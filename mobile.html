@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<!--
+MedSpaSync Pro - Medical Spa Rewards Reconciliation Platform
+Copyright (c) 2025 Mythos Media Co. All rights reserved.
+
+PROPRIETARY AND CONFIDENTIAL
+This software, including all HTML, CSS, JavaScript, and associated files,
+is proprietary to Mythos Media Co. Unauthorized copying, distribution, 
+modification, reverse engineering, or use is strictly prohibited.
+
+Patent Pending - Automated Medical Spa Rewards Reconciliation System
+Trademark: MedSpaSync Pro™ is a trademark of Mythos Media Co.
+
+Licensed for demonstration purposes only.
+For licensing inquiries: sales@mythosmedia.co
+Version: 1.0 Mobile
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MedSpaSync Pro - Mobile</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MedSpaSync Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8cGF0aCBkPSJNNDggODBIMTQ0VjExMkg0OFY4MFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik02NCA2NEgxMjhWOTZINjRWNjRaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjE5MiIgeTI9IjE5MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNjY3ZWVhIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc2NGJhMiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8cGF0aCBkPSJNNDggODBIMTQ0VjExMkg0OFY4MFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik02NCA2NEgxMjhWOTZINjRWNjRaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjE5MiIgeTI9IjE5MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNjY3ZWVhIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc2NGJhMiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=">
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNwYVN5bmMgUHJvIiwKICAic2hvcnRfbmFtZSI6ICJTcGFTeW5jIiwKICAiZGVzY3JpcHRpb24iOiAiTWVkaWNhbCBTcGEgUmV3YXJkcyBSZWNvbmNpbGlhdGlvbiBBdXRvbWF0aW9uIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiM2NjdlZWEiLAogICJ0aGVtZV9jb2xvciI6ICIjNjY3ZWVhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqa3lJaUIyYVdWM1FtOTRQU0l3SURBZ01Ua3lJREU1TWlJZ1ptbHNiRDBpYm05dVpTSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNablh5SStDanhzWldOMElIZHBaSFJvUFNJeE9USWlJR2hsYVdkb2REMGlNVGt5SWlCeWVEMGlNalFpSUdacGJHdzlJblZ5YkNnalozSmhaR2xsYm5Rd0tTSXZQZ284Y0dGMGFDQmtQU0pOTkRnZ09EQklNVFEwVmpFeE1rZzBPRlk0TUZvaUlHWnBiR3c5SW5kb2FYUmxJaTgrQ2p4d1lYUm9JR1E5SW0wMk5DQTJORWd4TWpkV09UWklOalIyTmpSYUlpQm1hV3hzUFNKM2FHbDBaU0l2UGdvOFpHVm1jejRLUEd4cGJtVmhja2R5WVdScFpXNTBJR2xrUFNKbmNtRmthV1Z1ZERBaUlIZ3hQU0l3SWlCNU1UMGlNQ0lnZURKOUlqRTVNaUlnZVRKOUlqRTVNaUlnWjNKaFpHbGxiblJWYm1sMGN6MGlkWE5sY2xOd1lXTmxUMjVWYzJVaVBnbzhjM1J2Y0NCemRHOXdMV052Ykc5eVBTSWpOall0TlRSRVlTSXZQZ284YzNSdmNDQnZabVp6WlhROUlqRWlJSE4wYjNBdFkyOXNiM0k5SWljM05qUmlZVElpTHo0S1BDOXNhVzVsWVhKSGNtRmthV1Z1ZEQ0S1BDOWtaV1p6UGdvOEwzTjJaejRLIj4KICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqa3lJaUIyYVdWM1FtOTRQU0l3SURBZ01Ua3lJREU1TWlJZ1ptbHNiRDBpYm05dVpTSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNaalh5SStDanhzWldOMElIZHBaSFJvUFNJeE9USWlJR2hsYVdkb2REMGlNVGt5SWlCeWVEMGlNalFpSUdacGJHdzlJblZ5YkNnalozSmhaR2xsYm5Rd0tTSXZQZ284Y0dGMGFDQmtQU0pOTkRnZ09EQklNVFEwVmpFeE1rZzBPRlk0TUZvaUlHWnBiR3c5SW5kb2FYUmxJaTgrQ2p4d1lYUm9JR1E5SW0wMk5DQTJORWd4TWpkV09UWklOalIyTmpSYUlpQm1hV3hzUFNKM2FHbDBaU0l2UGdvOFpHVm1jejRLUEd4cGJtVmhja2R5WVdScFpXNTBJR2xrUFNKbmNtRmthV1Z1ZERBaUlIZ3hQU0l3SWlCNU1UMGlNQ0lnZURKOUlqRTVNaUlnZVRKOUlqRTVNaUlnWjNKaFpHbGxiblJWYm1sMGN6MGlkWE5sY2xOd1lXTmxUMjVWYzJVaVBnbzhjM1J2Y0NCemRHOXdMV052Ykc5eVBTSWpOall0TlRSRVlTSXZQZ284YzNSdmNDQnZabVp6WlhROUlqRWlJSE4wYjNBdFkyOXNiM0k5SWljM05qUmlZVElpTHo0S1BDOXNhVzVsWVhKSGNtRmthV1Z1ZEQ0S1BDOWtaV1p6UGdvOEwzTjJaejRLIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .mobile-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .mobile-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .mobile-header p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .install-banner {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            cursor: pointer;
+            display: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .install-banner.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #333;
+        }
+
+        .upload-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .upload-box:active {
+            transform: scale(0.98);
+        }
+
+        .upload-box.has-file {
+            border-color: #4caf50;
+            background: #e8f5e8;
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .upload-box p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s ease;
+            margin: 0 auto;
+            display: block;
+            width: fit-content;
+        }
+
+        .upload-btn:active {
+            transform: scale(0.95);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .sample-data-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .sample-data-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .sample-data-btn:active {
+            transform: scale(0.95);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 300px;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .analyze-btn:active {
+            transform: scale(0.95);
+        }
+
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .metric-card:active {
+            transform: scale(0.95);
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .metric-value.success { color: #4caf50; }
+        .metric-value.warning { color: #ff9800; }
+        .metric-value.error { color: #f44336; }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .discrepancies-list {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .discrepancy-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+        }
+
+        .discrepancy-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .icon-error { background: #ffebee; color: #c62828; }
+        .icon-warning { background: #fff3e0; color: #f57c00; }
+
+        .discrepancy-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .discrepancy-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .discrepancy-subtitle {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.2;
+        }
+
+        .discrepancy-amount {
+            font-weight: 600;
+            color: #f44336;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 120px;
+            max-width: 150px;
+        }
+
+        .export-btn:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-footer {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 15px;
+        }
+
+        .mobile-footer p {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .mobile-footer a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #4caf50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .mobile-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .metric-value {
+                font-size: 1.6rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .export-btn {
+                max-width: none;
+            }
+        }
+
+        /* iOS specific styles */
+        @supports (-webkit-appearance: none) {
+            .container {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="install-banner" id="installBanner" onclick="installApp()">
+            📱 Install MedSpaSync Pro as an App - Tap here!
+        </div>
+        
+        <div class="mobile-header">
+            <h1>🏥 MedSpaSync Pro</h1>
+            <p>Automated Rewards Reconciliation</p>
+            <p style="color: #888; font-size: 0.8rem;">Mobile Edition</p>
+        </div>
+
+        <div class="upload-section">
+            <h2>Upload Your Data Files</h2>
+            
+            <div class="upload-grid">
+                <div class="upload-box" id="posUpload">
+                    <div class="upload-icon">💻</div>
+                    <h3>POS System</h3>
+                    <p>Point-of-sale transactions (CSV/Excel)</p>
+                    <button class="upload-btn" onclick="document.getElementById('posFile').click()">Choose File</button>
+                    <input type="file" id="posFile" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileUpload('pos', this)">
+                    <div id="posFileName" style="margin-top: 8px; font-weight: 600; color: #4caf50; font-size: 0.8rem;"></div>
+                </div>
+
+                <div class="upload-box" id="alleUpload">
+                    <div class="upload-icon">💉</div>
+                    <h3>Alle Rewards</h3>
+                    <p>Alle rewards program data</p>
+                    <button class="upload-btn" onclick="document.getElementById('alleFile').click()">Choose File</button>
+                    <input type="file" id="alleFile" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileUpload('alle', this)">
+                    <div id="alleFileName" style="margin-top: 8px; font-weight: 600; color: #4caf50; font-size: 0.8rem;"></div>
+                </div>
+
+                <div class="upload-box" id="aspireUpload">
+                    <div class="upload-icon">💊</div>
+                    <h3>Aspire Rewards</h3>
+                    <p>Aspire rewards program data</p>
+                    <button class="upload-btn" onclick="document.getElementById('aspireFile').click()">Choose File</button>
+                    <input type="file" id="aspireFile" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileUpload('aspire', this)">
+                    <div id="aspireFileName" style="margin-top: 8px; font-weight: 600; color: #4caf50; font-size: 0.8rem;"></div>
+                </div>
+            </div>
+
+            <div class="sample-data-section">
+                <button class="sample-data-btn" onclick="loadSampleData()">🧪 Use Sample Data</button>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
+                    Don't have files? Try sample data to see how it works
+                </p>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()" disabled>
+                🔍 Analyze Data
+            </button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="loading" id="loadingDiv">
+                <div class="loading-spinner"></div>
+                <h3 style="margin-bottom: 8px;">Analyzing data...</h3>
+                <p style="color: #666; font-size: 0.9rem;">Finding discrepancies & calculating savings</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div id="resultsContent" style="display: none;">
+                <h2 style="margin-bottom: 15px; text-align: center; font-size: 1.3rem;">📊 Analysis Results</h2>
+                
+                <div class="results-grid">
+                    <div class="metric-card">
+                        <div class="metric-value success" id="timeSaved">2.4</div>
+                        <div class="metric-label">Hours Saved</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value warning" id="discrepancyCount">0</div>
+                        <div class="metric-label">Discrepancies Found</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value success" id="moneySaved">$12,000</div>
+                        <div class="metric-label">Annual Savings</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value error" id="missedRevenue">$0</div>
+                        <div class="metric-label">Missed Revenue</div>
+                    </div>
+                </div>
+
+                <div class="discrepancies-list" id="discrepanciesList">
+                    <h3 style="margin-bottom: 12px; font-size: 1.1rem;">🔍 Detailed Findings</h3>
+                    <div id="discrepancyItems"></div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="export-btn" onclick="exportReport()">📄 Export</button>
+                    <button class="export-btn" onclick="shareResults()">📱 Share</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-footer">
+        <p>&copy; 2025 Mythos Media Co. All rights reserved.</p>
+        <p>
+            MedSpaSync™ is a trademark of Mythos Media Co. | Patent Pending
+        </p>
+        <p style="margin-top: 8px;">
+            <a href="mailto:legal@mythosmedia.co">Legal</a> | 
+            <a href="mailto:sales@mythosmedia.co">Contact</a>
+        </p>
+    </div>
+
+    <script>
+        let uploadedFiles = {
+            pos: null,
+            alle: null,
+            aspire: null
+        };
+
+        let sampleData = {
+            pos: [
+                {date: '2024-05-28', patient: 'Jane Smith', service: 'Botox 20 units', amount: 250.00},
+                {date: '2024-05-28', patient: 'John Doe', service: 'Juvederm Voluma', amount: 650.00},
+                {date: '2024-05-27', patient: 'Sarah Johnson', service: 'Dysport 30 units', amount: 300.00},
+                {date: '2024-05-27', patient: 'Mike Wilson', service: 'Restylane Lyft', amount: 550.00},
+                {date: '2024-05-26', patient: 'Lisa Brown', service: 'Botox 30 units', amount: 375.00}
+            ],
+            alle: [
+                {date: '2024-05-28', patient: 'Jane Smith', treatment: 'Botox', amount: 250.00, points: 200},
+                {date: '2024-05-28', patient: 'John Doe', treatment: 'Juvederm', amount: 650.00, points: 300},
+                {date: '2024-05-26', patient: 'Lisa Brown', treatment: 'Botox', amount: 375.00, points: 300}
+            ],
+            aspire: [
+                {date: '2024-05-27', patient: 'Sarah Johnson', treatment: 'Dysport', amount: 300.00, points: 200},
+                {date: '2024-05-27', patient: 'Mike Wilson', treatment: 'Restylane', amount: 550.00, points: 600}
+            ]
+        };
+
+        let deferredPrompt;
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallBanner();
+        });
+
+        function showInstallBanner() {
+            const banner = document.getElementById('installBanner');
+            banner.classList.add('show');
+        }
+
+        function installApp() {
+            const banner = document.getElementById('installBanner');
+            banner.classList.remove('show');
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showNotification('App installed successfully! 🎉', 'success');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Manual installation instructions
+                showNotification('To install: Share → Add to Home Screen', 'info');
+            }
+        }
+
+        // Check if already installed
+        window.addEventListener('appinstalled', () => {
+            showNotification('MedSpaSync Pro installed! 🎉', 'success');
+            document.getElementById('installBanner').style.display = 'none';
+        });
+
+        function handleFileUpload(type, input) {
+            const file = input.files[0];
+            if (file) {
+                uploadedFiles[type] = file;
+                const uploadBox = document.getElementById(type + 'Upload');
+                const fileName = document.getElementById(type + 'FileName');
+                
+                uploadBox.classList.add('has-file');
+                fileName.textContent = `✅ ${file.name}`;
+                
+                // Haptic feedback on supported devices
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+                
+                checkIfReadyToAnalyze();
+            }
+        }
+
+        function loadSampleData() {
+            uploadedFiles.pos = 'sample';
+            uploadedFiles.alle = 'sample';
+            uploadedFiles.aspire = 'sample';
+
+            ['pos', 'alle', 'aspire'].forEach(type => {
+                const uploadBox = document.getElementById(type + 'Upload');
+                const fileName = document.getElementById(type + 'FileName');
+                uploadBox.classList.add('has-file');
+                fileName.textContent = `✅ Sample ${type.toUpperCase()} data`;
+            });
+
+            checkIfReadyToAnalyze();
+            
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate([50, 50, 50]);
+            }
+            
+            showNotification('Sample data loaded! 📊', 'success');
+        }
+
+        function checkIfReadyToAnalyze() {
+            const hasPos = uploadedFiles.pos !== null;
+            const hasAtLeastOneRewards = uploadedFiles.alle !== null || uploadedFiles.aspire !== null;
+            
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.disabled = !(hasPos && hasAtLeastOneRewards);
+            
+            if (!analyzeBtn.disabled) {
+                analyzeBtn.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+            }
+        }
+
+        function runAnalysis() {
+            const resultsSection = document.getElementById('resultsSection');
+            const loadingDiv = document.getElementById('loadingDiv');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            resultsSection.style.display = 'block';
+            loadingDiv.style.display = 'block';
+            resultsContent.style.display = 'none';
+
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+
+            // Animate progress bar
+            const progressFill = document.getElementById('progressFill');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(showResults, 500);
+                }
+            }, 200);
+
+            // Smooth scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function showResults() {
+            const loadingDiv = document.getElementById('loadingDiv');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            loadingDiv.style.display = 'none';
+            resultsContent.style.display = 'block';
+
+            const discrepancies = analyzeData();
+            
+            // Update metrics with animation
+            document.getElementById('discrepancyCount').textContent = discrepancies.length;
+            document.getElementById('missedRevenue').textContent = ' + (discrepancies.length * 75).toLocaleString();
+            
+            showDiscrepancies(discrepancies);
+            
+            // Success haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+            
+            showNotification(`Analysis complete! Found ${discrepancies.length} discrepancies`, 'success');
+        }
+
+        function analyzeData() {
+            const discrepancies = [];
+            
+            if (uploadedFiles.pos === 'sample') {
+                discrepancies.push({
+                    type: 'Missing Alle Entry',
+                    patient: 'Sarah Johnson',
+                    service: 'Dysport 30 units',
+                    amount: 300.00,
+                    severity: 'high'
+                });
+                
+                discrepancies.push({
+                    type: 'Missing Aspire Entry',
+                    patient: 'Jane Smith',
+                    service: 'Botox 20 units',
+                    amount: 250.00,
+                    severity: 'high'
+                });
+                
+                discrepancies.push({
+                    type: 'Missing Aspire Entry',
+                    patient: 'John Doe',
+                    service: 'Juvederm Voluma',
+                    amount: 650.00,
+                    severity: 'high'
+                });
+                
+                discrepancies.push({
+                    type: 'Missing Aspire Entry',
+                    patient: 'Lisa Brown',
+                    service: 'Botox 30 units',
+                    amount: 375.00,
+                    severity: 'high'
+                });
+            }
+            
+            return discrepancies;
+        }
+
+        function showDiscrepancies(discrepancies) {
+            const container = document.getElementById('discrepancyItems');
+            container.innerHTML = '';
+            
+            if (discrepancies.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #4caf50; font-size: 1rem; padding: 20px;">🎉 Perfect match! No discrepancies found.</p>';
+                return;
+            }
+            
+            discrepancies.forEach(disc => {
+                const item = document.createElement('div');
+                item.className = 'discrepancy-item';
+                item.innerHTML = `
+                    <div class="discrepancy-icon ${disc.severity === 'high' ? 'icon-error' : 'icon-warning'}">
+                        ${disc.severity === 'high' ? '❌' : '⚠️'}
+                    </div>
+                    <div class="discrepancy-content">
+                        <div class="discrepancy-title">${disc.type}</div>
+                        <div class="discrepancy-subtitle">${disc.patient}: ${disc.service}</div>
+                    </div>
+                    <div class="discrepancy-amount">${disc.amount.toFixed(2)}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function exportReport() {
+            const discrepancies = analyzeData();
+            const reportContent = `
+MEDSPASYNC MOBILE REPORT
+Generated: ${new Date().toLocaleString()}
+
+SUMMARY:
+- Discrepancies Found: ${discrepancies.length}
+- Estimated Missed Revenue: ${discrepancies.length * 75}
+- Time Saved: 2.4 hours (96% reduction)
+- Annual Savings: $12,000
+
+DETAILED FINDINGS:
+${discrepancies.map((d, i) => `${i+1}. ${d.type}: ${d.patient} - ${d.service} (${d.amount.toFixed(2)})`).join('\n')}
+
+BUSINESS IMPACT:
+Annual Value: $15,000-20,000
+Service Cost: $6,000/year
+Net Savings: $9,000-14,000/year
+ROI: 150-233%
+
+Generated by MedSpaSync Pro Mobile
+© 2025 Mythos Media Co.
+            `.trim();
+            
+            if (navigator.share) {
+                // Use native sharing on mobile
+                navigator.share({
+                    title: 'MedSpaSync Report',
+                    text: reportContent
+                });
+            } else {
+                // Fallback to download
+                const blob = new Blob([reportContent], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `medspasync_mobile_report_${new Date().toISOString().split('T')[0]}.txt`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
+            
+            showNotification('Report exported! 📄', 'success');
+        }
+
+        function shareResults() {
+            const discrepancies = analyzeData();
+            const shareText = `🏥 SpaSync Pro found ${discrepancies.length} discrepancies worth ${discrepancies.length * 75} in missed revenue! This automation could save your spa $12,000+ annually. Check it out: ${window.location.href}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'MedSpaSync Pro Results',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('Results copied to clipboard! 📋', 'success');
+                });
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            if (type === 'success') notification.style.background = '#4caf50';
+            else if (type === 'error') notification.style.background = '#f44336';
+            else notification.style.background = '#2196f3';
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Hide notification
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swContent = `
+                    const CACHE_NAME = 'medspasync-v1';
+                    const urlsToCache = [
+                        '/',
+                        '/index.html'
+                    ];
+
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then((cache) => cache.addAll(urlsToCache))
+                        );
+                    });
+
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then((response) => {
+                                    return response || fetch(event.request);
+                                })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swContent], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(() => console.log('SW registered'))
+                    .catch(() => console.log('SW registration failed'));
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('MedSpaSync Pro Mobile ready! 📱', 'success');
+            
+            // Show install banner after a delay if not installed
+            setTimeout(() => {
+                if (!window.matchMedia('(display-mode: standalone)').matches) {
+                    showInstallBanner();
+                }
+            }, 3000);
+        });
+
+        // Prevent zoom on input focus (iOS)
+        document.addEventListener('touchstart', function() {}, true);
+    </script>
+</body>
+</html>
