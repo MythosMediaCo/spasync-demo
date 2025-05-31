@@ -1,4 +1,4 @@
-// ENHANCED MEDSPASYNC PRO - PROFESSIONAL FEATURES
+// ENHANCED MEDSPASYNC PRO - PROFESSIONAL FEATURES (WITH SCRUBBED NAMES)
 const { useState, useEffect } = React;
 
 // Time Savings Calculator Component
@@ -144,7 +144,7 @@ const ProfessionalDemo = () => {
         document.getElementById('missed-revenue').textContent = '$2,340';
         document.getElementById('annual-savings').textContent = '$28,080';
         
-        // Update the discrepancy table with realistic findings
+        // Update the discrepancy table with FICTIONAL NAMES for privacy
         const tableBody = document.querySelector('#discrepancy-table tbody');
         tableBody.innerHTML = `
             <tr>
@@ -582,25 +582,26 @@ function populateResults() {
     document.getElementById('missed-revenue').textContent = '$3,240';
     document.getElementById('annual-savings').textContent = '$38,880';
     
+    // Updated with FICTIONAL NAMES for privacy protection
     const tableBody = document.querySelector('#discrepancy-table tbody');
     tableBody.innerHTML = `
         <tr>
             <td><span style="color: #f44336; font-weight: bold;">Missing Claim</span></td>
-            <td>Sarah Johnson</td>
+            <td>Patient A-123</td>
             <td>2025-05-15</td>
             <td>$85.00</td>
             <td>Botox treatment eligible for Alle rewards - claim not submitted</td>
         </tr>
         <tr>
             <td><span style="color: #ff9800; font-weight: bold;">Date Mismatch</span></td>
-            <td>Michael Chen</td>
+            <td>Patient B-456</td>
             <td>2025-05-22</td>
             <td>$120.00</td>
             <td>Aspire certificate processed 3 days after treatment - review timing</td>
         </tr>
         <tr>
             <td><span style="color: #f44336; font-weight: bold;">Missing Claim</span></td>
-            <td>Jennifer Davis</td>
+            <td>Patient C-789</td>
             <td>2025-05-18</td>
             <td>$200.00</td>
             <td>CoolSculpting session eligible for Alle points - no rewards applied</td>
@@ -622,7 +623,7 @@ Generated: ${new Date().toLocaleDateString()}
 
 SUMMARY:
 - Hours Saved: 16.2 per week
-- Missed Revenue Identified: $3,240
+- Process Improvements Identified: Multiple opportunities
 - Annual Projected Savings: $38,880
 
 RECOMMENDATIONS:
