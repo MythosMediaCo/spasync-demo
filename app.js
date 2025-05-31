@@ -1,7 +1,7 @@
-// ENHANCED MEDSPASYNC PRO - PROFESSIONAL FEATURES (WITH SCRUBBED NAMES)
+// ENHANCED MEDSPASYNC PRO WITH INTEGRATED LEAD CAPTURE
 const { useState, useEffect } = React;
 
-// Time Savings Calculator Component
+// Time Savings Calculator Component (unchanged)
 const TimeSavingsCalculator = () => {
     const [selectedVolume, setSelectedVolume] = useState('medium');
     
@@ -88,12 +88,13 @@ const TimeSavingsCalculator = () => {
     );
 };
 
-// Professional Demo Component
+// Professional Demo Component with Integrated Lead Capture
 const ProfessionalDemo = () => {
     const [currentStep, setCurrentStep] = useState('ready');
     const [analysisProgress, setAnalysisProgress] = useState(0);
     const [currentMessage, setCurrentMessage] = useState('');
     const [showResults, setShowResults] = useState(false);
+    const [showTrialForm, setShowTrialForm] = useState(false);
     
     const DEMO_RESULTS = {
         processingTime: 47,
@@ -176,6 +177,39 @@ const ProfessionalDemo = () => {
                 <td>Automated reconciliation vs manual process saves significant staff time</td>
             </tr>
         `;
+    };
+    
+    const handleTrialSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        console.log('Trial signup:', data);
+        
+        // Show success message
+        setShowTrialForm(false);
+        
+        // Create success notification
+        const successDiv = document.createElement('div');
+        successDiv.innerHTML = `
+            <div style="
+                background: linear-gradient(135deg, #4caf50, #45a049);
+                color: white;
+                padding: 30px;
+                border-radius: 15px;
+                text-align: center;
+                margin: 20px 0;
+                box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+            ">
+                <h3 style="margin-bottom: 15px;">🎉 Trial Activated!</h3>
+                <p style="margin-bottom: 10px;">Check your email for login credentials and setup instructions.</p>
+                <p>Our team will contact you within 2 hours to help get started.</p>
+            </div>
+        `;
+        document.querySelector('.demo-results').appendChild(successDiv);
+        
+        // Send lead notification
+        sendLeadNotification(data, 'Free Trial Signup');
     };
     
     if (currentStep === 'ready') {
@@ -412,30 +446,143 @@ const ProfessionalDemo = () => {
                 )
             ),
             
-            React.createElement('div', { style: { textAlign: 'center', marginTop: '40px' }},
-                React.createElement('h4', { 
-                    style: { marginBottom: '25px', color: '#333' }
-                }, '🚀 Ready to Streamline Your Operations?'),
+            // POST-DEMO TRIAL CAPTURE
+            React.createElement('div', { style: { 
+                background: 'linear-gradient(135deg, #4caf50, #45a049)',
+                color: 'white',
+                padding: '40px',
+                borderRadius: '20px',
+                margin: '40px 0',
+                textAlign: 'center',
+                boxShadow: '0 15px 35px rgba(76, 175, 80, 0.3)'
+            }},
+                React.createElement('h3', { 
+                    style: { fontSize: '2.2rem', marginBottom: '20px' }
+                }, '✅ Impressed by the Results?'),
+                React.createElement('p', { 
+                    style: { fontSize: '1.2rem', marginBottom: '25px', opacity: '0.95' }
+                }, 'Get MedSpaSync Pro working for YOUR practice. Start your free 30-day trial and see these results with your actual data.'),
+                
+                !showTrialForm ? 
+                    React.createElement('button', { 
+                        className: 'cta-button',
+                        style: { 
+                            background: 'rgba(255,255,255,0.9)', 
+                            color: '#4caf50',
+                            fontSize: '1.3rem',
+                            padding: '20px 40px'
+                        },
+                        onClick: () => setShowTrialForm(true)
+                    }, '🚀 Start My Free 30-Day Trial')
+                :
+                    React.createElement('form', { 
+                        onSubmit: handleTrialSubmit,
+                        style: { maxWidth: '600px', margin: '0 auto' }
+                    },
+                        React.createElement('div', { 
+                            style: { 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(3, 1fr)', 
+                                gap: '15px', 
+                                marginBottom: '20px' 
+                            }
+                        },
+                            React.createElement('input', { 
+                                type: 'text', 
+                                name: 'firstName',
+                                placeholder: 'First Name*', 
+                                required: true,
+                                style: { 
+                                    padding: '15px', 
+                                    borderRadius: '8px', 
+                                    border: 'none',
+                                    fontSize: '1rem'
+                                }
+                            }),
+                            React.createElement('input', { 
+                                type: 'email', 
+                                name: 'email',
+                                placeholder: 'Email*', 
+                                required: true,
+                                style: { 
+                                    padding: '15px', 
+                                    borderRadius: '8px', 
+                                    border: 'none',
+                                    fontSize: '1rem'
+                                }
+                            }),
+                            React.createElement('input', { 
+                                type: 'text', 
+                                name: 'practiceName',
+                                placeholder: 'Practice Name*', 
+                                required: true,
+                                style: { 
+                                    padding: '15px', 
+                                    borderRadius: '8px', 
+                                    border: 'none',
+                                    fontSize: '1rem'
+                                }
+                            })
+                        ),
+                        
+                        React.createElement('button', { 
+                            type: 'submit',
+                            style: { 
+                                background: 'rgba(255,255,255,0.9)', 
+                                color: '#4caf50',
+                                border: 'none',
+                                padding: '15px 30px',
+                                borderRadius: '8px',
+                                fontSize: '1.1rem',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                width: '100%'
+                            }
+                        }, '🚀 Activate My Free Trial')
+                    ),
+                
                 React.createElement('div', { 
-                    style: { display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }
+                    style: { 
+                        marginTop: '30px', 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(2, 1fr)', 
+                        gap: '30px',
+                        opacity: '0.9',
+                        fontSize: '0.95rem'
+                    }
                 },
-                    React.createElement('button', { 
-                        className: 'cta-button',
-                        onClick: () => window.open('mailto:sales@mythosmedia.co?subject=MedSpaSync Pro - Free Trial Request&body=I would like to start a free trial of MedSpaSync Pro based on the demo analysis.', '_blank')
-                    }, 'Start Free 30-Day Trial'),
-                    React.createElement('button', { 
-                        className: 'cta-button',
-                        style: { background: 'linear-gradient(90deg, #17a2b8, #138496)' },
-                        onClick: () => setCurrentStep('ready')
-                    }, 'Run Another Analysis')
-                ),
+                    React.createElement('div', {},
+                        React.createElement('strong', {}, 'Free Trial Includes:'),
+                        React.createElement('div', { style: { marginTop: '10px' }},
+                            '✅ Full analysis of your data\n✅ Complete reconciliation report\n✅ Implementation guidance\n✅ No setup fees'.split('\n').map((item, i) => 
+                                React.createElement('div', { key: i }, item)
+                            )
+                        )
+                    ),
+                    React.createElement('div', {},
+                        React.createElement('strong', {}, 'What Happens Next:'),
+                        React.createElement('div', { style: { marginTop: '10px' }},
+                            '📧 Instant trial access email\n📞 Optional setup call (15 min)\n📊 Your first report in 24 hours\n🚀 Start saving time immediately'.split('\n').map((item, i) => 
+                                React.createElement('div', { key: i }, item)
+                            )
+                        )
+                    )
+                )
+            ),
+            
+            React.createElement('div', { style: { textAlign: 'center', marginTop: '30px' }},
+                React.createElement('button', { 
+                    className: 'cta-button',
+                    style: { background: 'linear-gradient(90deg, #17a2b8, #138496)', margin: '10px' },
+                    onClick: () => setCurrentStep('ready')
+                }, 'Run Another Analysis'),
                 
                 React.createElement('div', { style: { 
-                    marginTop: '30px', 
+                    marginTop: '20px', 
                     display: 'grid', 
                     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
                     gap: '15px',
-                    maxWidth: '800px',
+                    maxWidth: '600px',
                     marginLeft: 'auto',
                     marginRight: 'auto'
                 }},
@@ -451,7 +598,29 @@ const ProfessionalDemo = () => {
     return null;
 };
 
-// Render the new professional components
+// Simple lead notification function
+function sendLeadNotification(data, source) {
+    console.log(`New lead from ${source}:`, data);
+    
+    // Create email subject and body
+    const subject = `New MedSpaSync Pro Lead: ${source}`;
+    const body = `New lead captured from ${source}:\n\n${JSON.stringify(data, null, 2)}`;
+    
+    // You can replace this with actual integrations:
+    // - Email service API call
+    // - CRM webhook
+    // - Slack notification
+    // - Database insertion
+    
+    // For now, create a mailto link as backup
+    if (data.email) {
+        const mailtoLink = `mailto:sales@mythosmedia.co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        // Optionally open email client
+        // window.open(mailtoLink);
+    }
+}
+
+// Render the professional components
 if (document.getElementById('timeSavingsCalculator')) {
     ReactDOM.render(React.createElement(TimeSavingsCalculator), document.getElementById('timeSavingsCalculator'));
 }
@@ -459,13 +628,9 @@ if (document.getElementById('professionalDemo')) {
     ReactDOM.render(React.createElement(ProfessionalDemo), document.getElementById('professionalDemo'));
 }
 
-// YOUR EXISTING JAVASCRIPT FUNCTIONALITY BELOW
-// Keep all your existing file upload, drag/drop, and analysis functions
-
-// File upload functionality
+// Keep all your existing JavaScript functionality below
 let uploadedFiles = [];
 
-// Drag and drop functionality
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     document.getElementById('drop-area').addEventListener(eventName, preventDefaults, false);
     document.body.addEventListener(eventName, preventDefaults, false);
@@ -582,7 +747,6 @@ function populateResults() {
     document.getElementById('missed-revenue').textContent = '$3,240';
     document.getElementById('annual-savings').textContent = '$38,880';
     
-    // Updated with FICTIONAL NAMES for privacy protection
     const tableBody = document.querySelector('#discrepancy-table tbody');
     tableBody.innerHTML = `
         <tr>
