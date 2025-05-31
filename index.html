@@ -6,6 +6,11 @@
     <title>MedSpaSync - Rewards Reconciliation Automation</title>
     <style>
         /* Existing CSS from your file */
+        .metric-value{
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -839,6 +844,13 @@
             <a href="#demo-section" class="cta-button">See the Demo</a>
         </section>
 
+        <!-- TEMPORARY TEST BUTTON - Remove after testing -->
+        <div style="text-align: center; padding: 20px; background: yellow; margin: 20px 0;">
+            <button onclick="testEmailJS()" style="background: red; color: white; padding: 20px; font-size: 20px; border: none; border-radius: 10px; cursor: pointer;">
+                🧪 TEST EMAIL SYSTEM
+            </button>
+        </div>
+
         <section class="container problem-solution-section">
             <h3>The Problem & Our Solution</h3>
             <div class="content-blocks">
@@ -858,6 +870,109 @@
                     <h4>Guaranteed ROI & Peace of Mind</h4>
                     <p>By drastically reducing manual hours and ensuring accurate reconciliation, MedSpaSync Pro delivers a clear and measurable return on investment. Our patent-pending technology provides unparalleled accuracy, giving you peace of mind and freeing your staff to focus on what truly matters: your patients and growing your business.</p>
                 </div>
+            </div>
+        </section>
+
+        <section class="lead-capture-section" style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        ">
+            <div class="container">
+                <h3 style="font-size: 2.2rem; margin-bottom: 20px; color: white;">
+                    📄 Get Your FREE Custom ROI Report
+                </h3>
+                <p style="font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; color: rgba(255,255,255,0.9);">
+                    Get a personalized analysis showing exactly how much MedSpaSync Pro can save YOUR practice, 
+                    plus implementation timeline and ROI projections.
+                </p>
+                
+                <form id="roiReportForm" style="max-width: 500px; margin: 0 auto;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <input type="text" name="firstName" placeholder="First Name*" required style="
+                            padding: 15px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1rem;
+                            background: rgba(255,255,255,0.95);
+                            color: #333;
+                        ">
+                        <input type="text" name="lastName" placeholder="Last Name*" required style="
+                            padding: 15px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1rem;
+                            background: rgba(255,255,255,0.95);
+                            color: #333;
+                        ">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <input type="email" name="email" placeholder="Business Email*" required style="
+                            padding: 15px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1rem;
+                            background: rgba(255,255,255,0.95);
+                            color: #333;
+                        ">
+                        <input type="tel" name="phone" placeholder="Phone Number" style="
+                            padding: 15px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1rem;
+                            background: rgba(255,255,255,0.95);
+                            color: #333;
+                        ">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <input type="text" name="practiceName" placeholder="Practice Name*" required style="
+                            padding: 15px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1rem;
+                            background: rgba(255,255,255,0.95);
+                            color: #333;
+                        ">
+                        <select name="practiceSize" required style="
+                            padding: 15px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1rem;
+                            background: rgba(255,255,255,0.95);
+                            color: #333;
+                        ">
+                            <option value="">Practice Size*</option>
+                            <option value="small">Small (1-2 providers)</option>
+                            <option value="medium">Medium (3-5 providers)</option>
+                            <option value="large">Large (6+ providers)</option>
+                            <option value="enterprise">Enterprise (Multiple locations)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" style="
+                        background: linear-gradient(90deg, #ff7e5f, #feb47b);
+                        color: white;
+                        padding: 18px 40px;
+                        border: none;
+                        border-radius: 50px;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        cursor: pointer;
+                        width: 100%;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 8px 20px rgba(255,126,95,0.4);
+                    " onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        📊 Generate My Custom ROI Report
+                    </button>
+                </form>
+                
+                <p style="font-size: 0.9rem; margin-top: 20px; opacity: 0.8;">
+                    ✅ Detailed savings analysis ✅ Implementation roadmap ✅ No sales calls unless requested
+                </p>
             </div>
         </section>
 
@@ -962,10 +1077,71 @@
         <p><a href="mailto:sales@mythosmedia.co">Contact Us</a> | <a href="#">Privacy Policy</a></p>
     </footer>
 
+    <!-- EmailJS Integration -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            // Initialize EmailJS with your actual public key
+            emailjs.init("Xe2K-4SHtRCGh-vSf");
+        })();
+    </script>
+
+    <!-- Test Function -->
+    <script>
+    function testEmailJS() {
+        console.log('Testing EmailJS...');
+        console.log('EmailJS loaded?', typeof emailjs);
+        
+        emailjs.send('service_xicrl9p', 'template_gze8atr', {
+            from_name: 'Test User',
+            from_email: 'test@example.com', 
+            practice_name: 'Test Practice',
+            source: 'Manual Test',
+            timestamp: new Date().toLocaleString(),
+            lead_details: 'This is a manual test'
+        }, 'Xe2K-4SHtRCGh-vSf')
+        .then(function(response) {
+            console.log('✅ Email sent successfully!', response);
+            alert('✅ Email sent! Check mythosmediaco@gmail.com');
+        })
+        .catch(function(error) {
+            console.log('❌ Email failed:', error);
+            alert('❌ Email failed. Check console for details.');
+        });
+    }
+
+    // ROI Report Form Handler
+    document.getElementById('roiReportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        console.log('ROI Report Request:', data);
+        
+        emailjs.send('service_xicrl9p', 'template_gze8atr', {
+            from_name: data.firstName + ' ' + data.lastName,
+            from_email: data.email,
+            practice_name: data.practiceName,
+            source: 'ROI Report Request',
+            timestamp: new Date().toLocaleString(),
+            lead_details: JSON.stringify(data, null, 2)
+        }, 'Xe2K-4SHtRCGh-vSf')
+        .then(function(response) {
+            console.log('ROI Report request sent!', response);
+            alert('✅ Thank you! Your custom ROI report will be emailed within 2 hours.');
+            e.target.reset();
+        })
+        .catch(function(error) {
+            console.log('ROI Report failed:', error);
+            alert('❌ Something went wrong. Please try again or contact us directly.');
+        });
+    });
+    </script>
+
+    <!-- React Scripts -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
     <script type="text/babel" src="app.js"></script>
 </body>
 </html>
