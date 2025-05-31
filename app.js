@@ -598,26 +598,112 @@ const ProfessionalDemo = () => {
     return null;
 };
 
-// Simple lead notification function
+// EMAILJS INTEGRATION - Professional Lead Capture
 function sendLeadNotification(data, source) {
     console.log(`New lead from ${source}:`, data);
     
-    // Create email subject and body
-    const subject = `New MedSpaSync Pro Lead: ${source}`;
-    const body = `New lead captured from ${source}:\n\n${JSON.stringify(data, null, 2)}`;
+    // EmailJS Configuration with your actual credentials
+    const emailParams = {
+        from_name: data.firstName || 'Unknown',
+        from_email: data.email || 'no-email@example.com',
+        practice_name: data.practiceName || 'Not provided',
+        source: source,
+        message: `New ${source} from ${data.firstName} at ${data.practiceName}`,
+        lead_details: JSON.stringify(data, null, 2),
+        timestamp: new Date().toLocaleString()
+    };
     
-    // You can replace this with actual integrations:
-    // - Email service API call
-    // - CRM webhook
-    // - Slack notification
-    // - Database insertion
-    
-    // For now, create a mailto link as backup
-    if (data.email) {
-        const mailtoLink = `mailto:sales@mythosmedia.co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        // Optionally open email client
-        // window.open(mailtoLink);
+    // Send email via EmailJS
+    if (typeof emailjs !== 'undefined') {
+        emailjs.send(
+            'service_xicrl9p',     // Your actual service ID
+            'template_gze8atr',    // Your lead notification template ID
+            emailParams,
+            'Xe2K-4SHtRCGh-vSf'   // Your actual public key
+        ).then(
+            function(response) {
+                console.log('Lead notification sent successfully!', response.status, response.text);
+                
+                // Send confirmation email to lead
+                sendConfirmationEmail(data);
+            },
+            function(error) {
+                console.error('Failed to send lead notification:', error);
+                
+                // Fallback: mailto link
+                const mailtoLink = `mailto:mythosmediaco@gmail.com?subject=New MedSpaSync Pro Lead: ${source}&body=Name: ${data.firstName}%0AEmail: ${data.email}%0APractice: ${data.practiceName}%0ASource: ${source}`;
+                window.open(mailtoLink);
+            }
+        );
+    } else {
+        // Fallback if EmailJS not loaded
+        console.warn('EmailJS not loaded, using mailto fallback');
+        const mailtoLink = `mailto:mythosmediaco@gmail.com?subject=New MedSpaSync Pro Lead: ${source}&body=Name: ${data.firstName}%0AEmail: ${data.email}%0APractice: ${data.practiceName}%0ASource: ${source}`;
+        window.open(mailtoLink);
     }
+}
+
+// Send confirmation email to the lead
+function sendConfirmationEmail(data) {
+    const confirmationParams = {
+        to_email: data.email,
+        to_name: data.firstName,
+        practice_name: data.practiceName,
+        support_email: 'mythosmediaco@gmail.com'
+    };
+    
+    if (typeof emailjs !== 'undefined') {
+        emailjs.send(
+            'service_xicrl9p',      // Your actual service ID
+            'template_b89p15u',     // Your trial confirmation template ID
+            confirmationParams,
+            'Xe2K-4SHtRCGh-vSf'    // Your actual public key
+        ).then(
+            function(response) {
+                console.log('Confirmation email sent to lead!', response.status);
+            },
+            function(error) {
+                console.error('Failed to send confirmation email:', error);
+            }
+        );
+    }
+}
+
+// HUBSPOT CRM INTEGRATION (Alternative/Additional)
+function sendToHubSpot(data, source) {
+    const hubspotData = {
+        fields: [
+            {
+                objectTypeId: "0-1", // Contact object
+                name: "email",
+                value: data.email
+            },
+            {
+                objectTypeId: "0-1",
+                name: "firstname", 
+                value: data.firstName
+            },
+            {
+                objectTypeId: "0-1",
+                name: "company",
+                value: data.practiceName
+            },
+            {
+                objectTypeId: "0-1",
+                name: "lead_source",
+                value: source
+            },
+            {
+                objectTypeId: "0-1",
+                name: "hs_lead_status",
+                value: "NEW"
+            }
+        ]
+    };
+    
+    // Note: HubSpot integration requires backend API due to CORS
+    // This is a placeholder for the structure
+    console.log('HubSpot payload prepared:', hubspotData);
 }
 
 // Render the professional components
