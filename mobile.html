@@ -597,6 +597,7 @@ Version: 1.0 Mobile
     </div>
 
     <script>
+        // Global variables
         let uploadedFiles = {
             pos: null,
             alle: null,
@@ -660,6 +661,43 @@ Version: 1.0 Mobile
             document.getElementById('installBanner').style.display = 'none';
         });
 
+        // Global functions
+        function loadSampleData() {
+            console.log('Loading sample data...');
+            
+            // Clear any existing data first
+            uploadedFiles = {
+                pos: null,
+                alle: null,
+                aspire: null
+            };
+            
+            // Set sample data
+            uploadedFiles.pos = 'sample';
+            uploadedFiles.alle = 'sample';
+            uploadedFiles.aspire = 'sample';
+
+            // Update UI
+            ['pos', 'alle', 'aspire'].forEach(type => {
+                const uploadBox = document.getElementById(type + 'Upload');
+                const fileName = document.getElementById(type + 'FileName');
+                
+                if (uploadBox && fileName) {
+                    uploadBox.classList.add('has-file');
+                    fileName.textContent = `✅ Sample ${type.toUpperCase()} data`;
+                }
+            });
+
+            checkIfReadyToAnalyze();
+            
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate([50, 50, 50]);
+            }
+            
+            showNotification('Sample data loaded! 📊', 'success');
+        }
+
         function handleFileUpload(type, input) {
             const file = input.files[0];
             if (file) {
@@ -680,15 +718,27 @@ Version: 1.0 Mobile
         }
 
         function loadSampleData() {
+            // Clear any existing data first
+            uploadedFiles = {
+                pos: null,
+                alle: null,
+                aspire: null
+            };
+            
+            // Set sample data
             uploadedFiles.pos = 'sample';
             uploadedFiles.alle = 'sample';
             uploadedFiles.aspire = 'sample';
 
+            // Update UI
             ['pos', 'alle', 'aspire'].forEach(type => {
                 const uploadBox = document.getElementById(type + 'Upload');
                 const fileName = document.getElementById(type + 'FileName');
-                uploadBox.classList.add('has-file');
-                fileName.textContent = `✅ Sample ${type.toUpperCase()} data`;
+                
+                if (uploadBox && fileName) {
+                    uploadBox.classList.add('has-file');
+                    fileName.textContent = `✅ Sample ${type.toUpperCase()} data`;
+                }
             });
 
             checkIfReadyToAnalyze();
@@ -706,10 +756,16 @@ Version: 1.0 Mobile
             const hasAtLeastOneRewards = uploadedFiles.alle !== null || uploadedFiles.aspire !== null;
             
             const analyzeBtn = document.getElementById('analyzeBtn');
-            analyzeBtn.disabled = !(hasPos && hasAtLeastOneRewards);
-            
-            if (!analyzeBtn.disabled) {
-                analyzeBtn.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+            if (analyzeBtn) {
+                analyzeBtn.disabled = !(hasPos && hasAtLeastOneRewards);
+                
+                if (!analyzeBtn.disabled) {
+                    analyzeBtn.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+                    analyzeBtn.style.cursor = 'pointer';
+                } else {
+                    analyzeBtn.style.background = '#ccc';
+                    analyzeBtn.style.cursor = 'not-allowed';
+                }
             }
         }
 
