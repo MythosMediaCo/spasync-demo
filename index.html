@@ -844,13 +844,6 @@
             <a href="#demo-section" class="cta-button">See the Demo</a>
         </section>
 
-        <!-- TEMPORARY TEST BUTTON - Remove after testing -->
-        <div style="text-align: center; padding: 20px; background: yellow; margin: 20px 0;">
-            <button onclick="testEmailJS()" style="background: red; color: white; padding: 20px; font-size: 20px; border: none; border-radius: 10px; cursor: pointer;">
-                🧪 TEST EMAIL SYSTEM
-            </button>
-        </div>
-
         <section class="container problem-solution-section">
             <h3>The Problem & Our Solution</h3>
             <div class="content-blocks">
@@ -1086,30 +1079,8 @@
         })();
     </script>
 
-    <!-- Test Function -->
+    <!-- Lead Capture Functions -->
     <script>
-    function testEmailJS() {
-        console.log('Testing EmailJS...');
-        console.log('EmailJS loaded?', typeof emailjs);
-        
-        emailjs.send('service_xicrl9p', 'template_gze8atr', {
-            from_name: 'Test User',
-            from_email: 'test@example.com', 
-            practice_name: 'Test Practice',
-            source: 'Manual Test',
-            timestamp: new Date().toLocaleString(),
-            lead_details: 'This is a manual test'
-        }, 'Xe2K-4SHtRCGh-vSf')
-        .then(function(response) {
-            console.log('✅ Email sent successfully!', response);
-            alert('✅ Email sent! Check mythosmediaco@gmail.com');
-        })
-        .catch(function(error) {
-            console.log('❌ Email failed:', error);
-            alert('❌ Email failed. Check console for details.');
-        });
-    }
-
     // ROI Report Form Handler
     document.getElementById('roiReportForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -1118,6 +1089,7 @@
         
         console.log('ROI Report Request:', data);
         
+        // Send lead notification email to you
         emailjs.send('service_xicrl9p', 'template_gze8atr', {
             from_name: data.firstName + ' ' + data.lastName,
             from_email: data.email,
@@ -1128,6 +1100,15 @@
         }, 'Xe2K-4SHtRCGh-vSf')
         .then(function(response) {
             console.log('ROI Report request sent!', response);
+            
+            // Send confirmation email to lead
+            emailjs.send('service_xicrl9p', 'template_b89p15u', {
+                to_email: data.email,
+                to_name: data.firstName,
+                practice_name: data.practiceName,
+                support_email: 'sales@mythosmedia.co'
+            }, 'Xe2K-4SHtRCGh-vSf');
+            
             alert('✅ Thank you! Your custom ROI report will be emailed within 2 hours.');
             e.target.reset();
         })
@@ -1136,6 +1117,35 @@
             alert('❌ Something went wrong. Please try again or contact us directly.');
         });
     });
+
+    // General lead notification function for trial signups
+    function sendLeadNotification(data, source) {
+        console.log(`New lead from ${source}:`, data);
+        
+        // Send lead notification email to you
+        emailjs.send('service_xicrl9p', 'template_gze8atr', {
+            from_name: data.firstName || 'Unknown',
+            from_email: data.email || 'no-email@example.com',
+            practice_name: data.practiceName || 'Not provided',
+            source: source,
+            timestamp: new Date().toLocaleString(),
+            lead_details: JSON.stringify(data, null, 2)
+        }, 'Xe2K-4SHtRCGh-vSf')
+        .then(function(response) {
+            console.log('Lead notification sent successfully!', response);
+            
+            // Send confirmation email to lead
+            emailjs.send('service_xicrl9p', 'template_b89p15u', {
+                to_email: data.email,
+                to_name: data.firstName,
+                practice_name: data.practiceName,
+                support_email: 'sales@mythosmedia.co'
+            }, 'Xe2K-4SHtRCGh-vSf');
+        })
+        .catch(function(error) {
+            console.error('Failed to send lead notification:', error);
+        });
+    }
     </script>
 
     <!-- React Scripts -->
