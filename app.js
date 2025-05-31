@@ -68,15 +68,15 @@ const TimeSavingsCalculator = () => {
         React.createElement('div', { className: 'savings-summary' },
             React.createElement('div', { className: 'savings-metric' },
                 React.createElement('label', {}, 'Hours Saved Monthly'),
-                React.createElement('value', {}, savedHours.toFixed(1))
+                React.createElement('div', { className: 'metric-value' }, savedHours.toFixed(1))
             ),
             React.createElement('div', { className: 'savings-metric' },
                 React.createElement('label', {}, 'Net Monthly Savings'),
-                React.createElement('value', {}, `$${netMonthlySavings.toFixed(0)}`)
+                React.createElement('div', { className: 'metric-value' }, `${netMonthlySavings.toFixed(0)}`)
             ),
             React.createElement('div', { className: 'savings-metric highlight' },
                 React.createElement('label', {}, 'Annual ROI'),
-                React.createElement('value', {}, `${roi.toFixed(0)}%`)
+                React.createElement('div', { className: 'metric-value' }, `${roi.toFixed(0)}%`)
             )
         ),
         
