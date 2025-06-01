@@ -1,13 +1,16 @@
 {
-  "name": "spasync-demo",
+  "name": "medspasync-frontend",
   "version": "1.0.0",
-  "description": "MedSpaSync Pro Frontend",
+  "description": "MedSpaSync Pro - Professional SaaS Platform for Medical Spa Rewards Reconciliation",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve -s . -p $PORT",
-    "dev": "npx serve -s ."
+    "start": "npx http-server . -p $PORT -a 0.0.0.0 --cors",
+    "dev": "npx http-server . -p 8080 -a localhost"
   },
   "dependencies": {
-    "serve": "^14.0.0"
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
