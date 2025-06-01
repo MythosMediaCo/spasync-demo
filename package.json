@@ -1,0 +1,13 @@
+{
+  "name": "spasync-demo",
+  "version": "1.0.0",
+  "description": "MedSpaSync Pro Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -s . -p $PORT",
+    "dev": "npx serve -s ."
+  },
+  "dependencies": {
+    "serve": "^14.0.0"
+  }
+}
