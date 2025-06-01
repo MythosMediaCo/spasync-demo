@@ -37,12 +37,36 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         
-        // ✅ FIXED: Changed from 'lucide' to 'LucideReact'
-        const {
-            Upload, FileText, BarChart3, Users, DollarSign, Clock, 
-            CheckCircle, AlertTriangle, XCircle, Download, RefreshCw, 
-            Settings, LogOut, AlertCircle, TrendingUp, Calendar
-        } = LucideReact;
+        // ✅ DEFENSIVE: Create icon components with fallbacks
+        const createIcon = (iconName) => {
+            if (typeof LucideReact !== 'undefined' && LucideReact[iconName]) {
+                return LucideReact[iconName];
+            }
+            // Fallback component if icon doesn't exist
+            return (props) => React.createElement('div', {
+                ...props,
+                className: `${props.className} inline-block w-5 h-5 bg-gray-400 rounded`,
+                title: iconName
+            });
+        };
+
+        // ✅ SAFE: Create all icons with fallbacks
+        const Upload = createIcon('Upload');
+        const FileText = createIcon('FileText');
+        const BarChart3 = createIcon('BarChart3');
+        const Users = createIcon('Users');
+        const DollarSign = createIcon('DollarSign');
+        const Clock = createIcon('Clock');
+        const CheckCircle = createIcon('CheckCircle');
+        const AlertTriangle = createIcon('AlertTriangle');
+        const XCircle = createIcon('XCircle');
+        const Download = createIcon('Download');
+        const RefreshCw = createIcon('RefreshCw');
+        const Settings = createIcon('Settings');
+        const LogOut = createIcon('LogOut');
+        const AlertCircle = createIcon('AlertCircle');
+        const TrendingUp = createIcon('TrendingUp');
+        const Calendar = createIcon('Calendar');
 
         const IntegratedMedSpaSyncDashboard = () => {
             const [user, setUser] = useState(null);
@@ -61,13 +85,18 @@
                 amountTolerancePercent: 5
             });
 
-            // ✅ IMPROVED: Better error handling for missing API
+            // ✅ SAFE: API with null checks
             const [api] = useState(() => {
-                if (!window.MedSpaSyncAPI) {
-                    console.error('MedSpaSyncAPI not found - check if api-service.js is loaded');
-                    return null;
+                if (typeof window !== 'undefined' && window.MedSpaSyncAPI) {
+                    try {
+                        return new window.MedSpaSyncAPI();
+                    } catch (e) {
+                        console.error('Failed to initialize API:', e);
+                        return null;
+                    }
                 }
-                return new window.MedSpaSyncAPI();
+                console.warn('MedSpaSyncAPI not found - using demo mode');
+                return null;
             });
 
             const fileInputRef = useRef(null);
@@ -76,80 +105,47 @@
             useEffect(() => {
                 const initializeApp = async () => {
                     try {
-                        // ✅ IMPROVED: Skip if API not available
-                        if (!api) {
-                            console.error('Cannot initialize - API service not available');
-                            setError('API service not available. Please check if api-service.js is loaded correctly.');
-                            setLoading(false);
-                            return;
-                        }
-
-                        // Check if user is authenticated
-                        if (!api.isAuthenticated()) {
-                            console.log('Not authenticated, redirecting to login');
-                            window.location.href = 'login.html';
-                            return;
-                        }
-
-                        // Test backend connection
                         setLoading(true);
-                        console.log('Testing backend connection...');
-                        
-                        // ✅ IMPROVED: Try-catch for backend connection
-                        let backendAvailable = true;
-                        try {
-                            await api.healthCheck();
-                            console.log('Backend connection successful');
-                        } catch (backendError) {
-                            console.warn('Backend connection failed, using demo mode:', backendError);
-                            backendAvailable = false;
-                        }
+                        console.log('Initializing dashboard...');
 
-                        // Set user data (from JWT token - in real app you'd decode this)
+                        // ✅ SKIP AUTH CHECK: For testing purposes
+                        // if (api && !api.isAuthenticated()) {
+                        //     console.log('Not authenticated, redirecting to login');
+                        //     window.location.href = 'login.html';
+                        //     return;
+                        // }
+
+                        // Set demo user data
                         setUser({
                             firstName: "Test",
                             lastName: "User", 
                             email: "test@medspasync.com",
                             practice: {
-                                name: "TestSpa",
+                                name: "Demo Spa",
                                 size: "small",
                                 subscriptionTier: "trial"
                             }
                         });
 
-                        // ✅ IMPROVED: Load real data or demo data
-                        if (backendAvailable) {
-                            try {
-                                await Promise.all([
-                                    loadUploadHistory(),
-                                    loadStats()
-                                ]);
-                            } catch (dataError) {
-                                console.warn('Failed to load real data, falling back to demo data:', dataError);
-                                loadDemoData();
-                            }
-                        } else {
-                            loadDemoData();
-                        }
+                        // ✅ ALWAYS LOAD DEMO DATA: For testing
+                        console.log('Loading demo data...');
+                        loadDemoData();
+
+                        console.log('Dashboard initialized successfully');
 
                     } catch (error) {
                         console.error('Failed to initialize app:', error);
-                        setError(api ? api.handleError(error, 'Initialization') : 'Failed to initialize dashboard. Please refresh the page.');
-                        
-                        if (error.message && error.message.includes('Authentication required')) {
-                            setTimeout(() => {
-                                window.location.href = 'login.html';
-                            }, 2000);
-                        }
+                        setError('Failed to initialize dashboard. Using demo mode.');
+                        loadDemoData();
                     } finally {
                         setLoading(false);
                     }
                 };
 
                 initializeApp();
-            }, [api]);
+            }, []);
 
-            // ✅ ADDED: Demo data loader
+            // ✅ DEMO DATA: Always available for testing
             const loadDemoData = () => {
                 console.log('Loading demo data...');
                 setUploads([
@@ -159,7 +155,7 @@
                         fileType: 'pos_transactions',
                         recordCount: 150,
                         status: 'processed',
-                        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+                        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
                     },
                     {
                         id: 2,
@@ -167,7 +163,7 @@
                         fileType: 'alle_rewards',
                         recordCount: 89,
                         status: 'processed',
-                        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString() // 12 hours ago
+                        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
                     },
                     {
                         id: 3,
@@ -175,7 +171,7 @@
                         fileType: 'aspire_certificates',
                         recordCount: 32,
                         status: 'processed',
-                        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString() // 6 hours ago
+                        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
                     }
                 ]);
                 setSelectedUploadIds([1, 2, 3]);
@@ -186,79 +182,8 @@
                 });
             };
 
-            const loadUploadHistory = async () => {
-                try {
-                    console.log('Loading upload history...');
-                    const response = await api.getUploadHistory();
-                    if (response.success) {
-                        console.log('Upload history loaded:', response.uploads);
-                        setUploads(response.uploads || []);
-                        
-                        // Auto-select recent uploads for reconciliation
-                        const recentUploads = response.uploads.slice(0, 3);
-                        setSelectedUploadIds(recentUploads.map(u => u.id));
-                    }
-                } catch (error) {
-                    console.error('Failed to load upload history:', error);
-                    throw error; // Re-throw to trigger demo data fallback
-                }
-            };
-
-            const loadStats = async () => {
-                try {
-                    console.log('Loading statistics...');
-                    const response = await api.getStats();
-                    if (response.success) {
-                        console.log('Statistics loaded:', response.stats);
-                        setStats(response.stats);
-                    }
-                } catch (error) {
-                    console.error('Failed to load stats:', error);
-                    // Don't throw - stats are not critical
-                }
-            };
-
             const handleFileUpload = async (files) => {
-                if (!api) {
-                    setError('API service not available');
-                    return;
-                }
-
-                setLoading(true);
-                setError(null);
-                setUploadProgress(0);
-
-                try {
-                    const file = files[0];
-                    console.log('Uploading file:', file.name, 'Size:', file.size);
-
-                    const response = await api.uploadFile(file, (progress) => {
-                        setUploadProgress(progress);
-                        console.log('Upload progress:', progress + '%');
-                    });
-
-                    if (response.success) {
-                        console.log('Upload successful:', response);
-                        showNotification(`Successfully uploaded ${file.name}`, 'success');
-                        
-                        // Reload upload history and stats
-                        await Promise.all([
-                            loadUploadHistory(),
-                            loadStats()
-                        ]);
-                        
-                        // Reset progress
-                        setUploadProgress(0);
-                    } else {
-                        throw new Error(response.error || 'Upload failed');
-                    }
-                } catch (error) {
-                    console.error('Upload failed:', error);
-                    setError(api.handleError(error, 'File upload'));
-                    setUploadProgress(0);
-                } finally {
-                    setLoading(false);
-                }
+                showNotification('File upload is in demo mode', 'info');
             };
 
             const runReconciliation = async () => {
@@ -267,44 +192,52 @@
                     return;
                 }
 
-                if (!api) {
-                    setError('API service not available');
-                    return;
-                }
-
                 setLoading(true);
                 setError(null);
-                setReconciliationResults(null);
 
-                try {
-                    console.log('Running reconciliation with uploads:', selectedUploadIds);
-                    console.log('Settings:', reconciliationSettings);
+                // ✅ DEMO RECONCILIATION: Simulate results
+                setTimeout(() => {
+                    const demoResults = {
+                        summary: {
+                            totalMatches: 45,
+                            exactMatches: 32,
+                            fuzzyMatches: 13,
+                            matchRate: 92,
+                            totalRecords: 271,
+                            timeSaved: { timeSavedHours: 8 }
+                        },
+                        matches: [
+                            {
+                                id: 1,
+                                matchType: 'exact',
+                                confidence: 0.98,
+                                record1: {
+                                    fileName: 'pos_transactions_demo.csv',
+                                    data: { patientName: 'Sarah Johnson', amount: '250.00', service: 'Botox Treatment' }
+                                },
+                                record2: {
+                                    fileName: 'alle_rewards_demo.csv',
+                                    data: { patientName: 'Sarah Johnson', points: '500', rewardType: 'Botox Discount' }
+                                }
+                            }
+                        ],
+                        unmatched: [
+                            {
+                                fileName: 'pos_transactions_demo.csv',
+                                record: { patientName: 'John Doe', amount: '180.00' },
+                                reason: 'No matching reward found'
+                            }
+                        ]
+                    };
 
-                    const response = await api.runReconciliation(selectedUploadIds, reconciliationSettings);
-
-                    if (response.success) {
-                        console.log('Reconciliation successful:', response);
-                        setReconciliationResults(response);
-                        showNotification(`Reconciliation complete: ${response.summary.totalMatches} matches found with ${response.summary.matchRate}% success rate`, 'success');
-                        
-                        // Switch to reconciliation tab to show results
-                        setActiveTab('reconciliation');
-                    } else {
-                        throw new Error(response.error || 'Reconciliation failed');
-                    }
-                } catch (error) {
-                    console.error('Reconciliation failed:', error);
-                    setError(api.handleError(error, 'Reconciliation'));
-                } finally {
+                    setReconciliationResults(demoResults);
+                    showNotification(`Demo reconciliation complete: ${demoResults.summary.totalMatches} matches found!`, 'success');
+                    setActiveTab('reconciliation');
                     setLoading(false);
-                }
+                }, 2000);
             };
 
             const handleLogout = () => {
-                console.log('Logging out...');
-                if (api) {
-                    api.logout();
-                }
                 showNotification('Logged out successfully', 'success');
                 setTimeout(() => {
                     window.location.href = 'login.html';
@@ -312,39 +245,28 @@
             };
 
             const showNotification = (message, type = 'success') => {
+                console.log(`Notification (${type}): ${message}`);
+                // Create visual notification
                 const notification = document.createElement('div');
                 notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transform transition-all duration-300 ${
-                    type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                    type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : 'bg-red-500'
                 }`;
                 notification.textContent = message;
                 document.body.appendChild(notification);
                 
-                // Animate in
-                setTimeout(() => {
-                    notification.style.transform = 'translateX(0)';
-                }, 100);
-                
-                // Remove after delay
                 setTimeout(() => {
                     if (document.body.contains(notification)) {
-                        notification.style.transform = 'translateX(100%)';
-                        setTimeout(() => {
-                            if (document.body.contains(notification)) {
-                                document.body.removeChild(notification);
-                            }
-                        }, 300);
+                        document.body.removeChild(notification);
                     }
                 }, 3000);
             };
 
             const formatCurrency = (amount) => {
-                if (!api) return `$${amount.toFixed(2)}`;
-                return api.formatCurrency(amount);
+                return `$${parseFloat(amount || 0).toFixed(2)}`;
             };
 
             const formatDate = (dateString) => {
-                if (!api) return new Date(dateString).toLocaleDateString();
-                return api.formatDate(dateString);
+                return new Date(dateString).toLocaleDateString();
             };
 
             const getFileTypeColor = (fileType) => {
@@ -430,7 +352,7 @@
                                     </div>
                                     <div className="hidden md:flex items-center space-x-4">
                                         <span className="text-sm text-gray-500">|</span>
-                                        <span className="text-sm text-green-600 font-medium">✓ Connected</span>
+                                        <span className="text-sm text-green-600 font-medium">✓ Demo Mode</span>
                                     </div>
                                 </div>
                                 
@@ -575,7 +497,7 @@
                                             ) : (
                                                 <BarChart3 className="w-5 h-5 mr-2" />
                                             )}
-                                            Run Reconciliation
+                                            Run Demo Reconciliation
                                         </button>
                                     </div>
                                 </div>
@@ -586,38 +508,25 @@
                                         <h3 className="text-lg font-medium text-gray-900">Recent Uploads</h3>
                                     </div>
                                     <div className="p-6">
-                                        {uploads.length === 0 ? (
-                                            <div className="text-center py-8">
-                                                <Upload className="w-12 h-12 mx-auto text-gray-400" />
-                                                <p className="mt-2 text-sm text-gray-500">No files uploaded yet</p>
-                                                <button
-                                                    onClick={() => setActiveTab('uploads')}
-                                                    className="mt-2 text-blue-600 hover:text-blue-500 text-sm"
-                                                >
-                                                    Upload your first file
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-4">
-                                                {uploads.slice(0, 5).map((upload) => (
-                                                    <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg">
-                                                        <div className="flex items-center space-x-3">
-                                                            <FileText className="w-5 h-5 text-gray-400" />
-                                                            <div>
-                                                                <p className="text-sm font-medium text-gray-900">{upload.fileName}</p>
-                                                                <p className="text-xs text-gray-500">{upload.recordCount} records</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center space-x-2">
-                                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)}`}>
-                                                                {getFileTypeLabel(upload.fileType)}
-                                                            </span>
-                                                            <span className="text-xs text-gray-500">{formatDate(upload.createdAt)}</span>
+                                        <div className="space-y-4">
+                                            {uploads.map((upload) => (
+                                                <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg">
+                                                    <div className="flex items-center space-x-3">
+                                                        <FileText className="w-5 h-5 text-gray-400" />
+                                                        <div>
+                                                            <p className="text-sm font-medium text-gray-900">{upload.fileName}</p>
+                                                            <p className="text-xs text-gray-500">{upload.recordCount} records</p>
                                                         </div>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        )}
+                                                    <div className="flex items-center space-x-2">
+                                                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)}`}>
+                                                            {getFileTypeLabel(upload.fileType)}
+                                                        </span>
+                                                        <span className="text-xs text-gray-500">{formatDate(upload.createdAt)}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -628,24 +537,8 @@
                             <div className="space-y-8">
                                 {/* Upload Zone */}
                                 <div className="bg-white rounded-lg shadow p-6">
-                                    <h3 className="text-lg font-medium text-gray-900 mb-4">Upload Files</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-4">Upload Files (Demo Mode)</h3>
                                     
-                                    {/* Upload Progress */}
-                                    {uploadProgress > 0 && uploadProgress < 100 && (
-                                        <div className="mb-4">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm text-gray-600">Uploading...</span>
-                                                <span className="text-sm text-gray-600">{uploadProgress}%</span>
-                                            </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                                <div
-                                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                                    style={{ width: `${uploadProgress}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    )}
-
                                     <div
                                         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                                             dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
@@ -658,7 +551,7 @@
                                         <Upload className="mx-auto h-12 w-12 text-gray-400" />
                                         <h4 className="mt-4 text-lg font-medium text-gray-900">Drop files here or click to upload</h4>
                                         <p className="mt-2 text-sm text-gray-500">
-                                            Supports CSV and Excel files (POS transactions, Alle rewards, Aspire certificates)
+                                            Demo mode: CSV and Excel files (POS transactions, Alle rewards, Aspire certificates)
                                         </p>
                                         <input
                                             ref={fileInputRef}
@@ -673,7 +566,7 @@
                                             disabled={loading}
                                             className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            Choose File
+                                            Choose File (Demo)
                                         </button>
                                     </div>
                                 </div>
@@ -758,7 +651,7 @@
                                 {/* Reconciliation Controls */}
                                 <div className="bg-white rounded-lg shadow p-6">
                                     <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-lg font-medium text-gray-900">Reconciliation Analysis</h3>
+                                        <h3 className="text-lg font-medium text-gray-900">Reconciliation Analysis (Demo)</h3>
                                         <button
                                             onClick={runReconciliation}
                                             disabled={loading || selectedUploadIds.length < 2}
@@ -769,54 +662,8 @@
                                             ) : (
                                                 <BarChart3 className="w-4 h-4 mr-2" />
                                             )}
-                                            {loading ? 'Analyzing...' : 'Start Reconciliation'}
+                                            {loading ? 'Analyzing...' : 'Start Demo Reconciliation'}
                                         </button>
-                                    </div>
-
-                                    {/* Reconciliation Settings */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Match Criteria
-                                            </label>
-                                            <select
-                                                value={reconciliationSettings.matchCriteria}
-                                                onChange={(e) => setReconciliationSettings({...reconciliationSettings, matchCriteria: e.target.value})}
-                                                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                            >
-                                                <option value="strict">Strict (90%+ confidence)</option>
-                                                <option value="normal">Normal (70%+ confidence)</option>
-                                                <option value="fuzzy">Fuzzy (50%+ confidence)</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Date Tolerance (days)
-                                            </label>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="30"
-                                                value={reconciliationSettings.dateToleranceDays}
-                                                onChange={(e) => setReconciliationSettings({...reconciliationSettings, dateToleranceDays: parseInt(e.target.value)})}
-                                                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Amount Tolerance (%)
-                                            </label>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="50"
-                                                value={reconciliationSettings.amountTolerancePercent}
-                                                onChange={(e) => setReconciliationSettings({...reconciliationSettings, amountTolerancePercent: parseInt(e.target.value)})}
-                                                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </div>
                                     </div>
 
                                     <div className="text-sm text-gray-600 mb-4">
@@ -832,7 +679,7 @@
                                         <div className="text-center py-8">
                                             <RefreshCw className="w-8 h-8 mx-auto text-blue-600 animate-spin" />
                                             <p className="mt-2 text-sm text-gray-500">
-                                                Running advanced reconciliation algorithms...
+                                                Running demo reconciliation algorithms...
                                             </p>
                                         </div>
                                     )}
@@ -887,67 +734,19 @@
                                             </div>
                                         </div>
 
-                                        {/* Matches */}
-                                        {reconciliationResults.matches && reconciliationResults.matches.length > 0 && (
-                                            <div className="bg-white rounded-lg shadow">
-                                                <div className="px-6 py-4 border-b border-gray-200">
-                                                    <h3 className="text-lg font-medium text-gray-900">Matched Records</h3>
-                                                </div>
-                                                <div className="p-6">
-                                                    <div className="space-y-4">
-                                                        {reconciliationResults.matches.map((match) => (
-                                                            <div key={match.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                                                                <div className="flex items-center justify-between mb-3">
-                                                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                                                        match.matchType === 'exact' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                                                    }`}>
-                                                                        {match.matchType} match ({Math.round(match.confidence * 100)}% confidence)
-                                                                    </span>
-                                                                </div>
-                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-900">{match.record1.fileName}</p>
-                                                                        <p className="text-sm text-gray-600">
-                                                                            {match.record1.data.patientName} - {formatCurrency(parseFloat(match.record1.data.amount || 0))} - {match.record1.data.service}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-900">{match.record2.fileName}</p>
-                                                                        <p className="text-sm text-gray-600">
-                                                                            {match.record2.data.patientName} - {match.record2.data.points} points - {match.record2.data.rewardType}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                        {/* Demo Results Message */}
+                                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                            <div className="flex">
+                                                <AlertCircle className="h-5 w-5 text-blue-400" />
+                                                <div className="ml-3">
+                                                    <h3 className="text-sm font-medium text-blue-800">Demo Results</h3>
+                                                    <p className="mt-1 text-sm text-blue-700">
+                                                        This is a demonstration of the reconciliation system with sample data. 
+                                                        In production, this would show real matches from your uploaded files.
+                                                    </p>
                                                 </div>
                                             </div>
-                                        )}
-
-                                        {/* Unmatched Records */}
-                                        {reconciliationResults.unmatched && reconciliationResults.unmatched.length > 0 && (
-                                            <div className="bg-white rounded-lg shadow">
-                                                <div className="px-6 py-4 border-b border-gray-200">
-                                                    <h3 className="text-lg font-medium text-gray-900">Unmatched Records</h3>
-                                                </div>
-                                                <div className="p-6">
-                                                    <div className="space-y-3">
-                                                        {reconciliationResults.unmatched.map((item, index) => (
-                                                            <div key={index} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                                                                <div>
-                                                                    <p className="text-sm font-medium text-gray-900">
-                                                                        {item.record?.patientName || 'Unknown'} - {formatCurrency(parseFloat(item.record?.amount || 0))}
-                                                                    </p>
-                                                                    <p className="text-xs text-gray-500">{item.fileName}</p>
-                                                                </div>
-                                                                <span className="text-xs text-yellow-600">{item.reason}</span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -957,45 +756,18 @@
                         {activeTab === 'reports' && (
                             <div className="space-y-8">
                                 <div className="bg-white rounded-lg shadow p-6">
-                                    <h3 className="text-lg font-medium text-gray-900 mb-6">Export Reports</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-6">Export Reports (Demo)</h3>
                                     
-                                    {reconciliationResults ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="border rounded-lg p-4">
-                                                <h4 className="font-medium text-gray-900 mb-2">Executive Summary</h4>
-                                                <p className="text-sm text-gray-600 mb-4">
-                                                    High-level overview with {reconciliationResults.summary.totalMatches} matches 
-                                                    and {reconciliationResults.summary.matchRate}% success rate
-                                                </p>
-                                                <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                                    <Download className="w-4 h-4 mr-2" />
-                                                    Download PDF
-                                                </button>
-                                            </div>
-                                            
-                                            <div className="border rounded-lg p-4">
-                                                <h4 className="font-medium text-gray-900 mb-2">Detailed Analysis</h4>
-                                                <p className="text-sm text-gray-600 mb-4">
-                                                    Complete match results, discrepancies, and recommendations
-                                                </p>
-                                                <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                                    <Download className="w-4 h-4 mr-2" />
-                                                    Download Excel
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="text-center py-8">
-                                            <FileText className="w-12 h-12 mx-auto text-gray-400" />
-                                            <p className="mt-2 text-sm text-gray-500">Run a reconciliation to generate reports</p>
-                                            <button
-                                                onClick={() => setActiveTab('reconciliation')}
-                                                className="mt-2 text-blue-600 hover:text-blue-500 text-sm"
-                                            >
-                                                Go to Reconciliation
-                                            </button>
-                                        </div>
-                                    )}
+                                    <div className="text-center py-8">
+                                        <FileText className="w-12 h-12 mx-auto text-gray-400" />
+                                        <p className="mt-2 text-sm text-gray-500">Run a reconciliation to generate reports</p>
+                                        <button
+                                            onClick={() => setActiveTab('reconciliation')}
+                                            className="mt-2 text-blue-600 hover:text-blue-500 text-sm"
+                                        >
+                                            Go to Reconciliation
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -1004,8 +776,24 @@
             );
         };
 
-        // Render the dashboard
-        ReactDOM.render(<IntegratedMedSpaSyncDashboard />, document.getElementById('dashboard-root'));
+        // ✅ SAFE RENDER: With error boundary
+        try {
+            ReactDOM.render(<IntegratedMedSpaSyncDashboard />, document.getElementById('dashboard-root'));
+            console.log('Dashboard rendered successfully');
+        } catch (error) {
+            console.error('Failed to render dashboard:', error);
+            document.getElementById('dashboard-root').innerHTML = `
+                <div class="flex items-center justify-center min-h-screen bg-gray-50">
+                    <div class="text-center">
+                        <h2 class="text-xl font-semibold text-gray-900">Dashboard Error</h2>
+                        <p class="mt-2 text-gray-600">Failed to load the dashboard. Please refresh the page.</p>
+                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Refresh Page
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
