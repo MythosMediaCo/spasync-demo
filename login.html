@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSpaSync Pro - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./api-service.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-card {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Header -->
+            <div class="text-center">
+                <div class="mx-auto h-20 w-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-extrabold text-white mb-2">
+                    Welcome to MedSpaSync Pro
+                </h2>
+                <p class="text-lg text-blue-100">
+                    Access your reconciliation dashboard
+                </p>
+            </div>
+            
+            <!-- Login Card -->
+            <div class="login-card rounded-2xl shadow-2xl p-8">
+                <!-- Connection Status -->
+                <div id="connectionStatus" class="hidden mb-6 p-3 rounded-lg">
+                    <div class="flex items-center">
+                        <div id="connectionIcon" class="flex-shrink-0"></div>
+                        <div class="ml-3">
+                            <p id="connectionMessage" class="text-sm font-medium"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Alert -->
+                <div id="errorAlert" class="hidden mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex">
+                        <svg class="h-5 w-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Connection Error</h3>
+                            <p id="errorMessage" class="mt-1 text-sm text-red-700"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Alert -->
+                <div id="successAlert" class="hidden mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex">
+                        <svg class="h-5 w-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-green-800">Login Successful</h3>
+                            <p class="mt-1 text-sm text-green-700">Redirecting to your dashboard...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <form class="space-y-6" id="loginForm">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Email Address
+                            </label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                required
+                                class="relative block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                placeholder="Enter your email"
+                                value="test@medspasync.com"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Password
+                            </label>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                required
+                                class="relative block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                placeholder="Enter your password"
+                                value="TestPassword123"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Demo Info -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex">
+                            <svg class="h-5 w-5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">Demo Account</h3>
+                                <p class="mt-1 text-sm text-blue-700">
+                                    Demo credentials are pre-filled. This connects to your real reconciliation system.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login Button -->
+                    <div>
+                        <button
+                            type="submit"
+                            id="loginButton"
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                        >
+                            <span id="loginButtonText" class="flex items-center">
+                                <svg id="loginIcon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                </svg>
+                                Sign In to Dashboard
+                            </span>
+                            <svg id="loginSpinner" class="hidden animate-spin ml-2 h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <div class="text-center space-y-2">
+                        <p class="text-sm text-gray-600">
+                            New to MedSpaSync Pro? 
+                            <a href="index.html" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                                Learn more about our platform
+                            </a>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <a href="index.html" class="font-medium text-gray-500 hover:text-gray-700 transition-colors">
+                                ← Back to homepage
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center">
+                <p class="text-sm text-blue-100">
+                    © 2025 MedSpaSync Pro. Advanced reconciliation for medical spas.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize API
+        const api = new MedSpaSyncAPI();
+        
+        // DOM elements
+        const errorAlert = document.getElementById('errorAlert');
+        const successAlert = document.getElementById('successAlert');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionIcon = document.getElementById('connectionIcon');
+        const connectionMessage = document.getElementById('connectionMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginButton = document.getElementById('loginButton');
+        const loginButtonText = document.getElementById('loginButtonText');
+        const loginIcon = document.getElementById('loginIcon');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const loginForm = document.getElementById('loginForm');
+
+        // Utility functions
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorAlert.classList.remove('hidden');
+            successAlert.classList.add('hidden');
+        }
+
+        function showSuccess(message = 'Login successful! Redirecting...') {
+            successAlert.classList.remove('hidden');
+            errorAlert.classList.add('hidden');
+        }
+
+        function hideAlerts() {
+            errorAlert.classList.add('hidden');
+            successAlert.classList.add('hidden');
+        }
+
+        function showConnectionStatus(status, message, isError = false) {
+            connectionStatus.classList.remove('hidden');
+            connectionMessage.textContent = message;
+            
+            if (isError) {
+                connectionStatus.className = 'mb-6 p-3 rounded-lg bg-red-50 border border-red-200';
+                connectionIcon.innerHTML = `
+                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+                connectionMessage.className = 'text-sm font-medium text-red-800';
+            } else {
+                connectionStatus.className = 'mb-6 p-3 rounded-lg bg-green-50 border border-green-200';
+                connectionIcon.innerHTML = `
+                    <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+                connectionMessage.className = 'text-sm font-medium text-green-800';
+            }
+        }
+
+        function setLoading(loading) {
+            loginButton.disabled = loading;
+            
+            if (loading) {
+                loginButtonText.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Signing in...
+                `;
+            } else {
+                loginButtonText.innerHTML = `
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                    Sign In to Dashboard
+                `;
+            }
+        }
+
+        // Check if already logged in
+        if (api.isAuthenticated()) {
+            showSuccess('Already logged in. Redirecting...');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
+
+        // Test backend connection on page load
+        window.addEventListener('load', async () => {
+            try {
+                console.log('Testing backend connection...');
+                await api.healthCheck();
+                showConnectionStatus('connected', 'Connected to MedSpaSync Pro servers');
+                console.log('Backend connection successful');
+            } catch (error) {
+                console.error('Backend connection failed:', error);
+                showConnectionStatus('error', `Unable to connect to servers: ${error.message}`, true);
+            }
+        });
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlerts();
+            setLoading(true);
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Basic validation
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                setLoading(false);
+                return;
+            }
+            
+            try {
+                console.log('Attempting login with:', { email, password: '[HIDDEN]' });
+                
+                const response = await api.login(email, password);
+                
+                if (response.success) {
+                    console.log('Login successful:', response);
+                    showSuccess();
+                    
+                    // Redirect to dashboard after brief delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    throw new Error(response.error || response.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(api.handleError(error, 'Login'));
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Add enter key support for better UX
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !loginButton.disabled) {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Auto-focus email field
+        document.getElementById('email').focus();
+    </script>
+</body>
+</html>
