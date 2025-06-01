@@ -4,204 +4,437 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedSpaSync Pro - Dashboard</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <meta name="description" content="Professional medical spa reconciliation dashboard">
+    
+    <!-- Optimized Script Loading -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./api-service.js"></script>
+    
+    <!-- Optimized Styles -->
     <style>
+        /* Core Variables */
+        :root {
+            --primary-blue: #3B82F6;
+            --primary-green: #10B981;
+            --primary-purple: #8B5CF6;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Enhanced Gradient Background */
         .gradient-bg {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, var(--gray-50) 0%, #E0E7FF 50%, var(--gray-100) 100%);
+            min-height: 100vh;
         }
-        .card-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        /* Optimized Card Styles */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
         }
-        .glass-effect {
-            backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.95);
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
-        .report-card {
-            transition: all 0.3s ease;
+
+        .card-interactive {
+            cursor: pointer;
             border: 2px solid transparent;
         }
-        .report-card:hover {
-            border-color: #3B82F6;
+
+        .card-interactive:hover {
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+
+        /* Optimized Metric Cards */
         .metric-card {
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
         }
+
         .metric-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
-        .status-badge {
+
+        /* Enhanced Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            line-height: 1.25;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #2563EB;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--gray-200);
+        }
+
+        .btn-success {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        /* Optimized Status Badges */
+        .badge {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
-        .icon-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+        .badge-success {
+            background: #DCFCE7;
+            color: #166534;
         }
-        .icon-bounce {
-            animation: bounce 1s infinite;
+
+        .badge-warning {
+            background: #FEF3C7;
+            color: #92400E;
         }
-        .icon-spin-slow {
-            animation: spin 3s linear infinite;
+
+        .badge-info {
+            background: #DBEAFE;
+            color: #1E40AF;
         }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+
+        .badge-error {
+            background: #FEE2E2;
+            color: #991B1B;
         }
-        @media print {
-            .no-print { display: none; }
-            .print-only { display: block; }
-        }
-        .print-only { display: none; }
-        .file-type-icon {
+
+        /* File Type Icons */
+        .file-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 2rem;
             height: 2rem;
-            border-radius: 0.375rem;
+            border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 600;
         }
-        .action-button {
-            transition: all 0.2s ease;
+
+        .file-icon-pos { background: var(--primary-blue); color: white; }
+        .file-icon-alle { background: var(--primary-green); color: white; }
+        .file-icon-aspire { background: var(--primary-purple); color: white; }
+        .file-icon-unknown { background: var(--gray-500); color: white; }
+
+        /* Enhanced Loading States */
+        .loading-spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        .action-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+        .loading-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .loading-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+            50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .metric-card {
+                padding: 1rem;
+            }
+            
+            .btn {
+                padding: 0.625rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .card { box-shadow: none !important; border: 1px solid var(--gray-300) !important; }
+        }
+
+        .print-only { display: none; }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus States */
+        .btn:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            padding: 1rem;
+            max-width: 24rem;
+            z-index: 50;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .notification-error {
+            border-left: 4px solid #EF4444;
+        }
+
+        .notification-info {
+            border-left: 4px solid var(--primary-blue);
         }
     </style>
 </head>
 <body class="gradient-bg">
     <div id="dashboard-root">
-        <div class="flex items-center justify-center min-h-screen bg-gray-50">
+        <div class="flex items-center justify-center min-h-screen">
             <div class="text-center">
-                <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
-                <p class="mt-6 text-xl text-gray-600">Loading MedSpaSync Pro Dashboard...</p>
-                <p class="mt-2 text-sm text-gray-500">Connecting to your reconciliation system</p>
+                <div class="loading-spinner mx-auto mb-4" style="width: 3rem; height: 3rem; border-width: 3px;"></div>
+                <p class="text-xl text-gray-600 font-medium">Loading MedSpaSync Pro...</p>
+                <p class="text-sm text-gray-500 mt-2">Connecting to your enterprise dashboard</p>
             </div>
         </div>
     </div>
     
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useCallback, useMemo } = React;
         
-        // ✅ FIXED: Reliable icon system using standard Lucide
-        const createIcon = (iconName) => {
-            return (props) => {
-                const iconElement = React.createElement('i', {
-                    'data-lucide': iconName.toLowerCase().replace(/([A-Z])/g, '-$1').replace(/^-/, ''),
-                    className: props.className || 'w-5 h-5',
-                    style: props.style || {}
-                });
-                
-                // Initialize Lucide icons after render
-                React.useEffect(() => {
-                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                        lucide.createIcons();
-                    }
-                }, []);
-                
-                return iconElement;
+        // Optimized Icon System - Simple SVG Components
+        const Icon = ({ name, className = "w-5 h-5", ...props }) => {
+            const icons = {
+                // Core Icons
+                upload: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12",
+                fileText: "M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+                barChart: "M3 3v18h18M9 17V9m4 8V6m4 11V2",
+                users: "M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 108 0 4 4 0 00-8 0M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75",
+                dollarSign: "M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6",
+                clock: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 6v6l4 2",
+                checkCircle: "M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3",
+                alertTriangle: "M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01",
+                xCircle: "M18 6L6 18M6 6l12 12",
+                download: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3",
+                refreshCw: "M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16M3 21v-5h5",
+                settings: "M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 000 2l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.38a2 2 0 000-2l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2zM12 15a3 3 0 100-6 3 3 0 000 6z",
+                logOut: "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9",
+                alertCircle: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01",
+                trendingUp: "M22 7l-8.5 8.5L9 11l-7 7M16 7h6v6",
+                calendar: "M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM21 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2M16 3v4M8 3v4",
+                target: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 18a6 6 0 100-12 6 6 0 000 12zM12 14a2 2 0 100-4 2 2 0 000 4z",
+                zap: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
+                shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+                activity: "M22 12h-4l-3 9L9 3l-3 9H2",
+                database: "M4 6c0-1.326 3.582-3 8-3s8 1.674 8 3M4 6c0 1.326 3.582 3 8 3s8-1.674 8-3M4 6v6c0 1.326 3.582 3 8 3s8-1.674 8-3V6M4 12v6c0 1.326 3.582 3 8 3s8-1.674 8-3v-6",
+                award: "M7.5 11.5a4.5 4.5 0 109 0 4.5 4.5 0 00-9 0zM8.5 21l3.5-7 3.5 7-3.5-1-3.5 1z",
+                star: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z",
+                home: "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM9 22V12h6v10",
+                folderOpen: "M6 14l1.45-2.9A2 2 0 019.24 10H20a2 2 0 011.94 2.5l-1.55 6a2 2 0 01-1.94 1.5H4a2 2 0 01-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 011.66.9L8 5h9a2 2 0 012 2v2",
+                filePlus: "M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M12 18v-6M9 15h6",
+                arrowRight: "M5 12h14M12 5l7 7-7 7",
+                chevronRight: "M9 18l6-6-6-6",
+                play: "M8 5v14l11-7z",
+                info: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 16v-4M12 8h.01",
+                search: "M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35",
+                hash: "M4 9h16M4 15h16M10 3L8 21M16 3l-2 18",
+                percent: "M19 5L5 19M6.5 6.5a2.5 2.5 0 105 0 2.5 2.5 0 00-5 0zM12.5 12.5a2.5 2.5 0 105 0 2.5 2.5 0 00-5 0z",
+                plus: "M12 5v14M5 12h14",
+                x: "M18 6L6 18M6 6l12 12",
+                check: "M20 6L9 17l-5-5",
+                layers: "M12 2l8 4-8 4-8-4 8-4zM2 17l10 5 10-5M2 12l10 5 10-5",
+                filter: "M22 3H2l8 9.46V19l4 2v-8.54L22 3z",
+                briefcase: "M16 20V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v16M8 7h8a2 2 0 012 2v9a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2z",
+                cpu: "M4 16v-2a2 2 0 00-2-2H0M4 8V6a2 2 0 012-2h2M20 8V6a2 2 0 00-2-2h-2M20 16v2a2 2 0 01-2 2h-2M22 12h-2a2 2 0 00-2 2v2M2 12h2a2 2 0 012-2V8M9 9h6v6H9V9z"
             };
+
+            const path = icons[name];
+            if (!path) {
+                console.warn(`Icon "${name}" not found`);
+                return <div className={`${className} bg-gray-300 rounded`}></div>;
+            }
+
+            return (
+                <svg 
+                    className={className} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    {...props}
+                >
+                    <path d={path} />
+                </svg>
+            );
         };
 
-        // Alternative: Simple SVG icons for guaranteed display
-        const createSvgIcon = (path, viewBox = "0 0 24 24") => {
-            return (props) => React.createElement('svg', {
-                className: props.className || 'w-5 h-5',
-                fill: 'none',
-                stroke: 'currentColor',
-                strokeWidth: '2',
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-                viewBox: viewBox,
-                ...props
-            }, React.createElement('path', { d: path }));
+        // Notification System
+        const useNotification = () => {
+            const [notifications, setNotifications] = useState([]);
+
+            const showNotification = useCallback((message, type = 'info', duration = 4000) => {
+                const id = Date.now();
+                const notification = { id, message, type };
+                
+                setNotifications(prev => [...prev, notification]);
+                
+                setTimeout(() => {
+                    setNotifications(prev => prev.filter(n => n.id !== id));
+                }, duration);
+            }, []);
+
+            return { notifications, showNotification };
         };
 
-        // Core Icons with SVG fallbacks
-        const Upload = createSvgIcon('M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12');
-        const FileText = createSvgIcon('M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8');
-        const BarChart3 = createSvgIcon('M3 3v18h18M9 17V9m4 8V6m4 11V2');
-        const Users = createSvgIcon('M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 108 0 4 4 0 00-8 0M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75');
-        const DollarSign = createSvgIcon('M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6');
-        const Clock = createSvgIcon('M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 6v6l4 2');
-        const CheckCircle = createSvgIcon('M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3');
-        const AlertTriangle = createSvgIcon('M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01');
-        const XCircle = createSvgIcon('M18 6L6 18M6 6l12 12');
-        const Download = createSvgIcon('M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3');
-        const RefreshCw = createSvgIcon('M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16M3 21v-5h5');
-        const Settings = createSvgIcon('M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 000 2l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.38a2 2 0 000-2l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2zM12 15a3 3 0 100-6 3 3 0 000 6z');
-        const LogOut = createSvgIcon('M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9');
-        const AlertCircle = createSvgIcon('M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01');
-        const TrendingUp = createSvgIcon('M22 7l-8.5 8.5L9 11l-7 7M16 7h6v6');
-        const Calendar = createSvgIcon('M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM21 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2M16 3v4M8 3v4');
-
-        // Enhanced Icons
-        const PieChart = createSvgIcon('M21.21 15.89A10 10 0 118 2.83M22 12A10 10 0 0012 2v10z');
-        const BarChart = createSvgIcon('M3 3v18h18M9 17V9m4 8V6m4 11V2');
-        const FileSpreadsheet = createSvgIcon('M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M8 13h2M8 17h2M14 13h2M14 17h2');
-        const Printer = createSvgIcon('M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z');
-        const Eye = createSvgIcon('M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z');
-        const EyeOff = createSvgIcon('M9.88 9.88a3 3 0 104.24 4.24M10.73 5.08A10.43 10.43 0 0112 5c7 0 11 8 11 8a13.16 13.16 0 01-1.67 2.68M6.61 6.61A13.526 13.526 0 002 12s4 8 11 8a9.74 9.74 0 005.39-1.61M2 2l20 20');
-        const Star = createSvgIcon('M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z');
-        const Shield = createSvgIcon('M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z');
-        const Zap = createSvgIcon('M13 2L3 14h9l-1 8 10-12h-9l1-8z');
-        const Target = createSvgIcon('M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 18a6 6 0 100-12 6 6 0 000 12zM12 14a2 2 0 100-4 2 2 0 000 4z');
-        const Award = createSvgIcon('M7.5 11.5a4.5 4.5 0 109 0 4.5 4.5 0 00-9 0zM8.5 21l3.5-7 3.5 7-3.5-1-3.5 1z');
-        const Briefcase = createSvgIcon('M16 20V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v16M8 7h8a2 2 0 012 2v9a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2z');
-        const Database = createSvgIcon('M4 6c0-1.326 3.582-3 8-3s8 1.674 8 3M4 6c0 1.326 3.582 3 8 3s8-1.674 8-3M4 6v6c0 1.326 3.582 3 8 3s8-1.674 8-3V6M4 12v6c0 1.326 3.582 3 8 3s8-1.674 8-3v-6');
-        const Server = createSvgIcon('M6 10H4a2 2 0 01-2-2V6a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 01-2 2h-2M6 10l6 6 6-6M6 10v8a2 2 0 002 2h8a2 2 0 002-2v-8');
-        const Cpu = createSvgIcon('M4 16v-2a2 2 0 00-2-2H0M4 8V6a2 2 0 012-2h2M20 8V6a2 2 0 00-2-2h-2M20 16v2a2 2 0 01-2 2h-2M22 12h-2a2 2 0 00-2 2v2M2 12h2a2 2 0 012-2V8M9 9h6v6H9V9z');
-        const Activity = createSvgIcon('M22 12h-4l-3 9L9 3l-3 9H2');
-        const Layers = createSvgIcon('M12 2l8 4-8 4-8-4 8-4zM2 17l10 5 10-5M2 12l10 5 10-5');
-        const Filter = createSvgIcon('M22 3H2l8 9.46V19l4 2v-8.54L22 3z');
-        const Search = createSvgIcon('M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35');
-        const Bell = createSvgIcon('M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0');
-        const Home = createSvgIcon('M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM9 22V12h6v10');
-        const FolderOpen = createSvgIcon('M6 14l1.45-2.9A2 2 0 019.24 10H20a2 2 0 011.94 2.5l-1.55 6a2 2 0 01-1.94 1.5H4a2 2 0 01-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 011.66.9L8 5h9a2 2 0 012 2v2');
-        const FileCheck = createSvgIcon('M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M9 15l2 2 4-4');
-        const FileX = createSvgIcon('M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M9.5 12.5l5 5M14.5 12.5l-5 5');
-        const FilePlus = createSvgIcon('M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M12 18v-6M9 15h6');
-        const TrendingDown = createSvgIcon('M22 17l-8.5-8.5L9 13l-7-7M16 17h6v-6');
-        const ArrowUp = createSvgIcon('M12 19V5M5 12l7-7 7 7');
-        const ArrowDown = createSvgIcon('M12 5v14M19 12l-7 7-7-7');
-        const ArrowRight = createSvgIcon('M5 12h14M12 5l7 7-7 7');
-        const ChevronRight = createSvgIcon('M9 18l6-6-6-6');
-        const Play = createSvgIcon('M8 5v14l11-7z');
-        const Pause = createSvgIcon('M6 19h4V5H6v14zM14 5v14h4V5h-4z');
-        const Square = createSvgIcon('M3 3h18v18H3z');
-        const RotateCcw = createSvgIcon('M1 4v6h6M2.05 13A10 10 0 0013 3M23 20v-6h-6M21.95 11A10 10 0 0111 21');
-        const CheckCircle2 = createSvgIcon('M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-2-8l4-4');
-        const Info = createSvgIcon('M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 16v-4M12 8h.01');
-        const HelpCircle = createSvgIcon('M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z');
-        const ExternalLink = createSvgIcon('M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3');
-        const Copy = createSvgIcon('M20 9h-9a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-9a2 2 0 00-2-2zM5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1');
-        const Share = createSvgIcon('M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13');
-        const MoreHorizontal = createSvgIcon('M12 13a1 1 0 100-2 1 1 0 000 2zM19 13a1 1 0 100-2 1 1 0 000 2zM5 13a1 1 0 100-2 1 1 0 000 2z');
-        const Grid = createSvgIcon('M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z');
-        const List = createSvgIcon('M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01');
-        const Hash = createSvgIcon('M4 9h16M4 15h16M10 3L8 21M16 3l-2 18');
-        const Percent = createSvgIcon('M19 5L5 19M6.5 6.5a2.5 2.5 0 105 0 2.5 2.5 0 00-5 0zM12.5 12.5a2.5 2.5 0 105 0 2.5 2.5 0 00-5 0z');
-        const Plus = createSvgIcon('M12 5v14M5 12h14');
-        const Minus = createSvgIcon('M5 12h14');
-        const X = createSvgIcon('M18 6L6 18M6 6l12 12');
-        const Check = createSvgIcon('M20 6L9 17l-5-5');
-
-        const IntegratedMedSpaSyncDashboard = () => {
+        // Main Dashboard Component
+        const MedSpaSyncDashboard = () => {
+            // State Management
             const [user, setUser] = useState(null);
             const [uploads, setUploads] = useState([]);
             const [reconciliationResults, setReconciliationResults] = useState(null);
             const [stats, setStats] = useState(null);
             const [loading, setLoading] = useState(false);
+            const [initialLoading, setInitialLoading] = useState(true);
             const [activeTab, setActiveTab] = useState('dashboard');
             const [dragActive, setDragActive] = useState(false);
             const [error, setError] = useState(null);
@@ -215,111 +448,80 @@
             const [generatingReport, setGeneratingReport] = useState(false);
             const [reportHistory, setReportHistory] = useState([]);
 
-            const [api] = useState(() => {
+            const { notifications, showNotification } = useNotification();
+            const fileInputRef = useRef(null);
+
+            // API Service - Optimized
+            const api = useMemo(() => {
                 if (typeof window !== 'undefined' && window.MedSpaSyncAPI) {
                     try {
-                        console.log('Initializing production API connection...');
                         return new window.MedSpaSyncAPI();
                     } catch (e) {
                         console.error('Failed to initialize API:', e);
                         return null;
                     }
                 }
-                console.error('MedSpaSyncAPI not found - check if api-service.js is loaded');
                 return null;
-            });
+            }, []);
 
-            const fileInputRef = useRef(null);
-
-            // ✅ ENHANCED FILE TYPE ICONS
-            const getFileTypeIcon = (fileType) => {
-                const icons = {
-                    pos_transactions: { icon: Database, color: 'bg-blue-500', textColor: 'text-white' },
-                    alle_rewards: { icon: Award, color: 'bg-green-500', textColor: 'text-white' },
-                    aspire_certificates: { icon: Star, color: 'bg-purple-500', textColor: 'text-white' },
-                    unknown: { icon: FileText, color: 'bg-gray-500', textColor: 'text-white' }
-                };
-                return icons[fileType] || icons.unknown;
-            };
-
-            // ✅ ENHANCED STATUS ICONS
-            const getStatusIcon = (status) => {
-                const statusIcons = {
-                    processed: { icon: CheckCircle, color: 'text-green-600' },
-                    processing: { icon: RefreshCw, color: 'text-blue-600 animate-spin' },
-                    error: { icon: XCircle, color: 'text-red-600' },
-                    pending: { icon: Clock, color: 'text-yellow-600' }
-                };
-                return statusIcons[status] || statusIcons.processed;
-            };
-
-            useEffect(() => {
-                const initializeApp = async () => {
-                    try {
-                        if (!api) {
-                            console.error('Cannot initialize - API service not available');
-                            setError('API service not available. Please check if api-service.js is loaded correctly.');
-                            return;
-                        }
-
-                        setLoading(true);
-                        console.log('Initializing production dashboard...');
-
-                        if (!api.isAuthenticated()) {
-                            console.log('Not authenticated, redirecting to login');
-                            window.location.href = 'login.html';
-                            return;
-                        }
-
-                        console.log('Testing backend connection...');
-                        await api.healthCheck();
-                        console.log('Backend connection successful');
-
-                        setUser({
-                            firstName: "Test",
-                            lastName: "User", 
-                            email: "test@medspasync.com",
-                            practice: {
-                                name: "Demo Spa",
-                                size: "small",
-                                subscriptionTier: "trial"
-                            }
-                        });
-
-                        console.log('Loading production data...');
-                        await Promise.all([
-                            loadUploadHistory(),
-                            loadStats(),
-                            loadReportHistory()
-                        ]);
-
-                        console.log('Production dashboard initialized successfully');
-
-                    } catch (error) {
-                        console.error('Failed to initialize app:', error);
-                        setError(api ? api.handleError(error, 'Initialization') : 'Failed to initialize dashboard. Please refresh the page.');
-                        
-                        if (error.message && error.message.includes('Authentication required')) {
-                            setTimeout(() => {
-                                window.location.href = 'login.html';
-                            }, 2000);
-                        }
-                    } finally {
-                        setLoading(false);
-                    }
-                };
-
-                initializeApp();
+            // Utility Functions
+            const formatCurrency = useCallback((amount) => {
+                if (api?.formatCurrency) return api.formatCurrency(amount);
+                return `$${parseFloat(amount || 0).toFixed(2)}`;
             }, [api]);
 
-            const loadUploadHistory = async () => {
+            const formatDate = useCallback((dateString) => {
+                if (api?.formatDate) return api.formatDate(dateString);
+                return new Date(dateString).toLocaleDateString();
+            }, [api]);
+
+            const getFileTypeConfig = useCallback((fileType) => {
+                const configs = {
+                    pos_transactions: { 
+                        icon: 'database', 
+                        label: 'POS Transactions', 
+                        className: 'file-icon-pos',
+                        badgeClass: 'badge-info'
+                    },
+                    alle_rewards: { 
+                        icon: 'award', 
+                        label: 'Alle Rewards', 
+                        className: 'file-icon-alle',
+                        badgeClass: 'badge-success'
+                    },
+                    aspire_certificates: { 
+                        icon: 'star', 
+                        label: 'Aspire Certificates', 
+                        className: 'file-icon-aspire',
+                        badgeClass: 'badge badge-warning'
+                    },
+                    unknown: { 
+                        icon: 'fileText', 
+                        label: 'Unknown Type', 
+                        className: 'file-icon-unknown',
+                        badgeClass: 'badge'
+                    }
+                };
+                return configs[fileType] || configs.unknown;
+            }, []);
+
+            const getStatusConfig = useCallback((status) => {
+                const configs = {
+                    processed: { icon: 'checkCircle', className: 'text-green-600', label: 'Processed' },
+                    processing: { icon: 'refreshCw', className: 'text-blue-600 loading-spinner', label: 'Processing' },
+                    error: { icon: 'xCircle', className: 'text-red-600', label: 'Error' },
+                    pending: { icon: 'clock', className: 'text-yellow-600', label: 'Pending' }
+                };
+                return configs[status] || configs.processed;
+            }, []);
+
+            // Data Loading Functions
+            const loadUploadHistory = useCallback(async () => {
+                if (!api) return;
                 try {
-                    console.log('Loading real upload history from backend...');
                     const response = await api.getUploadHistory();
                     if (response.success) {
-                        console.log('Upload history loaded:', response.uploads);
                         setUploads(response.uploads || []);
-                        
                         const recentUploads = (response.uploads || []).slice(0, 3);
                         setSelectedUploadIds(recentUploads.map(u => u.id));
                     } else {
@@ -329,26 +531,22 @@
                     console.error('Failed to load upload history:', error);
                     setError(api.handleError(error, 'Loading upload history'));
                 }
-            };
+            }, [api]);
 
-            const loadStats = async () => {
+            const loadStats = useCallback(async () => {
+                if (!api) return;
                 try {
-                    console.log('Loading real statistics from backend...');
                     const response = await api.getStats();
                     if (response.success) {
-                        console.log('Statistics loaded:', response.stats);
                         setStats(response.stats);
-                    } else {
-                        console.warn('Failed to load stats:', response.error);
                     }
                 } catch (error) {
                     console.error('Failed to load stats:', error);
                 }
-            };
+            }, [api]);
 
-            const loadReportHistory = async () => {
+            const loadReportHistory = useCallback(async () => {
                 try {
-                    console.log('Loading report history...');
                     const mockReports = [
                         {
                             id: 1,
@@ -371,13 +569,11 @@
                 } catch (error) {
                     console.error('Failed to load report history:', error);
                 }
-            };
+            }, []);
 
-            const handleFileUpload = async (files) => {
-                if (!api) {
-                    setError('API service not available');
-                    return;
-                }
+            // File Upload Handler
+            const handleFileUpload = useCallback(async (files) => {
+                if (!api || !files.length) return;
 
                 setLoading(true);
                 setError(null);
@@ -385,22 +581,13 @@
 
                 try {
                     const file = files[0];
-                    console.log('Uploading file to production backend:', file.name, 'Size:', file.size);
-
                     const response = await api.uploadFile(file, (progress) => {
                         setUploadProgress(progress);
-                        console.log('Upload progress:', progress + '%');
                     });
 
                     if (response.success) {
-                        console.log('Upload successful:', response);
                         showNotification(`Successfully uploaded ${file.name}`, 'success');
-                        
-                        await Promise.all([
-                            loadUploadHistory(),
-                            loadStats()
-                        ]);
-                        
+                        await Promise.all([loadUploadHistory(), loadStats()]);
                         setUploadProgress(0);
                     } else {
                         throw new Error(response.error || 'Upload failed');
@@ -412,9 +599,10 @@
                 } finally {
                     setLoading(false);
                 }
-            };
+            }, [api, showNotification, loadUploadHistory, loadStats]);
 
-            const runReconciliation = async () => {
+            // Reconciliation Handler
+            const runReconciliation = useCallback(async () => {
                 if (selectedUploadIds.length < 2) {
                     setError('Please select at least 2 files for reconciliation');
                     return;
@@ -430,16 +618,11 @@
                 setReconciliationResults(null);
 
                 try {
-                    console.log('Running production reconciliation with uploads:', selectedUploadIds);
-                    console.log('Settings:', reconciliationSettings);
-
                     const response = await api.runReconciliation(selectedUploadIds, reconciliationSettings);
 
                     if (response.success) {
-                        console.log('Production reconciliation successful:', response);
                         setReconciliationResults(response);
                         showNotification(`Reconciliation complete: ${response.summary.totalMatches} matches found with ${response.summary.matchRate}% success rate`, 'success');
-                        
                         setActiveTab('reconciliation');
                         await loadStats();
                     } else {
@@ -451,16 +634,90 @@
                 } finally {
                     setLoading(false);
                 }
-            };
+            }, [selectedUploadIds, api, reconciliationSettings, showNotification, loadStats]);
 
-            const generateReport = async (reportType) => {
+            // Business Metrics Calculator
+            const calculateBusinessMetrics = useCallback((summary) => {
+                const totalRecords = summary.totalRecords || 0;
+                const totalMatches = summary.totalMatches || 0;
+                const matchRate = summary.matchRate || 0;
+
+                const avgTimePerManualMatch = 15; // minutes
+                const timeSavedHours = Math.round((totalMatches * avgTimePerManualMatch) / 60 * 100) / 100;
+                const hourlyRate = 25; // USD per hour
+                const costSavings = Math.round(timeSavedHours * hourlyRate);
+                const avgRevenuePerMatch = 45; // Average revenue recovered per match
+                const revenueRecovery = Math.round(totalMatches * avgRevenuePerMatch);
+                const roi = costSavings > 0 ? Math.round(((revenueRecovery + costSavings) / 299) * 100) : 0;
+
+                return {
+                    timeSavedHours,
+                    costSavings,
+                    revenueRecovery,
+                    roi,
+                    efficiencyGain: Math.round((matchRate / 100) * 96),
+                    processingSpeed: totalRecords > 0 ? Math.round(totalRecords / 0.5) + ' records/minute' : '0 records/minute'
+                };
+            }, []);
+
+            // Drag and Drop Handlers
+            const handleDrag = useCallback((e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.type === "dragenter" || e.type === "dragover") {
+                    setDragActive(true);
+                } else if (e.type === "dragleave") {
+                    setDragActive(false);
+                }
+            }, []);
+
+            const handleDrop = useCallback((e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDragActive(false);
+                
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleFileUpload(e.dataTransfer.files);
+                }
+            }, [handleFileUpload]);
+
+            // Toggle Upload Selection
+            const toggleUploadSelection = useCallback((uploadId) => {
+                setSelectedUploadIds(prev => {
+                    if (prev.includes(uploadId)) {
+                        return prev.filter(id => id !== uploadId);
+                    } else {
+                        return [...prev, uploadId];
+                    }
+                });
+            }, []);
+
+            // File Input Handler
+            const handleFileInputChange = useCallback((e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleFileUpload(e.target.files);
+                }
+            }, [handleFileUpload]);
+
+            // Logout Handler
+            const handleLogout = useCallback(() => {
+                if (api) {
+                    api.logout();
+                }
+                showNotification('Logged out successfully', 'success');
+                setTimeout(() => {
+                    window.location.href = '/'; // ✅ FIXED: Redirect to new production login
+                }, 1000);
+            }, [api, showNotification]);
+
+            // Report Generation
+            const generateReport = useCallback(async (reportType) => {
                 if (!reconciliationResults) {
                     setError('Please run a reconciliation first to generate reports');
                     return;
                 }
 
                 setGeneratingReport(true);
-                console.log(`Generating ${reportType} report...`);
 
                 try {
                     const summary = reconciliationResults.summary;
@@ -490,34 +747,12 @@
                 } finally {
                     setGeneratingReport(false);
                 }
-            };
+            }, [reconciliationResults, calculateBusinessMetrics, showNotification]);
 
-            const calculateBusinessMetrics = (summary) => {
-                const totalRecords = summary.totalRecords || 0;
-                const totalMatches = summary.totalMatches || 0;
-                const matchRate = summary.matchRate || 0;
-
-                const avgTimePerManualMatch = 15; // minutes
-                const timeSavedHours = Math.round((totalMatches * avgTimePerManualMatch) / 60 * 100) / 100;
-                const hourlyRate = 25; // USD per hour
-                const costSavings = Math.round(timeSavedHours * hourlyRate);
-                const avgRevenuePerMatch = 45; // Average revenue recovered per match
-                const revenueRecovery = Math.round(totalMatches * avgRevenuePerMatch);
-                const roi = costSavings > 0 ? Math.round(((revenueRecovery + costSavings) / 299) * 100) : 0;
-
-                return {
-                    timeSavedHours,
-                    costSavings,
-                    revenueRecovery,
-                    roi,
-                    efficiencyGain: Math.round((matchRate / 100) * 96),
-                    processingSpeed: totalRecords > 0 ? Math.round(totalRecords / 0.5) + ' records/minute' : '0 records/minute'
-                };
-            };
-
+            // Report Generation Functions
             const generateExecutiveSummaryPDF = async (summary, metrics) => {
                 const reportContent = `
-                    <div class="print-only" style="max-width: 800px; margin: 0 auto; padding: 40px; font-family: Arial, sans-serif;">
+                    <div style="max-width: 800px; margin: 0 auto; padding: 40px; font-family: Arial, sans-serif;">
                         <div style="text-align: center; margin-bottom: 40px;">
                             <h1 style="color: #1E40AF; margin-bottom: 10px;">MedSpaSync Pro</h1>
                             <h2 style="color: #374151; margin-bottom: 5px;">Executive Reconciliation Summary</h2>
@@ -544,19 +779,9 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 30px;">
-                            <h3 style="color: #1F2937; margin-bottom: 15px;">Key Performance Indicators</h3>
-                            <div style="background: white; border: 1px solid #E5E7EB; padding: 20px; border-radius: 8px;">
-                                <p>✅ <strong>Processing Speed:</strong> ${metrics.processingSpeed}</p>
-                                <p>✅ <strong>Accuracy Rate:</strong> ${summary.matchRate}% automated matching</p>
-                                <p>✅ <strong>Time Reduction:</strong> ${metrics.efficiencyGain}% faster than manual processing</p>
-                                <p>✅ <strong>Quality Assurance:</strong> ${summary.exactMatches} perfect matches with 100% confidence</p>
-                            </div>
-                        </div>
-
                         <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
-                            <p style="color: #6B7280; margin: 0;">MedSpaSync Pro - Automated Reconciliation Platform</p>
-                            <p style="color: #6B7280; margin: 0;">Contact: sales@mythosmedia.co</p>
+                            <p style="color: #6B7280; margin: 0;">MedSpaSync Pro - Enterprise Reconciliation Platform</p>
+                            <p style="color: #6B7280; margin: 0;">© 2025 MythosMediaCo, LLC</p>
                         </div>
                     </div>
                 `;
@@ -568,10 +793,7 @@
                             <title>Executive Summary - MedSpaSync Pro</title>
                             <style>
                                 body { margin: 0; padding: 0; }
-                                @media print { 
-                                    body { margin: 0; }
-                                    .no-print { display: none; }
-                                }
+                                @media print { body { margin: 0; } }
                             </style>
                         </head>
                         <body onload="window.print(); window.close();">
@@ -583,20 +805,6 @@
             };
 
             const generateDetailedAnalysisExcel = async (results, metrics) => {
-                const csvContent = generateCSVContent(results, metrics);
-                
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `MedSpaSync_Detailed_Analysis_${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
-
-            const generateCSVContent = (results, metrics) => {
                 let csv = 'MedSpaSync Pro - Detailed Reconciliation Analysis\n\n';
                 
                 csv += 'EXECUTIVE SUMMARY\n';
@@ -604,12 +812,8 @@
                 csv += `Total Matches,${results.summary.totalMatches}\n`;
                 csv += `Match Rate,${results.summary.matchRate}%\n`;
                 csv += `Total Records,${results.summary.totalRecords}\n`;
-                csv += `Exact Matches,${results.summary.exactMatches}\n`;
-                csv += `Fuzzy Matches,${results.summary.fuzzyMatches}\n`;
                 csv += `Time Saved,${metrics.timeSavedHours} hours\n`;
-                csv += `Cost Savings,$${metrics.costSavings}\n`;
-                csv += `Revenue Recovery,$${metrics.revenueRecovery}\n`;
-                csv += `ROI,${metrics.roi}%\n\n`;
+                csv += `Revenue Recovery,$${metrics.revenueRecovery}\n\n`;
 
                 if (results.matches && results.matches.length > 0) {
                     csv += 'MATCHED RECORDS\n';
@@ -620,166 +824,132 @@
                         csv += `${match.record1.fileName},${match.record1.data.patientName},${match.record1.data.amount || 'N/A'},`;
                         csv += `${match.record2.fileName},${match.record2.data.patientName},${match.record2.data.points || match.record2.data.amount || 'N/A'}\n`;
                     });
-                    csv += '\n';
                 }
 
-                if (results.unmatched && results.unmatched.length > 0) {
-                    csv += 'UNMATCHED RECORDS\n';
-                    csv += 'File Name,Patient Name,Amount,Reason\n';
-                    
-                    results.unmatched.forEach(item => {
-                        csv += `${item.fileName},${item.record?.patientName || 'Unknown'},${item.record?.amount || 'N/A'},${item.reason}\n`;
-                    });
-                }
-
-                return csv;
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `MedSpaSync_Analysis_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             };
 
-            const handleLogout = () => {
-                console.log('Logging out from production...');
-                if (api) {
-                    api.logout();
-                }
-                showNotification('Logged out successfully', 'success');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1000);
-            };
+            // Initialize App
+            useEffect(() => {
+                const initializeApp = async () => {
+                    try {
+                        if (!api) {
+                            setError('API service not available. Please refresh the page.');
+                            return;
+                        }
 
-            const showNotification = (message, type = 'success') => {
-                console.log(`Notification (${type}): ${message}`);
-                const notification = document.createElement('div');
-                const iconHtml = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-                notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transform transition-all duration-300 flex items-center gap-2 ${
-                    type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : 'bg-red-500'
-                }`;
-                notification.innerHTML = `${iconHtml} ${message}`;
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        notification.style.transform = 'translateX(100%)';
-                        setTimeout(() => {
-                            if (document.body.contains(notification)) {
-                                document.body.removeChild(notification);
+                        // ✅ FIXED: Check authentication properly
+                        if (!api.isAuthenticated()) {
+                            console.log('Not authenticated, redirecting to login');
+                            window.location.href = '/'; // ✅ FIXED: Redirect to new production login
+                            return;
+                        }
+
+                        await api.healthCheck();
+
+                        setUser({
+                            firstName: "Test",
+                            lastName: "User", 
+                            email: "test@medspasync.com",
+                            practice: {
+                                name: "Demo Spa",
+                                size: "small",
+                                subscriptionTier: "trial"
                             }
-                        }, 300);
+                        });
+
+                        await Promise.all([
+                            loadUploadHistory(),
+                            loadStats(),
+                            loadReportHistory()
+                        ]);
+
+                    } catch (error) {
+                        console.error('Failed to initialize app:', error);
+                        setError(api ? api.handleError(error, 'Initialization') : 'Failed to initialize dashboard');
+                        
+                        if (error.message && error.message.includes('Authentication required')) {
+                            setTimeout(() => {
+                                window.location.href = '/'; // ✅ FIXED: Redirect to new production login
+                            }, 2000);
+                        }
+                    } finally {
+                        setInitialLoading(false);
                     }
-                }, 3000);
-            };
-
-            const formatCurrency = (amount) => {
-                if (api && api.formatCurrency) {
-                    return api.formatCurrency(amount);
-                }
-                return `$${parseFloat(amount || 0).toFixed(2)}`;
-            };
-
-            const formatDate = (dateString) => {
-                if (api && api.formatDate) {
-                    return api.formatDate(dateString);
-                }
-                return new Date(dateString).toLocaleDateString();
-            };
-
-            const getFileTypeColor = (fileType) => {
-                const colors = {
-                    pos_transactions: 'bg-blue-100 text-blue-800',
-                    alle_rewards: 'bg-green-100 text-green-800',
-                    aspire_certificates: 'bg-purple-100 text-purple-800',
-                    unknown: 'bg-gray-100 text-gray-800'
                 };
-                return colors[fileType] || 'bg-gray-100 text-gray-800';
-            };
 
-            const getFileTypeLabel = (fileType) => {
-                const labels = {
-                    pos_transactions: 'POS Transactions',
-                    alle_rewards: 'Alle Rewards',
-                    aspire_certificates: 'Aspire Certificates',
-                    unknown: 'Unknown Type'
-                };
-                return labels[fileType] || fileType;
-            };
+                initializeApp();
+            }, [api, loadUploadHistory, loadStats, loadReportHistory]);
 
-            const handleDrag = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (e.type === "dragenter" || e.type === "dragover") {
-                    setDragActive(true);
-                } else if (e.type === "dragleave") {
-                    setDragActive(false);
-                }
-            };
-
-            const handleDrop = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setDragActive(false);
-                
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    handleFileUpload(e.dataTransfer.files);
-                }
-            };
-
-            const toggleUploadSelection = (uploadId) => {
-                setSelectedUploadIds(prev => {
-                    if (prev.includes(uploadId)) {
-                        return prev.filter(id => id !== uploadId);
-                    } else {
-                        return [...prev, uploadId];
-                    }
-                });
-            };
-
-            const handleFileInputChange = (e) => {
-                if (e.target.files && e.target.files[0]) {
-                    handleFileUpload(e.target.files);
-                }
-            };
-
-            if (loading && !user) {
+            // Initial Loading Screen
+            if (initialLoading) {
                 return (
-                    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-                        <div className="text-center">
-                            <div className="relative">
-                                <Server className="w-16 h-16 mx-auto text-blue-600 animate-pulse" />
-                                <Zap className="w-6 h-6 absolute top-0 right-0 text-yellow-500 animate-bounce" />
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-center animate-slide-in">
+                            <div className="relative mb-6">
+                                <Icon name="shield" className="w-16 h-16 text-blue-600 mx-auto loading-pulse" />
+                                <Icon name="zap" className="w-6 h-6 absolute top-0 right-0 text-yellow-500 loading-bounce" />
                             </div>
-                            <p className="mt-6 text-xl text-gray-600 flex items-center justify-center gap-2">
-                                <Shield className="w-5 h-5 text-green-600" />
+                            <p className="text-xl text-gray-600 font-medium flex items-center justify-center gap-2">
+                                <Icon name="activity" className="w-5 h-5 loading-pulse" />
                                 Connecting to MedSpaSync Pro...
                             </p>
-                            <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                <Activity className="w-4 h-4 animate-pulse" />
-                                Loading your reconciliation dashboard
-                            </p>
+                            <p className="text-sm text-gray-500 mt-2">Loading your enterprise dashboard</p>
                         </div>
                     </div>
                 );
             }
 
             return (
-                <div className="min-h-screen bg-gray-50">
-                    {/* Enhanced Header */}
+                <div className="min-h-screen">
+                    {/* Notifications */}
+                    <div className="fixed top-4 right-4 z-50 space-y-2">
+                        {notifications.map((notification) => (
+                            <div
+                                key={notification.id}
+                                className={`notification notification-${notification.type} show animate-slide-in`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Icon 
+                                        name={notification.type === 'success' ? 'checkCircle' : notification.type === 'error' ? 'xCircle' : 'info'} 
+                                        className={`w-5 h-5 ${
+                                            notification.type === 'success' ? 'text-green-600' : 
+                                            notification.type === 'error' ? 'text-red-600' : 'text-blue-600'
+                                        }`} 
+                                    />
+                                    <span className="text-sm font-medium text-gray-900">{notification.message}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Header */}
                     <header className="bg-white shadow-sm border-b no-print">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex justify-between items-center h-16">
                                 <div className="flex items-center space-x-4">
                                     <div className="flex items-center space-x-2">
                                         <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                            <BarChart3 className="w-5 h-5 text-white" />
+                                            <Icon name="barChart" className="w-5 h-5 text-white" />
                                         </div>
                                         <span className="text-xl font-bold text-gray-900">MedSpaSync Pro</span>
                                     </div>
                                     <div className="hidden md:flex items-center space-x-4">
-                                        <span className="text-sm text-gray-500">|</span>
+                                        <span className="text-sm text-gray-400">|</span>
                                         <div className="flex items-center space-x-1">
-                                            <Shield className="w-4 h-4 text-green-600" />
+                                            <Icon name="shield" className="w-4 h-4 text-green-600" />
                                             <span className="text-sm text-green-600 font-medium">Production</span>
                                         </div>
                                         <div className="flex items-center space-x-1">
-                                            <Activity className="w-4 h-4 text-blue-600 animate-pulse" />
+                                            <Icon name="activity" className="w-4 h-4 text-blue-600 loading-pulse" />
                                             <span className="text-sm text-blue-600 font-medium">Live</span>
                                         </div>
                                     </div>
@@ -789,20 +959,22 @@
                                     {user && (
                                         <div className="text-right">
                                             <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                                                <Users className="w-4 h-4" />
+                                                <Icon name="users" className="w-4 h-4" />
                                                 {user.firstName} {user.lastName}
                                             </div>
                                             <div className="text-xs text-gray-500 flex items-center gap-1">
-                                                <Briefcase className="w-3 h-3" />
+                                                <Icon name="briefcase" className="w-3 h-3" />
                                                 {user.practice.name}
                                             </div>
                                         </div>
                                     )}
-                                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors hover:bg-gray-100 rounded-lg">
-                                        <Settings className="w-5 h-5" />
+                                    <button className="btn-secondary !p-2">
+                                        <Icon name="settings" className="w-5 h-5" />
+                                        <span className="sr-only">Settings</span>
                                     </button>
-                                    <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-gray-600 transition-colors hover:bg-gray-100 rounded-lg">
-                                        <LogOut className="w-5 h-5" />
+                                    <button onClick={handleLogout} className="btn-secondary !p-2">
+                                        <Icon name="logOut" className="w-5 h-5" />
+                                        <span className="sr-only">Logout</span>
                                     </button>
                                 </div>
                             </div>
@@ -810,22 +982,18 @@
                     </header>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {/* Enhanced Error Alert */}
+                        {/* Error Alert */}
                         {error && (
-                            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 no-print">
+                            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 no-print animate-slide-in">
                                 <div className="flex">
-                                    <AlertCircle className="h-5 w-5 text-red-400" />
+                                    <Icon name="alertCircle" className="h-5 w-5 text-red-400" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-red-800 flex items-center gap-1">
-                                            <XCircle className="w-4 h-4" />
-                                            Error
-                                        </h3>
+                                        <h3 className="text-sm font-medium text-red-800">Error</h3>
                                         <p className="mt-1 text-sm text-red-700">{error}</p>
                                         <button
                                             onClick={() => setError(null)}
-                                            className="mt-2 text-sm text-red-600 hover:text-red-500 underline flex items-center gap-1"
+                                            className="mt-2 text-sm text-red-600 hover:text-red-500 underline"
                                         >
-                                            <X className="w-3 h-3" />
                                             Dismiss
                                         </button>
                                     </div>
@@ -833,118 +1001,95 @@
                             </div>
                         )}
 
-                        {/* Enhanced Navigation Tabs */}
+                        {/* Navigation Tabs */}
                         <div className="border-b border-gray-200 mb-8 no-print">
                             <nav className="-mb-px flex space-x-8">
                                 {[
-                                    { id: 'dashboard', name: 'Dashboard', icon: Home },
-                                    { id: 'uploads', name: 'File Uploads', icon: Upload },
-                                    { id: 'reconciliation', name: 'Reconciliation', icon: Target },
-                                    { id: 'reports', name: 'Reports', icon: BarChart3 }
-                                ].map((tab) => {
-                                    const Icon = tab.icon;
-                                    return (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => setActiveTab(tab.id)}
-                                            className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                                activeTab === tab.id
-                                                    ? 'border-blue-500 text-blue-600'
-                                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                            }`}
-                                        >
-                                            <Icon className="w-5 h-5" />
-                                            <span>{tab.name}</span>
-                                            {activeTab === tab.id && <ChevronRight className="w-4 h-4" />}
-                                        </button>
-                                    );
-                                })}
+                                    { id: 'dashboard', name: 'Dashboard', icon: 'home' },
+                                    { id: 'uploads', name: 'File Uploads', icon: 'upload' },
+                                    { id: 'reconciliation', name: 'Reconciliation', icon: 'target' },
+                                    { id: 'reports', name: 'Reports', icon: 'barChart' }
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                                            activeTab === tab.id
+                                                ? 'border-blue-500 text-blue-600'
+                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                        }`}
+                                    >
+                                        <Icon name={tab.icon} className="w-5 h-5" />
+                                        <span>{tab.name}</span>
+                                        {activeTab === tab.id && <Icon name="chevronRight" className="w-4 h-4" />}
+                                    </button>
+                                ))}
                             </nav>
                         </div>
 
-                        {/* Enhanced Dashboard Tab */}
+                        {/* Dashboard Tab */}
                         {activeTab === 'dashboard' && (
-                            <div className="space-y-8">
-                                {/* Enhanced Key Metrics */}
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Key Metrics */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                    <div className="metric-card">
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <div className="p-2 bg-blue-100 rounded-lg">
-                                                    <Database className="h-6 w-6 text-blue-600" />
-                                                </div>
+                                            <div className="p-2 bg-blue-100 rounded-lg">
+                                                <Icon name="database" className="h-6 w-6 text-blue-600" />
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                    <Hash className="w-3 h-3" />
-                                                    Total Records
-                                                </p>
+                                                <p className="text-sm font-medium text-gray-500">Total Records</p>
                                                 <p className="text-2xl font-semibold text-gray-900">{stats?.totalRecords || 0}</p>
                                                 <p className="text-xs text-green-600 flex items-center gap-1">
-                                                    <TrendingUp className="w-3 h-3" />
+                                                    <Icon name="trendingUp" className="w-3 h-3" />
                                                     Processed
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                    <div className="metric-card">
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <div className="p-2 bg-green-100 rounded-lg">
-                                                    <FolderOpen className="h-6 w-6 text-green-600" />
-                                                </div>
+                                            <div className="p-2 bg-green-100 rounded-lg">
+                                                <Icon name="folderOpen" className="h-6 w-6 text-green-600" />
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                    <FilePlus className="w-3 h-3" />
-                                                    Total Uploads
-                                                </p>
+                                                <p className="text-sm font-medium text-gray-500">Total Uploads</p>
                                                 <p className="text-2xl font-semibold text-gray-900">{stats?.totalUploads || 0}</p>
                                                 <p className="text-xs text-blue-600 flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" />
+                                                    <Icon name="clock" className="w-3 h-3" />
                                                     Files ready
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                    <div className="metric-card">
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <div className="p-2 bg-yellow-100 rounded-lg">
-                                                    <Target className="h-6 w-6 text-yellow-600" />
-                                                </div>
+                                            <div className="p-2 bg-yellow-100 rounded-lg">
+                                                <Icon name="target" className="h-6 w-6 text-yellow-600" />
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                    <CheckCircle className="w-3 h-3" />
-                                                    Ready to Reconcile
-                                                </p>
+                                                <p className="text-sm font-medium text-gray-500">Ready to Reconcile</p>
                                                 <p className="text-2xl font-semibold text-gray-900">{selectedUploadIds.length}</p>
                                                 <p className="text-xs text-purple-600 flex items-center gap-1">
-                                                    <Zap className="w-3 h-3" />
+                                                    <Icon name="zap" className="w-3 h-3" />
                                                     Selected
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                    <div className="metric-card">
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <div className="p-2 bg-purple-100 rounded-lg">
-                                                    <Activity className="h-6 w-6 text-purple-600" />
-                                                </div>
+                                            <div className="p-2 bg-purple-100 rounded-lg">
+                                                <Icon name="activity" className="h-6 w-6 text-purple-600" />
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                    <Search className="w-3 h-3" />
-                                                    Potential Pairs
-                                                </p>
+                                                <p className="text-sm font-medium text-gray-500">Potential Pairs</p>
                                                 <p className="text-2xl font-semibold text-gray-900">{stats?.reconciliationOpportunities?.potentialPairs || 0}</p>
                                                 <p className="text-xs text-indigo-600 flex items-center gap-1">
-                                                    <ArrowUp className="w-3 h-3" />
+                                                    <Icon name="trendingUp" className="w-3 h-3" />
                                                     Opportunities
                                                 </p>
                                             </div>
@@ -952,98 +1097,86 @@
                                     </div>
                                 </div>
 
-                                {/* Enhanced Quick Actions */}
-                                <div className="bg-white rounded-lg shadow p-6">
+                                {/* Quick Actions */}
+                                <div className="card p-6">
                                     <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-                                        <Zap className="w-5 h-5 text-yellow-500" />
+                                        <Icon name="zap" className="w-5 h-5 text-yellow-500" />
                                         Quick Actions
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <button
                                             onClick={() => setActiveTab('uploads')}
-                                            className="action-button flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                            className="btn btn-secondary justify-between"
                                         >
-                                            <FilePlus className="w-5 h-5 mr-2 text-blue-600" />
-                                            Upload New Files
-                                            <ArrowRight className="w-4 h-4 ml-2 text-gray-400" />
+                                            <div className="flex items-center gap-2">
+                                                <Icon name="filePlus" className="w-5 h-5 text-blue-600" />
+                                                Upload New Files
+                                            </div>
+                                            <Icon name="arrowRight" className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={runReconciliation}
                                             disabled={selectedUploadIds.length < 2 || loading}
-                                            className="action-button flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className="btn btn-primary"
                                         >
                                             {loading ? (
-                                                <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                                                <div className="loading-spinner"></div>
                                             ) : (
-                                                <Play className="w-5 h-5 mr-2" />
+                                                <Icon name="play" className="w-5 h-5" />
                                             )}
                                             Run Reconciliation
-                                            {!loading && <Zap className="w-4 h-4 ml-2" />}
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Enhanced Recent Uploads */}
-                                <div className="bg-white rounded-lg shadow">
+                                {/* Recent Uploads */}
+                                <div className="card">
                                     <div className="px-6 py-4 border-b border-gray-200">
                                         <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                                            <FolderOpen className="w-5 h-5 text-blue-600" />
+                                            <Icon name="folderOpen" className="w-5 h-5 text-blue-600" />
                                             Recent Uploads
                                         </h3>
                                     </div>
                                     <div className="p-6">
                                         {uploads.length === 0 ? (
                                             <div className="text-center py-8">
-                                                <div className="flex justify-center mb-4">
-                                                    <div className="relative">
-                                                        <Upload className="w-12 h-12 text-gray-400" />
-                                                        <Plus className="w-6 h-6 absolute -top-2 -right-2 text-blue-500 bg-white rounded-full border-2 border-blue-500" />
-                                                    </div>
-                                                </div>
-                                                <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-1">
-                                                    <Info className="w-4 h-4" />
-                                                    No files uploaded yet
-                                                </p>
+                                                <Icon name="upload" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                                                <p className="text-sm text-gray-500 mb-4">No files uploaded yet</p>
                                                 <button
                                                     onClick={() => setActiveTab('uploads')}
-                                                    className="mt-2 text-blue-600 hover:text-blue-500 text-sm flex items-center justify-center gap-1"
+                                                    className="btn btn-primary"
                                                 >
-                                                    <FilePlus className="w-4 h-4" />
+                                                    <Icon name="filePlus" className="w-4 h-4" />
                                                     Upload your first file
                                                 </button>
                                             </div>
                                         ) : (
                                             <div className="space-y-4">
                                                 {uploads.slice(0, 5).map((upload) => {
-                                                    const fileIcon = getFileTypeIcon(upload.fileType);
-                                                    const statusIcon = getStatusIcon(upload.status);
-                                                    const StatusIcon = statusIcon.icon;
-                                                    const FileIcon = fileIcon.icon;
+                                                    const fileConfig = getFileTypeConfig(upload.fileType);
+                                                    const statusConfig = getStatusConfig(upload.status);
                                                     
                                                     return (
                                                         <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors">
                                                             <div className="flex items-center space-x-3">
-                                                                <div className={`file-type-icon ${fileIcon.color} ${fileIcon.textColor}`}>
-                                                                    <FileIcon className="w-4 h-4" />
+                                                                <div className={`file-icon ${fileConfig.className}`}>
+                                                                    <Icon name={fileConfig.icon} className="w-4 h-4" />
                                                                 </div>
                                                                 <div>
-                                                                    <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                                                                        {upload.fileName}
-                                                                        <Eye className="w-3 h-3 text-gray-400" />
-                                                                    </p>
+                                                                    <p className="text-sm font-medium text-gray-900">{upload.fileName}</p>
                                                                     <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                                        <Hash className="w-3 h-3" />
+                                                                        <Icon name="hash" className="w-3 h-3" />
                                                                         {upload.recordCount} records
                                                                     </p>
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center space-x-3">
-                                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)} flex items-center gap-1`}>
-                                                                    <StatusIcon className={`w-3 h-3 ${statusIcon.color}`} />
-                                                                    {getFileTypeLabel(upload.fileType)}
+                                                                <span className={`badge ${fileConfig.badgeClass}`}>
+                                                                    <Icon name={statusConfig.icon} className={`w-3 h-3 ${statusConfig.className}`} />
+                                                                    {fileConfig.label}
                                                                 </span>
                                                                 <span className="text-xs text-gray-500 flex items-center gap-1">
-                                                                    <Calendar className="w-3 h-3" />
+                                                                    <Icon name="calendar" className="w-3 h-3" />
                                                                     {formatDate(upload.createdAt)}
                                                                 </span>
                                                             </div>
@@ -1057,37 +1190,35 @@
                             </div>
                         )}
 
-                        {/* Enhanced File Uploads Tab */}
+                        {/* File Uploads Tab */}
                         {activeTab === 'uploads' && (
-                            <div className="space-y-8">
-                                {/* Enhanced Upload Zone */}
-                                <div className="bg-white rounded-lg shadow p-6">
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Upload Zone */}
+                                <div className="card p-6">
                                     <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-                                        <Upload className="w-5 h-5 text-blue-600" />
+                                        <Icon name="upload" className="w-5 h-5 text-blue-600" />
                                         Upload Files
-                                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full flex items-center gap-1">
-                                            <Shield className="w-3 h-3" />
+                                        <span className="badge badge-info">
+                                            <Icon name="shield" className="w-3 h-3" />
                                             Secure
                                         </span>
                                     </h3>
                                     
-                                    {/* Enhanced Upload Progress */}
+                                    {/* Upload Progress */}
                                     {uploadProgress > 0 && uploadProgress < 100 && (
                                         <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                                             <div className="flex justify-between items-center mb-2">
                                                 <span className="text-sm text-blue-700 flex items-center gap-1">
-                                                    <RefreshCw className="w-4 h-4 animate-spin" />
+                                                    <div className="loading-spinner"></div>
                                                     Uploading...
                                                 </span>
                                                 <span className="text-sm text-blue-700 font-semibold">{uploadProgress}%</span>
                                             </div>
                                             <div className="w-full bg-blue-200 rounded-full h-3">
                                                 <div
-                                                    className="bg-blue-600 h-3 rounded-full transition-all duration-300 flex items-center justify-end pr-2"
+                                                    className="bg-blue-600 h-3 rounded-full transition-all duration-300"
                                                     style={{ width: `${uploadProgress}%` }}
-                                                >
-                                                    {uploadProgress > 20 && <Zap className="w-3 h-3 text-white" />}
-                                                </div>
+                                                ></div>
                                             </div>
                                         </div>
                                     )}
@@ -1101,31 +1232,24 @@
                                         onDragOver={handleDrag}
                                         onDrop={handleDrop}
                                     >
-                                        <div className="flex justify-center mb-4">
-                                            <div className="relative">
-                                                <Upload className={`h-12 w-12 ${dragActive ? 'text-blue-500 animate-bounce' : 'text-gray-400'}`} />
-                                                {dragActive && <Zap className="w-6 h-6 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />}
-                                            </div>
-                                        </div>
-                                        <h4 className="mt-4 text-lg font-medium text-gray-900 flex items-center justify-center gap-2">
+                                        <Icon name="upload" className={`h-12 w-12 mx-auto mb-4 ${dragActive ? 'text-blue-500 loading-bounce' : 'text-gray-400'}`} />
+                                        <h4 className="text-lg font-medium text-gray-900 mb-2">
                                             Drop files here or click to upload
-                                            {dragActive && <Target className="w-5 h-5 text-blue-500" />}
                                         </h4>
-                                        <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-1">
-                                            <FileCheck className="w-4 h-4" />
+                                        <p className="text-sm text-gray-500 mb-4">
                                             Supports CSV and Excel files (POS transactions, Alle rewards, Aspire certificates)
                                         </p>
-                                        <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
+                                        <div className="flex items-center justify-center gap-4 text-xs text-gray-400 mb-4">
                                             <div className="flex items-center gap-1">
-                                                <Database className="w-3 h-3" />
+                                                <Icon name="database" className="w-3 h-3" />
                                                 POS Data
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Award className="w-3 h-3" />
+                                                <Icon name="award" className="w-3 h-3" />
                                                 Alle Rewards
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Star className="w-3 h-3" />
+                                                <Icon name="star" className="w-3 h-3" />
                                                 Aspire Certs
                                             </div>
                                         </div>
@@ -1140,31 +1264,30 @@
                                         <button
                                             onClick={() => fileInputRef.current?.click()}
                                             disabled={loading}
-                                            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className="btn btn-primary"
                                         >
-                                            <FilePlus className="w-4 h-4 mr-2" />
+                                            <Icon name="filePlus" className="w-4 h-4" />
                                             Choose File
-                                            <ArrowRight className="w-4 h-4 ml-2" />
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Enhanced Upload History with Selection */}
-                                <div className="bg-white rounded-lg shadow">
+                                {/* Upload History */}
+                                <div className="card">
                                     <div className="px-6 py-4 border-b border-gray-200">
                                         <div className="flex justify-between items-center">
                                             <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                                                <Layers className="w-5 h-5 text-blue-600" />
+                                                <Icon name="layers" className="w-5 h-5 text-blue-600" />
                                                 Upload History
                                             </h3>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm text-gray-500 flex items-center gap-1">
-                                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                                    <Icon name="checkCircle" className="w-4 h-4 text-green-600" />
                                                     {selectedUploadIds.length} selected for reconciliation
                                                 </span>
                                                 {selectedUploadIds.length >= 2 && (
-                                                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center gap-1">
-                                                        <Zap className="w-3 h-3" />
+                                                    <span className="badge badge-success">
+                                                        <Icon name="zap" className="w-3 h-3" />
                                                         Ready
                                                     </span>
                                                 )}
@@ -1176,49 +1299,29 @@
                                             <thead className="bg-gray-50">
                                                 <tr>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        <div className="flex items-center gap-1">
-                                                            <CheckCircle className="w-3 h-3" />
-                                                            Select
-                                                        </div>
+                                                        Select
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        <div className="flex items-center gap-1">
-                                                            <FileText className="w-3 h-3" />
-                                                            File Name
-                                                        </div>
+                                                        File Name
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        <div className="flex items-center gap-1">
-                                                            <Filter className="w-3 h-3" />
-                                                            Type
-                                                        </div>
+                                                        Type
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        <div className="flex items-center gap-1">
-                                                            <Hash className="w-3 h-3" />
-                                                            Records
-                                                        </div>
+                                                        Records
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        <div className="flex items-center gap-1">
-                                                            <Activity className="w-3 h-3" />
-                                                            Status
-                                                        </div>
+                                                        Status
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        <div className="flex items-center gap-1">
-                                                            <Calendar className="w-3 h-3" />
-                                                            Uploaded
-                                                        </div>
+                                                        Uploaded
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {uploads.map((upload) => {
-                                                    const fileIcon = getFileTypeIcon(upload.fileType);
-                                                    const statusIcon = getStatusIcon(upload.status);
-                                                    const StatusIcon = statusIcon.icon;
-                                                    const FileIcon = fileIcon.icon;
+                                                    const fileConfig = getFileTypeConfig(upload.fileType);
+                                                    const statusConfig = getStatusConfig(upload.status);
                                                     const isSelected = selectedUploadIds.includes(upload.id);
                                                     
                                                     return (
@@ -1233,35 +1336,28 @@
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                                 <div className="flex items-center gap-2">
-                                                                    <div className={`file-type-icon ${fileIcon.color} ${fileIcon.textColor}`}>
-                                                                        <FileIcon className="w-3 h-3" />
+                                                                    <div className={`file-icon ${fileConfig.className}`}>
+                                                                        <Icon name={fileConfig.icon} className="w-3 h-3" />
                                                                     </div>
                                                                     {upload.fileName}
                                                                 </div>
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)} flex items-center gap-1 w-fit`}>
-                                                                    <FileIcon className="w-3 h-3" />
-                                                                    {getFileTypeLabel(upload.fileType)}
+                                                                <span className={`badge ${fileConfig.badgeClass}`}>
+                                                                    {fileConfig.label}
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                                <div className="flex items-center gap-1">
-                                                                    <Hash className="w-3 h-3 text-gray-400" />
-                                                                    {upload.recordCount}
-                                                                </div>
+                                                                {upload.recordCount}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                                <span className={`status-badge px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800`}>
-                                                                    <StatusIcon className={`w-3 h-3 ${statusIcon.color}`} />
-                                                                    {upload.status}
+                                                                <span className="badge badge-success">
+                                                                    <Icon name={statusConfig.icon} className={`w-3 h-3 ${statusConfig.className}`} />
+                                                                    {statusConfig.label}
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                                <div className="flex items-center gap-1">
-                                                                    <Calendar className="w-3 h-3" />
-                                                                    {formatDate(upload.createdAt)}
-                                                                </div>
+                                                                {formatDate(upload.createdAt)}
                                                             </td>
                                                         </tr>
                                                     );
@@ -1273,42 +1369,38 @@
                             </div>
                         )}
 
-                        {/* Enhanced Reconciliation Tab */}
+                        {/* Reconciliation Tab */}
                         {activeTab === 'reconciliation' && (
-                            <div className="space-y-8">
-                                {/* Enhanced Reconciliation Controls */}
-                                <div className="bg-white rounded-lg shadow p-6">
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Reconciliation Controls */}
+                                <div className="card p-6">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                                            <Target className="w-5 h-5 text-blue-600" />
+                                            <Icon name="target" className="w-5 h-5 text-blue-600" />
                                             Reconciliation Analysis
-                                            <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
-                                                <Cpu className="w-3 h-3" />
+                                            <span className="badge badge-info">
+                                                <Icon name="cpu" className="w-3 h-3" />
                                                 AI-Powered
                                             </span>
                                         </h3>
                                         <button
                                             onClick={runReconciliation}
                                             disabled={loading || selectedUploadIds.length < 2}
-                                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            className="btn btn-primary"
                                         >
                                             {loading ? (
-                                                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                                                <div className="loading-spinner"></div>
                                             ) : (
-                                                <Play className="w-4 h-4 mr-2" />
+                                                <Icon name="play" className="w-4 h-4" />
                                             )}
                                             {loading ? 'Analyzing...' : 'Start Reconciliation'}
-                                            {!loading && <Zap className="w-4 h-4 ml-2" />}
                                         </button>
                                     </div>
 
-                                    {/* Enhanced Reconciliation Settings */}
+                                    {/* Reconciliation Settings */}
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-                                                <Target className="w-3 h-3" />
-                                                Match Criteria
-                                            </label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Match Criteria</label>
                                             <select
                                                 value={reconciliationSettings.matchCriteria}
                                                 onChange={(e) => setReconciliationSettings({...reconciliationSettings, matchCriteria: e.target.value})}
@@ -1321,10 +1413,7 @@
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-                                                <Calendar className="w-3 h-3" />
-                                                Date Tolerance (days)
-                                            </label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Date Tolerance (days)</label>
                                             <input
                                                 type="number"
                                                 min="0"
@@ -1336,10 +1425,7 @@
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-                                                <Percent className="w-3 h-3" />
-                                                Amount Tolerance (%)
-                                            </label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Amount Tolerance (%)</label>
                                             <input
                                                 type="number"
                                                 min="0"
@@ -1351,33 +1437,32 @@
                                         </div>
                                     </div>
 
-                                    <div className="text-sm text-gray-600 mb-4 p-3 bg-blue-50 rounded-lg flex items-center gap-2">
-                                        <Info className="w-4 h-4 text-blue-600" />
+                                    <div className="text-sm text-gray-600 p-3 bg-blue-50 rounded-lg flex items-center gap-2">
+                                        <Icon name="info" className="w-4 h-4 text-blue-600" />
                                         Selected {selectedUploadIds.length} files for reconciliation. 
-                                        {selectedUploadIds.length < 2 && (
+                                        {selectedUploadIds.length < 2 ? (
                                             <span className="text-yellow-600 ml-1 flex items-center gap-1">
-                                                <AlertTriangle className="w-4 h-4" />
+                                                <Icon name="alertTriangle" className="w-4 h-4" />
                                                 (Select at least 2 files from the Uploads tab)
                                             </span>
-                                        )}
-                                        {selectedUploadIds.length >= 2 && (
+                                        ) : (
                                             <span className="text-green-600 ml-1 flex items-center gap-1">
-                                                <CheckCircle className="w-4 h-4" />
+                                                <Icon name="checkCircle" className="w-4 h-4" />
                                                 Ready to analyze!
                                             </span>
                                         )}
                                     </div>
 
                                     {loading && (
-                                        <div className="text-center py-8 bg-blue-50 rounded-lg">
+                                        <div className="text-center py-8 bg-blue-50 rounded-lg mt-4">
                                             <div className="flex justify-center mb-4">
                                                 <div className="relative">
-                                                    <Cpu className="w-8 h-8 text-blue-600 animate-pulse" />
-                                                    <Activity className="w-4 h-4 absolute -top-1 -right-1 text-green-500 animate-bounce" />
+                                                    <Icon name="cpu" className="w-8 h-8 text-blue-600 loading-pulse" />
+                                                    <Icon name="activity" className="w-4 h-4 absolute -top-1 -right-1 text-green-500 loading-bounce" />
                                                 </div>
                                             </div>
-                                            <p className="mt-2 text-sm text-blue-700 font-medium flex items-center justify-center gap-1">
-                                                <Zap className="w-4 h-4 animate-pulse" />
+                                            <p className="text-sm text-blue-700 font-medium flex items-center justify-center gap-1">
+                                                <Icon name="zap" className="w-4 h-4 loading-pulse" />
                                                 Running advanced reconciliation algorithms...
                                             </p>
                                             <p className="text-xs text-blue-600 mt-1">AI matching in progress</p>
@@ -1385,68 +1470,59 @@
                                     )}
                                 </div>
 
-                                {/* Enhanced Reconciliation Results */}
+                                {/* Reconciliation Results */}
                                 {reconciliationResults && (
                                     <div className="space-y-6">
-                                        {/* Enhanced Summary Cards */}
+                                        {/* Summary Cards */}
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                            <div className="metric-card">
                                                 <div className="flex items-center">
                                                     <div className="p-2 bg-green-100 rounded-lg">
-                                                        <CheckCircle className="h-6 w-6 text-green-600" />
+                                                        <Icon name="checkCircle" className="h-6 w-6 text-green-600" />
                                                     </div>
                                                     <div className="ml-4">
-                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                            <Target className="w-3 h-3" />
-                                                            Total Matches
-                                                        </p>
+                                                        <p className="text-sm font-medium text-gray-500">Total Matches</p>
                                                         <p className="text-2xl font-semibold text-gray-900">
                                                             {reconciliationResults.summary.totalMatches}
                                                         </p>
                                                         <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                            <Award className="w-3 h-3 text-green-600" />
+                                                            <Icon name="award" className="w-3 h-3 text-green-600" />
                                                             {reconciliationResults.summary.exactMatches} exact, {reconciliationResults.summary.fuzzyMatches} fuzzy
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                            <div className="metric-card">
                                                 <div className="flex items-center">
                                                     <div className="p-2 bg-blue-100 rounded-lg">
-                                                        <TrendingUp className="h-6 w-6 text-blue-600" />
+                                                        <Icon name="trendingUp" className="h-6 w-6 text-blue-600" />
                                                     </div>
                                                     <div className="ml-4">
-                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                            <Percent className="w-3 h-3" />
-                                                            Match Rate
-                                                        </p>
+                                                        <p className="text-sm font-medium text-gray-500">Match Rate</p>
                                                         <p className="text-2xl font-semibold text-gray-900">
                                                             {reconciliationResults.summary.matchRate}%
                                                         </p>
                                                         <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                            <Database className="w-3 h-3 text-blue-600" />
+                                                            <Icon name="database" className="w-3 h-3 text-blue-600" />
                                                             {reconciliationResults.summary.totalRecords} total records
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-lg shadow p-6 metric-card">
+                                            <div className="metric-card">
                                                 <div className="flex items-center">
                                                     <div className="p-2 bg-purple-100 rounded-lg">
-                                                        <Clock className="h-6 w-6 text-purple-600" />
+                                                        <Icon name="clock" className="h-6 w-6 text-purple-600" />
                                                     </div>
                                                     <div className="ml-4">
-                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                                                            <Zap className="w-3 h-3" />
-                                                            Time Saved
-                                                        </p>
+                                                        <p className="text-sm font-medium text-gray-500">Time Saved</p>
                                                         <p className="text-2xl font-semibold text-gray-900">
-                                                            {reconciliationResults.summary.timeSaved?.timeSavedHours || 0}h
+                                                            {reconciliationResults.summary.timeSaved?.timeSavedHours || calculateBusinessMetrics(reconciliationResults.summary).timeSavedHours}h
                                                         </p>
                                                         <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                            <ArrowUp className="w-3 h-3 text-purple-600" />
+                                                            <Icon name="trendingUp" className="w-3 h-3 text-purple-600" />
                                                             vs manual reconciliation
                                                         </p>
                                                     </div>
@@ -1454,17 +1530,16 @@
                                             </div>
                                         </div>
 
-                                        {/* Enhanced Production Results */}
+                                        {/* Success Alert */}
                                         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                             <div className="flex">
-                                                <CheckCircle className="h-5 w-5 text-green-400" />
+                                                <Icon name="checkCircle" className="h-5 w-5 text-green-400" />
                                                 <div className="ml-3">
                                                     <h3 className="text-sm font-medium text-green-800 flex items-center gap-1">
-                                                        <Shield className="w-4 h-4" />
+                                                        <Icon name="shield" className="w-4 h-4" />
                                                         Production Reconciliation Complete
                                                     </h3>
-                                                    <p className="mt-1 text-sm text-green-700 flex items-center gap-1">
-                                                        <Cpu className="w-4 h-4" />
+                                                    <p className="mt-1 text-sm text-green-700">
                                                         Real reconciliation completed successfully using your advanced algorithms. 
                                                         Results show actual matches from your uploaded files.
                                                     </p>
@@ -1472,14 +1547,14 @@
                                             </div>
                                         </div>
 
-                                        {/* Enhanced Matches Display */}
+                                        {/* Matched Records */}
                                         {reconciliationResults.matches && reconciliationResults.matches.length > 0 && (
-                                            <div className="bg-white rounded-lg shadow">
+                                            <div className="card">
                                                 <div className="px-6 py-4 border-b border-gray-200">
                                                     <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                                                        <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                                        <Icon name="checkCircle" className="w-5 h-5 text-green-600" />
                                                         Matched Records
-                                                        <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                                        <span className="badge badge-success">
                                                             {reconciliationResults.matches.length} found
                                                         </span>
                                                     </h3>
@@ -1489,31 +1564,29 @@
                                                         {reconciliationResults.matches.map((match) => (
                                                             <div key={match.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                                                 <div className="flex items-center justify-between mb-3">
-                                                                    <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1 ${
-                                                                        match.matchType === 'exact' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                                    <span className={`badge ${
+                                                                        match.matchType === 'exact' ? 'badge-success' : 'badge-warning'
                                                                     }`}>
-                                                                        {match.matchType === 'exact' ? <CheckCircle className="w-3 h-3" /> : <Search className="w-3 h-3" />}
+                                                                        <Icon name={match.matchType === 'exact' ? 'checkCircle' : 'search'} className="w-3 h-3" />
                                                                         {match.matchType} match ({Math.round(match.confidence * 100)}% confidence)
                                                                     </span>
                                                                 </div>
                                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                                     <div className="p-3 bg-blue-50 rounded-lg">
                                                                         <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                                                                            <FileText className="w-4 h-4 text-blue-600" />
+                                                                            <Icon name="fileText" className="w-4 h-4 text-blue-600" />
                                                                             {match.record1.fileName}
                                                                         </p>
-                                                                        <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
-                                                                            <Users className="w-3 h-3" />
+                                                                        <p className="text-sm text-gray-600 mt-1">
                                                                             {match.record1.data.patientName} - {formatCurrency(parseFloat(match.record1.data.amount || 0))} - {match.record1.data.service}
                                                                         </p>
                                                                     </div>
                                                                     <div className="p-3 bg-green-50 rounded-lg">
                                                                         <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                                                                            <FileText className="w-4 h-4 text-green-600" />
+                                                                            <Icon name="fileText" className="w-4 h-4 text-green-600" />
                                                                             {match.record2.fileName}
                                                                         </p>
-                                                                        <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
-                                                                            <Award className="w-3 h-3" />
+                                                                        <p className="text-sm text-gray-600 mt-1">
                                                                             {match.record2.data.patientName} - {match.record2.data.points} points - {match.record2.data.rewardType}
                                                                         </p>
                                                                     </div>
@@ -1524,406 +1597,99 @@
                                                 </div>
                                             </div>
                                         )}
-
-                                        {/* Enhanced Unmatched Records */}
-                                        {reconciliationResults.unmatched && reconciliationResults.unmatched.length > 0 && (
-                                            <div className="bg-white rounded-lg shadow">
-                                                <div className="px-6 py-4 border-b border-gray-200">
-                                                    <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                                                        <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                                                        Unmatched Records
-                                                        <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                                                            {reconciliationResults.unmatched.length} items
-                                                        </span>
-                                                    </h3>
-                                                </div>
-                                                <div className="p-6">
-                                                    <div className="space-y-3">
-                                                        {reconciliationResults.unmatched.map((item, index) => (
-                                                            <div key={index} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                                                                <div className="flex items-center gap-3">
-                                                                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                                                                            <Users className="w-3 h-3" />
-                                                                            {item.record?.patientName || 'Unknown'} - {formatCurrency(parseFloat(item.record?.amount || 0))}
-                                                                        </p>
-                                                                        <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                                            <FileText className="w-3 h-3" />
-                                                                            {item.fileName}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                <span className="text-xs text-yellow-600 bg-yellow-200 px-2 py-1 rounded-full flex items-center gap-1">
-                                                                    <Info className="w-3 h-3" />
-                                                                    {item.reason}
-                                                                </span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* ✅ SUPER ENHANCED REPORTS TAB WITH COMPREHENSIVE ICONS */}
+                        {/* Reports Tab */}
                         {activeTab === 'reports' && (
-                            <div className="space-y-8">
-                                {/* Enhanced Report Generation Section */}
-                                <div className="bg-white rounded-lg shadow p-6">
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Report Generation */}
+                                <div className="card p-6">
                                     <h3 className="text-lg font-medium text-gray-900 mb-6 flex items-center gap-2">
-                                        <BarChart3 className="w-5 h-5 text-blue-600" />
+                                        <Icon name="barChart" className="w-5 h-5 text-blue-600" />
                                         Export Reports
-                                        <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
-                                            <Award className="w-3 h-3" />
+                                        <span className="badge badge-info">
+                                            <Icon name="award" className="w-3 h-3" />
                                             Enterprise
                                         </span>
                                     </h3>
                                     
                                     {reconciliationResults ? (
                                         <div>
-                                            {/* Enhanced Business Intelligence Overview */}
+                                            {/* Business Intelligence Overview */}
                                             <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
                                                 <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                    <TrendingUp className="w-5 h-5 text-blue-600" />
+                                                    <Icon name="trendingUp" className="w-5 h-5 text-blue-600" />
                                                     Business Intelligence Summary
-                                                    <Zap className="w-4 h-4 text-yellow-500 animate-pulse" />
                                                 </h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                     <div className="text-center bg-white p-4 rounded-lg shadow-sm">
                                                         <div className="flex items-center justify-center mb-2">
                                                             <div className="p-2 bg-blue-100 rounded-full">
-                                                                <Target className="w-6 h-6 text-blue-600" />
+                                                                <Icon name="target" className="w-6 h-6 text-blue-600" />
                                                             </div>
                                                         </div>
                                                         <p className="text-3xl font-bold text-blue-600">{reconciliationResults.summary.totalMatches}</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <CheckCircle className="w-3 h-3" />
-                                                            Matches Found
-                                                        </p>
+                                                        <p className="text-sm text-gray-600">Matches Found</p>
                                                     </div>
                                                     <div className="text-center bg-white p-4 rounded-lg shadow-sm">
                                                         <div className="flex items-center justify-center mb-2">
                                                             <div className="p-2 bg-green-100 rounded-full">
-                                                                <Percent className="w-6 h-6 text-green-600" />
+                                                                <Icon name="percent" className="w-6 h-6 text-green-600" />
                                                             </div>
                                                         </div>
                                                         <p className="text-3xl font-bold text-green-600">{reconciliationResults.summary.matchRate}%</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <TrendingUp className="w-3 h-3" />
-                                                            Success Rate
-                                                        </p>
+                                                        <p className="text-sm text-gray-600">Success Rate</p>
                                                     </div>
                                                     <div className="text-center bg-white p-4 rounded-lg shadow-sm">
                                                         <div className="flex items-center justify-center mb-2">
                                                             <div className="p-2 bg-purple-100 rounded-full">
-                                                                <Clock className="w-6 h-6 text-purple-600" />
+                                                                <Icon name="clock" className="w-6 h-6 text-purple-600" />
                                                             </div>
                                                         </div>
                                                         <p className="text-3xl font-bold text-purple-600">{calculateBusinessMetrics(reconciliationResults.summary).timeSavedHours}h</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <Zap className="w-3 h-3" />
-                                                            Time Saved
-                                                        </p>
+                                                        <p className="text-sm text-gray-600">Time Saved</p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {/* Enhanced Report Generation Cards */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                                <div className="report-card border rounded-lg p-6 cursor-pointer hover:shadow-lg" onClick={() => generateReport('executive-summary')}>
+                                            {/* Report Generation Cards */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="card card-interactive p-6" onClick={() => generateReport('executive-summary')}>
                                                     <div className="flex items-center mb-4">
                                                         <div className="p-3 bg-blue-100 rounded-lg mr-4">
-                                                            <div className="relative">
-                                                                <FileText className="w-8 h-8 text-blue-600" />
-                                                                <Award className="w-4 h-4 absolute -top-1 -right-1 text-yellow-500" />
-                                                            </div>
+                                                            <Icon name="fileText" className="w-8 h-8 text-blue-600" />
                                                         </div>
                                                         <div>
                                                             <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                                                 Executive Summary
-                                                                <Star className="w-4 h-4 text-yellow-500" />
+                                                                <Icon name="star" className="w-4 h-4 text-yellow-500" />
                                                             </h4>
-                                                            <p className="text-sm text-gray-500 flex items-center gap-1">
-                                                                <Briefcase className="w-3 h-3" />
-                                                                Professional PDF report for management
-                                                            </p>
+                                                            <p className="text-sm text-gray-500">Professional PDF report for management</p>
                                                         </div>
                                                     </div>
                                                     <div className="space-y-3 mb-4">
                                                         <p className="text-sm text-gray-600 flex items-center gap-2">
-                                                            <BarChart className="w-4 h-4 text-blue-500" />
+                                                            <Icon name="barChart" className="w-4 h-4 text-blue-500" />
                                                             High-level overview with {reconciliationResults.summary.totalMatches} matches 
                                                             and {reconciliationResults.summary.matchRate}% success rate
                                                         </p>
                                                         <p className="text-sm text-gray-600 flex items-center gap-2">
-                                                            <DollarSign className="w-4 h-4 text-green-500" />
+                                                            <Icon name="dollarSign" className="w-4 h-4 text-green-500" />
                                                             ROI analysis showing ${calculateBusinessMetrics(reconciliationResults.summary).revenueRecovery} potential recovery
                                                         </p>
                                                         <p className="text-sm text-gray-600 flex items-center gap-2">
-                                                            <Clock className="w-4 h-4 text-purple-500" />
+                                                            <Icon name="clock" className="w-4 h-4 text-purple-500" />
                                                             Time savings: {calculateBusinessMetrics(reconciliationResults.summary).timeSavedHours} hours vs manual processing
                                                         </p>
                                                     </div>
                                                     <button 
                                                         disabled={generatingReport}
-                                                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-all"
+                                                        className="btn btn-primary w-full"
                                                     >
                                                         {generatingReport ? (
-                                                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                                                            <div className="loading-spinner"></div>
                                                         ) : (
-                                                            <Download className="w-4 h-4 mr-2" />
-                                                        )}
-                                                        Generate PDF Report
-                                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                                    </button>
-                                                </div>
-                                                
-                                                <div className="report-card border rounded-lg p-6 cursor-pointer hover:shadow-lg" onClick={() => generateReport('detailed-analysis')}>
-                                                    <div className="flex items-center mb-4">
-                                                        <div className="p-3 bg-green-100 rounded-lg mr-4">
-                                                            <div className="relative">
-                                                                <FileSpreadsheet className="w-8 h-8 text-green-600" />
-                                                                <Database className="w-4 h-4 absolute -top-1 -right-1 text-blue-500" />
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                                                Detailed Analysis
-                                                                <Layers className="w-4 h-4 text-green-500" />
-                                                            </h4>
-                                                            <p className="text-sm text-gray-500 flex items-center gap-1">
-                                                                <Database className="w-3 h-3" />
-                                                                Complete Excel export with all data
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="space-y-3 mb-4">
-                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
-                                                            <List className="w-4 h-4 text-green-500" />
-                                                            Complete match results with confidence scores
-                                                        </p>
-                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
-                                                            <Search className="w-4 h-4 text-yellow-500" />
-                                                            Unmatched records analysis and recommendations
-                                                        </p>
-                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
-                                                            <TrendingUp className="w-4 h-4 text-blue-500" />
-                                                            Performance metrics and business intelligence
-                                                        </p>
-                                                    </div>
-                                                    <button 
-                                                        disabled={generatingReport}
-                                                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 transition-all"
-                                                    >
-                                                        {generatingReport ? (
-                                                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                                                        ) : (
-                                                            <Download className="w-4 h-4 mr-2" />
-                                                        )}
-                                                        Download Excel File
-                                                        <ExternalLink className="w-4 h-4 ml-2" />
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {/* Enhanced Business Metrics Dashboard */}
-                                            <div className="bg-white border rounded-lg p-6">
-                                                <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                    <Activity className="w-5 h-5 text-blue-600" />
-                                                    Performance Analytics
-                                                    <span className="text-sm bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
-                                                        <Zap className="w-3 h-3" />
-                                                        Live Data
-                                                    </span>
-                                                </h4>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                    <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200 hover:shadow-md transition-all">
-                                                        <div className="flex items-center justify-center mb-2">
-                                                            <div className="p-2 bg-blue-200 rounded-full">
-                                                                <DollarSign className="w-6 h-6 text-blue-700" />
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-2xl font-bold text-blue-600">${calculateBusinessMetrics(reconciliationResults.summary).costSavings}</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <ArrowUp className="w-3 h-3 text-green-500" />
-                                                            Cost Savings
-                                                        </p>
-                                                    </div>
-                                                    <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200 hover:shadow-md transition-all">
-                                                        <div className="flex items-center justify-center mb-2">
-                                                            <div className="p-2 bg-green-200 rounded-full">
-                                                                <TrendingUp className="w-6 h-6 text-green-700" />
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-2xl font-bold text-green-600">{calculateBusinessMetrics(reconciliationResults.summary).roi}%</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <Award className="w-3 h-3 text-yellow-500" />
-                                                            ROI
-                                                        </p>
-                                                    </div>
-                                                    <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200 hover:shadow-md transition-all">
-                                                        <div className="flex items-center justify-center mb-2">
-                                                            <div className="p-2 bg-purple-200 rounded-full">
-                                                                <Clock className="w-6 h-6 text-purple-700" />
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-2xl font-bold text-purple-600">{calculateBusinessMetrics(reconciliationResults.summary).efficiencyGain}%</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <Zap className="w-3 h-3 text-purple-500" />
-                                                            Efficiency Gain
-                                                        </p>
-                                                    </div>
-                                                    <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200 hover:shadow-md transition-all">
-                                                        <div className="flex items-center justify-center mb-2">
-                                                            <div className="p-2 bg-yellow-200 rounded-full">
-                                                                <Activity className="w-6 h-6 text-yellow-700" />
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-xl font-bold text-yellow-600">{calculateBusinessMetrics(reconciliationResults.summary).processingSpeed}</p>
-                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                                                            <Cpu className="w-3 h-3 text-blue-500" />
-                                                            Processing Speed
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    ) : (
-                                        <div className="text-center py-12">
-                                            <div className="flex justify-center mb-4">
-                                                <div className="relative">
-                                                    <FileText className="w-16 h-16 text-gray-400" />
-                                                    <AlertCircle className="w-6 h-6 absolute -top-2 -right-2 text-blue-500 bg-white rounded-full border-2 border-blue-500" />
-                                                </div>
-                                            </div>
-                                            <h4 className="text-lg font-medium text-gray-900 mb-2 flex items-center justify-center gap-2">
-                                                <Info className="w-5 h-5 text-blue-600" />
-                                                No Reconciliation Data Available
-                                            </h4>
-                                            <p className="text-gray-600 mb-6 flex items-center justify-center gap-1">
-                                                <Search className="w-4 h-4" />
-                                                Run a reconciliation to generate comprehensive reports and business intelligence.
-                                            </p>
-                                            <button
-                                                onClick={() => setActiveTab('reconciliation')}
-                                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-all"
-                                            >
-                                                <Play className="w-5 h-5 mr-2" />
-                                                Start Reconciliation
-                                                <ArrowRight className="w-5 h-5 ml-2" />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Enhanced Report History */}
-                                {reportHistory.length > 0 && (
-                                    <div className="bg-white rounded-lg shadow">
-                                        <div className="px-6 py-4 border-b border-gray-200">
-                                            <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                                                <FolderOpen className="w-5 h-5 text-blue-600" />
-                                                Report History
-                                                <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full flex items-center gap-1">
-                                                    <Hash className="w-3 h-3" />
-                                                    {reportHistory.length} reports
-                                                </span>
-                                            </h3>
-                                        </div>
-                                        <div className="p-6">
-                                            <div className="space-y-4">
-                                                {reportHistory.map((report) => (
-                                                    <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-all hover:shadow-md">
-                                                        <div className="flex items-center space-x-4">
-                                                            <div className={`p-2 rounded-lg ${report.type === 'Executive Summary' ? 'bg-blue-100' : 'bg-green-100'}`}>
-                                                                {report.type === 'Executive Summary' ? (
-                                                                    <FileText className="w-6 h-6 text-blue-600" />
-                                                                ) : (
-                                                                    <FileSpreadsheet className="w-6 h-6 text-green-600" />
-                                                                )}
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-sm font-medium text-gray-900 flex items-center gap-2">
-                                                                    {report.type}
-                                                                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
-                                                                        <CheckCircle className="w-3 h-3" />
-                                                                        Complete
-                                                                    </span>
-                                                                </p>
-                                                                <p className="text-xs text-gray-500 flex items-center gap-3">
-                                                                    <span className="flex items-center gap-1">
-                                                                        <Target className="w-3 h-3" />
-                                                                        {report.matches} matches
-                                                                    </span>
-                                                                    <span className="flex items-center gap-1">
-                                                                        <Percent className="w-3 h-3" />
-                                                                        {report.matchRate}% rate
-                                                                    </span>
-                                                                    <span className="flex items-center gap-1">
-                                                                        <Clock className="w-3 h-3" />
-                                                                        {report.timeSaved}h saved
-                                                                    </span>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center space-x-3">
-                                                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                                                                <Calendar className="w-3 h-3" />
-                                                                {formatDate(report.createdAt)}
-                                                            </span>
-                                                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                                                                <Download className="w-4 h-4" />
-                                                            </button>
-                                                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                                                                <Share className="w-4 h-4" />
-                                                            </button>
-                                                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                                                                <MoreHorizontal className="w-4 h-4" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        };
-
-        // Enhanced render with error boundary
-        try {
-            ReactDOM.render(<IntegratedMedSpaSyncDashboard />, document.getElementById('dashboard-root'));
-            console.log('🎨 Enterprise dashboard with comprehensive icon system rendered successfully');
-        } catch (error) {
-            console.error('Failed to render dashboard:', error);
-            document.getElementById('dashboard-root').innerHTML = `
-                <div class="flex items-center justify-center min-h-screen bg-gray-50">
-                    <div class="text-center">
-                        <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
-                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-semibold text-gray-900">Dashboard Error</h2>
-                        <p class="mt-2 text-gray-600">Failed to load the dashboard. Please refresh the page.</p>
-                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                            Refresh Page
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-    </script>
-</body>
-</html>
+                                                            <Icon name="download" className="w-4 h-4" />
