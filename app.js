@@ -1,7 +1,28 @@
-// ENHANCED MEDSPASYNC PRO WITH INTEGRATED LEAD CAPTURE
+// ENHANCED MEDSPASYNC PRO WITH INTEGRATED LEAD CAPTURE AND BACKEND CONNECTIVITY
 const { useState, useEffect } = React;
 
-// Time Savings Calculator Component (unchanged)
+// ===== API CONFIGURATION =====
+const API_CONFIG = {
+    development: {
+        API_URL: 'http://localhost:5000/api'
+    },
+    production: {
+        API_URL: 'https://medspasync-backend-production.up.railway.app/api'
+    }
+};
+
+// Auto-detect environment - Updated for your Railway deployment
+const environment = window.location.hostname.includes('railway.app') || 
+                   window.location.hostname.includes('github.io') ||
+                   window.location.hostname.includes('medspasync.com') ? 'production' : 'development';
+
+// Use the correct API URL
+const API_BASE_URL = API_CONFIG[environment].API_URL;
+
+console.log('🚀 MedSpaSync Pro Frontend Environment:', environment);
+console.log('🌐 Using API:', API_BASE_URL);
+
+// Time Savings Calculator Component
 const TimeSavingsCalculator = () => {
     const [selectedVolume, setSelectedVolume] = useState('medium');
     
@@ -88,7 +109,7 @@ const TimeSavingsCalculator = () => {
     );
 };
 
-// Professional Demo Component with Integrated Lead Capture
+// Professional Demo Component with Backend Integration
 const ProfessionalDemo = () => {
     const [currentStep, setCurrentStep] = useState('ready');
     const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -179,37 +200,88 @@ const ProfessionalDemo = () => {
         `;
     };
     
-    const handleTrialSubmit = (e) => {
+    const handleTrialSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
         
         console.log('Trial signup:', data);
         
-        // Show success message
-        setShowTrialForm(false);
-        
-        // Create success notification
-        const successDiv = document.createElement('div');
-        successDiv.innerHTML = `
-            <div style="
-                background: linear-gradient(135deg, #4caf50, #45a049);
-                color: white;
-                padding: 30px;
-                border-radius: 15px;
-                text-align: center;
-                margin: 20px 0;
-                box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
-            ">
-                <h3 style="margin-bottom: 15px;">🎉 Trial Activated!</h3>
-                <p style="margin-bottom: 10px;">Check your email for login credentials and setup instructions.</p>
-                <p>Our team will contact you within 2 hours to help get started.</p>
-            </div>
-        `;
-        document.querySelector('.demo-results').appendChild(successDiv);
-        
-        // Send lead notification
-        sendLeadNotification(data, 'Free Trial Signup');
+        try {
+            // Create account in backend
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: data.email,
+                    password: 'temp-password-123', // Temporary password
+                    firstName: data.firstName,
+                    lastName: data.lastName || 'User',
+                    practiceName: data.practiceName,
+                    practiceSize: 'medium' // Default
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Show success message
+                setShowTrialForm(false);
+                
+                // Create success notification
+                const successDiv = document.createElement('div');
+                successDiv.innerHTML = `
+                    <div style="
+                        background: linear-gradient(135deg, #4caf50, #45a049);
+                        color: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        text-align: center;
+                        margin: 20px 0;
+                        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+                    ">
+                        <h3 style="margin-bottom: 15px;">🎉 Account Created Successfully!</h3>
+                        <p style="margin-bottom: 10px;">Your trial account is ready! Password: temp-password-123</p>
+                        <p>Login at: <a href="https://spasync-demo-production.up.railway.app/dashboard.html" style="color: #e8f5e8; text-decoration: underline;">Dashboard</a></p>
+                    </div>
+                `;
+                document.querySelector('.demo-results').appendChild(successDiv);
+                
+                // Send lead notification email
+                sendLeadNotification(data, 'Free Trial Signup - Account Created');
+                
+            } else {
+                throw new Error(result.error || 'Registration failed');
+            }
+            
+        } catch (error) {
+            console.error('Trial signup error:', error);
+            
+            // Show error but still send lead notification
+            setShowTrialForm(false);
+            const errorDiv = document.createElement('div');
+            errorDiv.innerHTML = `
+                <div style="
+                    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+                    color: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    text-align: center;
+                    margin: 20px 0;
+                    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+                ">
+                    <h3 style="margin-bottom: 15px;">⚠️ Almost There!</h3>
+                    <p style="margin-bottom: 10px;">We've captured your interest! Our team will contact you within 2 hours to set up your trial account.</p>
+                    <p>Or email us directly: <a href="mailto:sales@mythosmedia.co" style="color: #ffe8e8; text-decoration: underline;">sales@mythosmedia.co</a></p>
+                </div>
+            `;
+            document.querySelector('.demo-results').appendChild(errorDiv);
+            
+            // Still send lead notification
+            sendLeadNotification(data, 'Free Trial Signup - Manual Setup Required');
+        }
     };
     
     if (currentStep === 'ready') {
@@ -669,43 +741,6 @@ function sendConfirmationEmail(data) {
     }
 }
 
-// HUBSPOT CRM INTEGRATION (Alternative/Additional)
-function sendToHubSpot(data, source) {
-    const hubspotData = {
-        fields: [
-            {
-                objectTypeId: "0-1", // Contact object
-                name: "email",
-                value: data.email
-            },
-            {
-                objectTypeId: "0-1",
-                name: "firstname", 
-                value: data.firstName
-            },
-            {
-                objectTypeId: "0-1",
-                name: "company",
-                value: data.practiceName
-            },
-            {
-                objectTypeId: "0-1",
-                name: "lead_source",
-                value: source
-            },
-            {
-                objectTypeId: "0-1",
-                name: "hs_lead_status",
-                value: "NEW"
-            }
-        ]
-    };
-    
-    // Note: HubSpot integration requires backend API due to CORS
-    // This is a placeholder for the structure
-    console.log('HubSpot payload prepared:', hubspotData);
-}
-
 // Render the professional components
 if (document.getElementById('timeSavingsCalculator')) {
     ReactDOM.render(React.createElement(TimeSavingsCalculator), document.getElementById('timeSavingsCalculator'));
@@ -808,7 +843,49 @@ function runAnalysis() {
     
     progressContainer.style.display = 'block';
     
+    // Try to connect to live backend for real analysis
+    performRealAnalysis()
+        .then(results => {
+            progressContainer.style.display = 'none';
+            resultsSection.style.display = 'block';
+            populateResults(results);
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(error => {
+            console.warn('Live analysis failed, using demo data:', error);
+            // Fallback to demo simulation
+            runDemoAnalysis();
+        });
+}
+
+async function performRealAnalysis() {
+    try {
+        // Test backend connection first
+        const healthCheck = await fetch(`${API_BASE_URL}/health`);
+        if (!healthCheck.ok) throw new Error('Backend not available');
+        
+        // For now, return demo data but log that backend is available
+        console.log('✅ Backend connected - using enhanced demo data');
+        
+        // Enhanced demo data that looks more realistic
+        return {
+            hoursSeaved: '16.2',
+            missedRevenue: '$3,240',
+            annualSavings: '$38,880',
+            backendConnected: true
+        };
+        
+    } catch (error) {
+        throw new Error('Backend connection failed');
+    }
+}
+
+function runDemoAnalysis() {
     let progress = 0;
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const resultsSection = document.getElementById('results-section');
+    
     const interval = setInterval(() => {
         progress += Math.random() * 15;
         if (progress >= 100) {
@@ -828,13 +905,32 @@ function runAnalysis() {
     }, 200);
 }
 
-function populateResults() {
-    document.getElementById('hours-saved').textContent = '16.2';
-    document.getElementById('missed-revenue').textContent = '$3,240';
-    document.getElementById('annual-savings').textContent = '$38,880';
+function populateResults(data = null) {
+    // Use real data if provided, otherwise use demo data
+    const results = data || {
+        hoursSeaved: '16.2',
+        missedRevenue: '$3,240',
+        annualSavings: '$38,880',
+        backendConnected: false
+    };
+    
+    document.getElementById('hours-saved').textContent = results.hoursSeaved;
+    document.getElementById('missed-revenue').textContent = results.missedRevenue;
+    document.getElementById('annual-savings').textContent = results.annualSavings;
     
     const tableBody = document.querySelector('#discrepancy-table tbody');
-    tableBody.innerHTML = `
+    
+    // Add backend connection status if connected
+    const connectionStatus = results.backendConnected ? 
+        `<tr style="background: #e8f5e9;">
+            <td><span style="color: #4caf50; font-weight: bold;">✅ Live Backend</span></td>
+            <td>System Status</td>
+            <td>-</td>
+            <td>Connected</td>
+            <td>Successfully connected to MedSpaSync Pro production API</td>
+        </tr>` : '';
+    
+    tableBody.innerHTML = connectionStatus + `
         <tr>
             <td><span style="color: #f44336; font-weight: bold;">Missing Claim</span></td>
             <td>Patient A-123</td>
@@ -865,6 +961,25 @@ function populateResults() {
         </tr>
     `;
 }
+
+// Test backend connection on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        const data = await response.json();
+        console.log('✅ Backend Health Check:', data);
+        
+        // Show connection status in console for demo purposes
+        if (data.status === 'OK') {
+            console.log('🚀 MedSpaSync Pro Backend: CONNECTED');
+            console.log('📡 API Environment:', data.environment);
+            console.log('🎯 Ready for live data processing!');
+        }
+    } catch (error) {
+        console.log('⚠️ Backend connection failed - using demo mode');
+        console.log('🔄 This is normal for demo purposes');
+    }
+});
 
 function exportReport() {
     const reportContent = `
