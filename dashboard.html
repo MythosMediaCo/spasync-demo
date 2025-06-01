@@ -30,11 +30,53 @@
             transform: translateY(-2px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .icon-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .icon-bounce {
+            animation: bounce 1s infinite;
+        }
+        .icon-spin-slow {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
         @media print {
             .no-print { display: none; }
             .print-only { display: block; }
         }
         .print-only { display: none; }
+        .file-type-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .action-button {
+            transition: all 0.2s ease;
+        }
+        .action-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
     </style>
 </head>
 <body class="gradient-bg">
@@ -51,7 +93,7 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         
-        // ✅ SAFE ICON LOADING
+        // ✅ COMPREHENSIVE ICON SYSTEM
         const createIcon = (iconName) => {
             if (typeof LucideReact !== 'undefined' && LucideReact[iconName]) {
                 return LucideReact[iconName];
@@ -63,6 +105,7 @@
             });
         };
 
+        // Core Icons
         const Upload = createIcon('Upload');
         const FileText = createIcon('FileText');
         const BarChart3 = createIcon('BarChart3');
@@ -79,10 +122,57 @@
         const AlertCircle = createIcon('AlertCircle');
         const TrendingUp = createIcon('TrendingUp');
         const Calendar = createIcon('Calendar');
+
+        // Enhanced Icons for Better UX
         const PieChart = createIcon('PieChart');
         const BarChart = createIcon('BarChart');
         const FileSpreadsheet = createIcon('FileSpreadsheet');
         const Printer = createIcon('Printer');
+        const Eye = createIcon('Eye');
+        const EyeOff = createIcon('EyeOff');
+        const Star = createIcon('Star');
+        const Shield = createIcon('Shield');
+        const Zap = createIcon('Zap');
+        const Target = createIcon('Target');
+        const Award = createIcon('Award');
+        const Briefcase = createIcon('Briefcase');
+        const Database = createIcon('Database');
+        const Server = createIcon('Server');
+        const Cpu = createIcon('Cpu');
+        const Activity = createIcon('Activity');
+        const Layers = createIcon('Layers');
+        const Filter = createIcon('Filter');
+        const Search = createIcon('Search');
+        const Bell = createIcon('Bell');
+        const Home = createIcon('Home');
+        const FolderOpen = createIcon('FolderOpen');
+        const FileCheck = createIcon('FileCheck');
+        const FileX = createIcon('FileX');
+        const FilePlus = createIcon('FilePlus');
+        const TrendingDown = createIcon('TrendingDown');
+        const ArrowUp = createIcon('ArrowUp');
+        const ArrowDown = createIcon('ArrowDown');
+        const ArrowRight = createIcon('ArrowRight');
+        const ChevronRight = createIcon('ChevronRight');
+        const Play = createIcon('Play');
+        const Pause = createIcon('Pause');
+        const Square = createIcon('Square');
+        const RotateCcw = createIcon('RotateCcw');
+        const CheckCircle2 = createIcon('CheckCircle2');
+        const Info = createIcon('Info');
+        const HelpCircle = createIcon('HelpCircle');
+        const ExternalLink = createIcon('ExternalLink');
+        const Copy = createIcon('Copy');
+        const Share = createIcon('Share');
+        const MoreHorizontal = createIcon('MoreHorizontal');
+        const Grid = createIcon('Grid');
+        const List = createIcon('List');
+        const Hash = createIcon('Hash');
+        const Percent = createIcon('Percent');
+        const Plus = createIcon('Plus');
+        const Minus = createIcon('Minus');
+        const X = createIcon('X');
+        const Check = createIcon('Check');
 
         const IntegratedMedSpaSyncDashboard = () => {
             const [user, setUser] = useState(null);
@@ -118,6 +208,28 @@
             });
 
             const fileInputRef = useRef(null);
+
+            // ✅ ENHANCED FILE TYPE ICONS
+            const getFileTypeIcon = (fileType) => {
+                const icons = {
+                    pos_transactions: { icon: Database, color: 'bg-blue-500', textColor: 'text-white' },
+                    alle_rewards: { icon: Award, color: 'bg-green-500', textColor: 'text-white' },
+                    aspire_certificates: { icon: Star, color: 'bg-purple-500', textColor: 'text-white' },
+                    unknown: { icon: FileText, color: 'bg-gray-500', textColor: 'text-white' }
+                };
+                return icons[fileType] || icons.unknown;
+            };
+
+            // ✅ ENHANCED STATUS ICONS
+            const getStatusIcon = (status) => {
+                const statusIcons = {
+                    processed: { icon: CheckCircle, color: 'text-green-600' },
+                    processing: { icon: RefreshCw, color: 'text-blue-600 animate-spin' },
+                    error: { icon: XCircle, color: 'text-red-600' },
+                    pending: { icon: Clock, color: 'text-yellow-600' }
+                };
+                return statusIcons[status] || statusIcons.processed;
+            };
 
             useEffect(() => {
                 const initializeApp = async () => {
@@ -215,7 +327,6 @@
             const loadReportHistory = async () => {
                 try {
                     console.log('Loading report history...');
-                    // Simulate report history - in production this would come from your backend
                     const mockReports = [
                         {
                             id: 1,
@@ -320,7 +431,6 @@
                 }
             };
 
-            // ✅ NEW: Comprehensive Report Generation
             const generateReport = async (reportType) => {
                 if (!reconciliationResults) {
                     setError('Please run a reconciliation first to generate reports');
@@ -331,7 +441,6 @@
                 console.log(`Generating ${reportType} report...`);
 
                 try {
-                    // Calculate business intelligence metrics
                     const summary = reconciliationResults.summary;
                     const businessMetrics = calculateBusinessMetrics(summary);
 
@@ -341,7 +450,6 @@
                         await generateDetailedAnalysisExcel(reconciliationResults, businessMetrics);
                     }
 
-                    // Add to report history
                     const newReport = {
                         id: Date.now(),
                         type: reportType === 'executive-summary' ? 'Executive Summary' : 'Detailed Analysis',
@@ -367,27 +475,25 @@
                 const totalMatches = summary.totalMatches || 0;
                 const matchRate = summary.matchRate || 0;
 
-                // Business intelligence calculations
                 const avgTimePerManualMatch = 15; // minutes
                 const timeSavedHours = Math.round((totalMatches * avgTimePerManualMatch) / 60 * 100) / 100;
                 const hourlyRate = 25; // USD per hour
                 const costSavings = Math.round(timeSavedHours * hourlyRate);
                 const avgRevenuePerMatch = 45; // Average revenue recovered per match
                 const revenueRecovery = Math.round(totalMatches * avgRevenuePerMatch);
-                const roi = costSavings > 0 ? Math.round(((revenueRecovery + costSavings) / 299) * 100) : 0; // Assuming $299/month subscription
+                const roi = costSavings > 0 ? Math.round(((revenueRecovery + costSavings) / 299) * 100) : 0;
 
                 return {
                     timeSavedHours,
                     costSavings,
                     revenueRecovery,
                     roi,
-                    efficiencyGain: Math.round((matchRate / 100) * 96), // 96% time reduction at 100% match rate
+                    efficiencyGain: Math.round((matchRate / 100) * 96),
                     processingSpeed: totalRecords > 0 ? Math.round(totalRecords / 0.5) + ' records/minute' : '0 records/minute'
                 };
             };
 
             const generateExecutiveSummaryPDF = async (summary, metrics) => {
-                // Create printable executive summary
                 const reportContent = `
                     <div class="print-only" style="max-width: 800px; margin: 0 auto; padding: 40px; font-family: Arial, sans-serif;">
                         <div style="text-align: center; margin-bottom: 40px;">
@@ -426,16 +532,6 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 30px;">
-                            <h3 style="color: #1F2937; margin-bottom: 15px;">Executive Recommendations</h3>
-                            <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 20px;">
-                                <p><strong>Continue Monthly Reconciliation:</strong> Maintain current automated reconciliation schedule to maximize efficiency gains.</p>
-                                <p><strong>Staff Reallocation:</strong> Redirect ${metrics.timeSavedHours} hours of staff time from manual reconciliation to patient care.</p>
-                                <p><strong>Revenue Optimization:</strong> Focus on the ${summary.totalMatches} matched transactions for targeted marketing campaigns.</p>
-                                <p><strong>Process Improvement:</strong> Consider increasing file upload frequency to improve cash flow visibility.</p>
-                            </div>
-                        </div>
-
                         <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
                             <p style="color: #6B7280; margin: 0;">MedSpaSync Pro - Automated Reconciliation Platform</p>
                             <p style="color: #6B7280; margin: 0;">Contact: sales@mythosmedia.co</p>
@@ -443,7 +539,6 @@
                     </div>
                 `;
 
-                // Open print dialog with the report
                 const printWindow = window.open('', '_blank');
                 printWindow.document.write(`
                     <html>
@@ -466,10 +561,8 @@
             };
 
             const generateDetailedAnalysisExcel = async (results, metrics) => {
-                // Create CSV content for Excel download
                 const csvContent = generateCSVContent(results, metrics);
                 
-                // Create download link
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
@@ -484,7 +577,6 @@
             const generateCSVContent = (results, metrics) => {
                 let csv = 'MedSpaSync Pro - Detailed Reconciliation Analysis\n\n';
                 
-                // Summary section
                 csv += 'EXECUTIVE SUMMARY\n';
                 csv += 'Metric,Value\n';
                 csv += `Total Matches,${results.summary.totalMatches}\n`;
@@ -497,7 +589,6 @@
                 csv += `Revenue Recovery,$${metrics.revenueRecovery}\n`;
                 csv += `ROI,${metrics.roi}%\n\n`;
 
-                // Matched records section
                 if (results.matches && results.matches.length > 0) {
                     csv += 'MATCHED RECORDS\n';
                     csv += 'Match Type,Confidence,File 1,Patient 1,Amount 1,File 2,Patient 2,Amount/Points 2\n';
@@ -510,7 +601,6 @@
                     csv += '\n';
                 }
 
-                // Unmatched records section
                 if (results.unmatched && results.unmatched.length > 0) {
                     csv += 'UNMATCHED RECORDS\n';
                     csv += 'File Name,Patient Name,Amount,Reason\n';
@@ -537,10 +627,11 @@
             const showNotification = (message, type = 'success') => {
                 console.log(`Notification (${type}): ${message}`);
                 const notification = document.createElement('div');
-                notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transform transition-all duration-300 ${
+                const iconHtml = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transform transition-all duration-300 flex items-center gap-2 ${
                     type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : 'bg-red-500'
                 }`;
-                notification.textContent = message;
+                notification.innerHTML = `${iconHtml} ${message}`;
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
@@ -629,9 +720,18 @@
                 return (
                     <div className="flex items-center justify-center min-h-screen bg-gray-50">
                         <div className="text-center">
-                            <RefreshCw className="w-16 h-16 mx-auto text-blue-600 animate-spin" />
-                            <p className="mt-6 text-xl text-gray-600">Connecting to MedSpaSync Pro...</p>
-                            <p className="mt-2 text-sm text-gray-500">Loading your reconciliation dashboard</p>
+                            <div className="relative">
+                                <Server className="w-16 h-16 mx-auto text-blue-600 animate-pulse" />
+                                <Zap className="w-6 h-6 absolute top-0 right-0 text-yellow-500 animate-bounce" />
+                            </div>
+                            <p className="mt-6 text-xl text-gray-600 flex items-center justify-center gap-2">
+                                <Shield className="w-5 h-5 text-green-600" />
+                                Connecting to MedSpaSync Pro...
+                            </p>
+                            <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-2">
+                                <Activity className="w-4 h-4 animate-pulse" />
+                                Loading your reconciliation dashboard
+                            </p>
                         </div>
                     </div>
                 );
@@ -639,7 +739,7 @@
 
             return (
                 <div className="min-h-screen bg-gray-50">
-                    {/* Header */}
+                    {/* Enhanced Header */}
                     <header className="bg-white shadow-sm border-b no-print">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex justify-between items-center h-16">
@@ -652,21 +752,34 @@
                                     </div>
                                     <div className="hidden md:flex items-center space-x-4">
                                         <span className="text-sm text-gray-500">|</span>
-                                        <span className="text-sm text-green-600 font-medium">✓ Production</span>
+                                        <div className="flex items-center space-x-1">
+                                            <Shield className="w-4 h-4 text-green-600" />
+                                            <span className="text-sm text-green-600 font-medium">Production</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1">
+                                            <Activity className="w-4 h-4 text-blue-600 animate-pulse" />
+                                            <span className="text-sm text-blue-600 font-medium">Live</span>
+                                        </div>
                                     </div>
                                 </div>
                                 
                                 <div className="flex items-center space-x-4">
                                     {user && (
                                         <div className="text-right">
-                                            <div className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</div>
-                                            <div className="text-xs text-gray-500">{user.practice.name}</div>
+                                            <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                                <Users className="w-4 h-4" />
+                                                {user.firstName} {user.lastName}
+                                            </div>
+                                            <div className="text-xs text-gray-500 flex items-center gap-1">
+                                                <Briefcase className="w-3 h-3" />
+                                                {user.practice.name}
+                                            </div>
                                         </div>
                                     )}
-                                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors hover:bg-gray-100 rounded-lg">
                                         <Settings className="w-5 h-5" />
                                     </button>
-                                    <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                                    <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-gray-600 transition-colors hover:bg-gray-100 rounded-lg">
                                         <LogOut className="w-5 h-5" />
                                     </button>
                                 </div>
@@ -675,18 +788,22 @@
                     </header>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {/* Error Alert */}
+                        {/* Enhanced Error Alert */}
                         {error && (
                             <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 no-print">
                                 <div className="flex">
                                     <AlertCircle className="h-5 w-5 text-red-400" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-red-800">Error</h3>
+                                        <h3 className="text-sm font-medium text-red-800 flex items-center gap-1">
+                                            <XCircle className="w-4 h-4" />
+                                            Error
+                                        </h3>
                                         <p className="mt-1 text-sm text-red-700">{error}</p>
                                         <button
                                             onClick={() => setError(null)}
-                                            className="mt-2 text-sm text-red-600 hover:text-red-500 underline"
+                                            className="mt-2 text-sm text-red-600 hover:text-red-500 underline flex items-center gap-1"
                                         >
+                                            <X className="w-3 h-3" />
                                             Dismiss
                                         </button>
                                     </div>
@@ -694,14 +811,14 @@
                             </div>
                         )}
 
-                        {/* Navigation Tabs */}
+                        {/* Enhanced Navigation Tabs */}
                         <div className="border-b border-gray-200 mb-8 no-print">
                             <nav className="-mb-px flex space-x-8">
                                 {[
-                                    { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
+                                    { id: 'dashboard', name: 'Dashboard', icon: Home },
                                     { id: 'uploads', name: 'File Uploads', icon: Upload },
-                                    { id: 'reconciliation', name: 'Reconciliation', icon: FileText },
-                                    { id: 'reports', name: 'Reports', icon: Download }
+                                    { id: 'reconciliation', name: 'Reconciliation', icon: Target },
+                                    { id: 'reports', name: 'Reports', icon: BarChart3 }
                                 ].map((tab) => {
                                     const Icon = tab.icon;
                                     return (
@@ -716,128 +833,201 @@
                                         >
                                             <Icon className="w-5 h-5" />
                                             <span>{tab.name}</span>
+                                            {activeTab === tab.id && <ChevronRight className="w-4 h-4" />}
                                         </button>
                                     );
                                 })}
                             </nav>
                         </div>
 
-                        {/* Dashboard Tab */}
+                        {/* Enhanced Dashboard Tab */}
                         {activeTab === 'dashboard' && (
                             <div className="space-y-8">
-                                {/* Key Metrics */}
+                                {/* Enhanced Key Metrics */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                    <div className="bg-white rounded-lg shadow p-6">
+                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0">
-                                                <FileText className="h-8 w-8 text-blue-600" />
+                                                <div className="p-2 bg-blue-100 rounded-lg">
+                                                    <Database className="h-6 w-6 text-blue-600" />
+                                                </div>
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500">Total Records</p>
+                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                    <Hash className="w-3 h-3" />
+                                                    Total Records
+                                                </p>
                                                 <p className="text-2xl font-semibold text-gray-900">{stats?.totalRecords || 0}</p>
+                                                <p className="text-xs text-green-600 flex items-center gap-1">
+                                                    <TrendingUp className="w-3 h-3" />
+                                                    Processed
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow p-6">
+                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0">
-                                                <Upload className="h-8 w-8 text-green-600" />
+                                                <div className="p-2 bg-green-100 rounded-lg">
+                                                    <FolderOpen className="h-6 w-6 text-green-600" />
+                                                </div>
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500">Total Uploads</p>
+                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                    <FilePlus className="w-3 h-3" />
+                                                    Total Uploads
+                                                </p>
                                                 <p className="text-2xl font-semibold text-gray-900">{stats?.totalUploads || 0}</p>
+                                                <p className="text-xs text-blue-600 flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    Files ready
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow p-6">
+                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0">
-                                                <BarChart3 className="h-8 w-8 text-yellow-600" />
+                                                <div className="p-2 bg-yellow-100 rounded-lg">
+                                                    <Target className="h-6 w-6 text-yellow-600" />
+                                                </div>
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500">Ready to Reconcile</p>
+                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                    <CheckCircle className="w-3 h-3" />
+                                                    Ready to Reconcile
+                                                </p>
                                                 <p className="text-2xl font-semibold text-gray-900">{selectedUploadIds.length}</p>
+                                                <p className="text-xs text-purple-600 flex items-center gap-1">
+                                                    <Zap className="w-3 h-3" />
+                                                    Selected
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow p-6">
+                                    <div className="bg-white rounded-lg shadow p-6 metric-card">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0">
-                                                <Clock className="h-8 w-8 text-purple-600" />
+                                                <div className="p-2 bg-purple-100 rounded-lg">
+                                                    <Activity className="h-6 w-6 text-purple-600" />
+                                                </div>
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500">Potential Pairs</p>
+                                                <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                    <Search className="w-3 h-3" />
+                                                    Potential Pairs
+                                                </p>
                                                 <p className="text-2xl font-semibold text-gray-900">{stats?.reconciliationOpportunities?.potentialPairs || 0}</p>
+                                                <p className="text-xs text-indigo-600 flex items-center gap-1">
+                                                    <ArrowUp className="w-3 h-3" />
+                                                    Opportunities
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Quick Actions */}
+                                {/* Enhanced Quick Actions */}
                                 <div className="bg-white rounded-lg shadow p-6">
-                                    <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                        <Zap className="w-5 h-5 text-yellow-500" />
+                                        Quick Actions
+                                    </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <button
                                             onClick={() => setActiveTab('uploads')}
-                                            className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                            className="action-button flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                                         >
-                                            <Upload className="w-5 h-5 mr-2 text-blue-600" />
+                                            <FilePlus className="w-5 h-5 mr-2 text-blue-600" />
                                             Upload New Files
+                                            <ArrowRight className="w-4 h-4 ml-2 text-gray-400" />
                                         </button>
                                         <button
                                             onClick={runReconciliation}
                                             disabled={selectedUploadIds.length < 2 || loading}
-                                            className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className="action-button flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         >
                                             {loading ? (
                                                 <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
                                             ) : (
-                                                <BarChart3 className="w-5 h-5 mr-2" />
+                                                <Play className="w-5 h-5 mr-2" />
                                             )}
                                             Run Reconciliation
+                                            {!loading && <Zap className="w-4 h-4 ml-2" />}
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Recent Uploads */}
+                                {/* Enhanced Recent Uploads */}
                                 <div className="bg-white rounded-lg shadow">
                                     <div className="px-6 py-4 border-b border-gray-200">
-                                        <h3 className="text-lg font-medium text-gray-900">Recent Uploads</h3>
+                                        <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                            <FolderOpen className="w-5 h-5 text-blue-600" />
+                                            Recent Uploads
+                                        </h3>
                                     </div>
                                     <div className="p-6">
                                         {uploads.length === 0 ? (
                                             <div className="text-center py-8">
-                                                <Upload className="w-12 h-12 mx-auto text-gray-400" />
-                                                <p className="mt-2 text-sm text-gray-500">No files uploaded yet</p>
+                                                <div className="flex justify-center mb-4">
+                                                    <div className="relative">
+                                                        <Upload className="w-12 h-12 text-gray-400" />
+                                                        <Plus className="w-6 h-6 absolute -top-2 -right-2 text-blue-500 bg-white rounded-full border-2 border-blue-500" />
+                                                    </div>
+                                                </div>
+                                                <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-1">
+                                                    <Info className="w-4 h-4" />
+                                                    No files uploaded yet
+                                                </p>
                                                 <button
                                                     onClick={() => setActiveTab('uploads')}
-                                                    className="mt-2 text-blue-600 hover:text-blue-500 text-sm"
+                                                    className="mt-2 text-blue-600 hover:text-blue-500 text-sm flex items-center justify-center gap-1"
                                                 >
+                                                    <FilePlus className="w-4 h-4" />
                                                     Upload your first file
                                                 </button>
                                             </div>
                                         ) : (
                                             <div className="space-y-4">
-                                                {uploads.slice(0, 5).map((upload) => (
-                                                    <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg">
-                                                        <div className="flex items-center space-x-3">
-                                                            <FileText className="w-5 h-5 text-gray-400" />
-                                                            <div>
-                                                                <p className="text-sm font-medium text-gray-900">{upload.fileName}</p>
-                                                                <p className="text-xs text-gray-500">{upload.recordCount} records</p>
+                                                {uploads.slice(0, 5).map((upload) => {
+                                                    const fileIcon = getFileTypeIcon(upload.fileType);
+                                                    const statusIcon = getStatusIcon(upload.status);
+                                                    const StatusIcon = statusIcon.icon;
+                                                    const FileIcon = fileIcon.icon;
+                                                    
+                                                    return (
+                                                        <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                                                            <div className="flex items-center space-x-3">
+                                                                <div className={`file-type-icon ${fileIcon.color} ${fileIcon.textColor}`}>
+                                                                    <FileIcon className="w-4 h-4" />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                                                        {upload.fileName}
+                                                                        <Eye className="w-3 h-3 text-gray-400" />
+                                                                    </p>
+                                                                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                                        <Hash className="w-3 h-3" />
+                                                                        {upload.recordCount} records
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center space-x-3">
+                                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)} flex items-center gap-1`}>
+                                                                    <StatusIcon className={`w-3 h-3 ${statusIcon.color}`} />
+                                                                    {getFileTypeLabel(upload.fileType)}
+                                                                </span>
+                                                                <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                                    <Calendar className="w-3 h-3" />
+                                                                    {formatDate(upload.createdAt)}
+                                                                </span>
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center space-x-2">
-                                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)}`}>
-                                                                {getFileTypeLabel(upload.fileType)}
-                                                            </span>
-                                                            <span className="text-xs text-gray-500">{formatDate(upload.createdAt)}</span>
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                         )}
                                     </div>
@@ -845,43 +1035,78 @@
                             </div>
                         )}
 
-                        {/* File Uploads Tab */}
+                        {/* Enhanced File Uploads Tab */}
                         {activeTab === 'uploads' && (
                             <div className="space-y-8">
-                                {/* Upload Zone */}
+                                {/* Enhanced Upload Zone */}
                                 <div className="bg-white rounded-lg shadow p-6">
-                                    <h3 className="text-lg font-medium text-gray-900 mb-4">Upload Files</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                        <Upload className="w-5 h-5 text-blue-600" />
+                                        Upload Files
+                                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full flex items-center gap-1">
+                                            <Shield className="w-3 h-3" />
+                                            Secure
+                                        </span>
+                                    </h3>
                                     
-                                    {/* Upload Progress */}
+                                    {/* Enhanced Upload Progress */}
                                     {uploadProgress > 0 && uploadProgress < 100 && (
-                                        <div className="mb-4">
+                                        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                                             <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm text-gray-600">Uploading...</span>
-                                                <span className="text-sm text-gray-600">{uploadProgress}%</span>
+                                                <span className="text-sm text-blue-700 flex items-center gap-1">
+                                                    <RefreshCw className="w-4 h-4 animate-spin" />
+                                                    Uploading...
+                                                </span>
+                                                <span className="text-sm text-blue-700 font-semibold">{uploadProgress}%</span>
                                             </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                            <div className="w-full bg-blue-200 rounded-full h-3">
                                                 <div
-                                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                                    className="bg-blue-600 h-3 rounded-full transition-all duration-300 flex items-center justify-end pr-2"
                                                     style={{ width: `${uploadProgress}%` }}
-                                                ></div>
+                                                >
+                                                    {uploadProgress > 20 && <Zap className="w-3 h-3 text-white" />}
+                                                </div>
                                             </div>
                                         </div>
                                     )}
 
                                     <div
-                                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                                            dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
+                                            dragActive ? 'border-blue-500 bg-blue-50 transform scale-105' : 'border-gray-300'
                                         }`}
                                         onDragEnter={handleDrag}
                                         onDragLeave={handleDrag}
                                         onDragOver={handleDrag}
                                         onDrop={handleDrop}
                                     >
-                                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                                        <h4 className="mt-4 text-lg font-medium text-gray-900">Drop files here or click to upload</h4>
-                                        <p className="mt-2 text-sm text-gray-500">
+                                        <div className="flex justify-center mb-4">
+                                            <div className="relative">
+                                                <Upload className={`h-12 w-12 ${dragActive ? 'text-blue-500 animate-bounce' : 'text-gray-400'}`} />
+                                                {dragActive && <Zap className="w-6 h-6 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />}
+                                            </div>
+                                        </div>
+                                        <h4 className="mt-4 text-lg font-medium text-gray-900 flex items-center justify-center gap-2">
+                                            Drop files here or click to upload
+                                            {dragActive && <Target className="w-5 h-5 text-blue-500" />}
+                                        </h4>
+                                        <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-1">
+                                            <FileCheck className="w-4 h-4" />
                                             Supports CSV and Excel files (POS transactions, Alle rewards, Aspire certificates)
                                         </p>
+                                        <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
+                                            <div className="flex items-center gap-1">
+                                                <Database className="w-3 h-3" />
+                                                POS Data
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Award className="w-3 h-3" />
+                                                Alle Rewards
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Star className="w-3 h-3" />
+                                                Aspire Certs
+                                            </div>
+                                        </div>
                                         <input
                                             ref={fileInputRef}
                                             type="file"
@@ -893,20 +1118,34 @@
                                         <button
                                             onClick={() => fileInputRef.current?.click()}
                                             disabled={loading}
-                                            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         >
+                                            <FilePlus className="w-4 h-4 mr-2" />
                                             Choose File
+                                            <ArrowRight className="w-4 h-4 ml-2" />
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Upload History with Selection */}
+                                {/* Enhanced Upload History with Selection */}
                                 <div className="bg-white rounded-lg shadow">
                                     <div className="px-6 py-4 border-b border-gray-200">
                                         <div className="flex justify-between items-center">
-                                            <h3 className="text-lg font-medium text-gray-900">Upload History</h3>
-                                            <div className="text-sm text-gray-500">
-                                                {selectedUploadIds.length} selected for reconciliation
+                                            <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                <Layers className="w-5 h-5 text-blue-600" />
+                                                Upload History
+                                            </h3>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm text-gray-500 flex items-center gap-1">
+                                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                                    {selectedUploadIds.length} selected for reconciliation
+                                                </span>
+                                                {selectedUploadIds.length >= 2 && (
+                                                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center gap-1">
+                                                        <Zap className="w-3 h-3" />
+                                                        Ready
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -915,58 +1154,96 @@
                                             <thead className="bg-gray-50">
                                                 <tr>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Select
+                                                        <div className="flex items-center gap-1">
+                                                            <CheckCircle className="w-3 h-3" />
+                                                            Select
+                                                        </div>
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        File Name
+                                                        <div className="flex items-center gap-1">
+                                                            <FileText className="w-3 h-3" />
+                                                            File Name
+                                                        </div>
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Type
+                                                        <div className="flex items-center gap-1">
+                                                            <Filter className="w-3 h-3" />
+                                                            Type
+                                                        </div>
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Records
+                                                        <div className="flex items-center gap-1">
+                                                            <Hash className="w-3 h-3" />
+                                                            Records
+                                                        </div>
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Status
+                                                        <div className="flex items-center gap-1">
+                                                            <Activity className="w-3 h-3" />
+                                                            Status
+                                                        </div>
                                                     </th>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Uploaded
+                                                        <div className="flex items-center gap-1">
+                                                            <Calendar className="w-3 h-3" />
+                                                            Uploaded
+                                                        </div>
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
-                                                {uploads.map((upload) => (
-                                                    <tr key={upload.id} className="hover:bg-gray-50">
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedUploadIds.includes(upload.id)}
-                                                                onChange={() => toggleUploadSelection(upload.id)}
-                                                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                            />
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                            {upload.fileName}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)}`}>
-                                                                {getFileTypeLabel(upload.fileType)}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                            {upload.recordCount}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                                <CheckCircle className="w-3 h-3 mr-1" />
-                                                                {upload.status}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                            {formatDate(upload.createdAt)}
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                {uploads.map((upload) => {
+                                                    const fileIcon = getFileTypeIcon(upload.fileType);
+                                                    const statusIcon = getStatusIcon(upload.status);
+                                                    const StatusIcon = statusIcon.icon;
+                                                    const FileIcon = fileIcon.icon;
+                                                    const isSelected = selectedUploadIds.includes(upload.id);
+                                                    
+                                                    return (
+                                                        <tr key={upload.id} className={`hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}>
+                                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={isSelected}
+                                                                    onChange={() => toggleUploadSelection(upload.id)}
+                                                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                />
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className={`file-type-icon ${fileIcon.color} ${fileIcon.textColor}`}>
+                                                                        <FileIcon className="w-3 h-3" />
+                                                                    </div>
+                                                                    {upload.fileName}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFileTypeColor(upload.fileType)} flex items-center gap-1 w-fit`}>
+                                                                    <FileIcon className="w-3 h-3" />
+                                                                    {getFileTypeLabel(upload.fileType)}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                                <div className="flex items-center gap-1">
+                                                                    <Hash className="w-3 h-3 text-gray-400" />
+                                                                    {upload.recordCount}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                                <span className={`status-badge px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800`}>
+                                                                    <StatusIcon className={`w-3 h-3 ${statusIcon.color}`} />
+                                                                    {upload.status}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                <div className="flex items-center gap-1">
+                                                                    <Calendar className="w-3 h-3" />
+                                                                    {formatDate(upload.createdAt)}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
                                             </tbody>
                                         </table>
                                     </div>
@@ -974,31 +1251,40 @@
                             </div>
                         )}
 
-                        {/* Reconciliation Tab */}
+                        {/* Enhanced Reconciliation Tab */}
                         {activeTab === 'reconciliation' && (
                             <div className="space-y-8">
-                                {/* Reconciliation Controls */}
+                                {/* Enhanced Reconciliation Controls */}
                                 <div className="bg-white rounded-lg shadow p-6">
                                     <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-lg font-medium text-gray-900">Reconciliation Analysis</h3>
+                                        <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                            <Target className="w-5 h-5 text-blue-600" />
+                                            Reconciliation Analysis
+                                            <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
+                                                <Cpu className="w-3 h-3" />
+                                                AI-Powered
+                                            </span>
+                                        </h3>
                                         <button
                                             onClick={runReconciliation}
                                             disabled={loading || selectedUploadIds.length < 2}
-                                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                         >
                                             {loading ? (
                                                 <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                                             ) : (
-                                                <BarChart3 className="w-4 h-4 mr-2" />
+                                                <Play className="w-4 h-4 mr-2" />
                                             )}
                                             {loading ? 'Analyzing...' : 'Start Reconciliation'}
+                                            {!loading && <Zap className="w-4 h-4 ml-2" />}
                                         </button>
                                     </div>
 
-                                    {/* Reconciliation Settings */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    {/* Enhanced Reconciliation Settings */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                                                <Target className="w-3 h-3" />
                                                 Match Criteria
                                             </label>
                                             <select
@@ -1006,14 +1292,15 @@
                                                 onChange={(e) => setReconciliationSettings({...reconciliationSettings, matchCriteria: e.target.value})}
                                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                             >
-                                                <option value="strict">Strict (90%+ confidence)</option>
-                                                <option value="normal">Normal (70%+ confidence)</option>
-                                                <option value="fuzzy">Fuzzy (50%+ confidence)</option>
+                                                <option value="strict">🎯 Strict (90%+ confidence)</option>
+                                                <option value="normal">⚡ Normal (70%+ confidence)</option>
+                                                <option value="fuzzy">🔍 Fuzzy (50%+ confidence)</option>
                                             </select>
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                                                <Calendar className="w-3 h-3" />
                                                 Date Tolerance (days)
                                             </label>
                                             <input
@@ -1027,7 +1314,8 @@
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                                                <Percent className="w-3 h-3" />
                                                 Amount Tolerance (%)
                                             </label>
                                             <input
@@ -1041,81 +1329,120 @@
                                         </div>
                                     </div>
 
-                                    <div className="text-sm text-gray-600 mb-4">
+                                    <div className="text-sm text-gray-600 mb-4 p-3 bg-blue-50 rounded-lg flex items-center gap-2">
+                                        <Info className="w-4 h-4 text-blue-600" />
                                         Selected {selectedUploadIds.length} files for reconciliation. 
                                         {selectedUploadIds.length < 2 && (
-                                            <span className="text-yellow-600 ml-1">
+                                            <span className="text-yellow-600 ml-1 flex items-center gap-1">
+                                                <AlertTriangle className="w-4 h-4" />
                                                 (Select at least 2 files from the Uploads tab)
+                                            </span>
+                                        )}
+                                        {selectedUploadIds.length >= 2 && (
+                                            <span className="text-green-600 ml-1 flex items-center gap-1">
+                                                <CheckCircle className="w-4 h-4" />
+                                                Ready to analyze!
                                             </span>
                                         )}
                                     </div>
 
                                     {loading && (
-                                        <div className="text-center py-8">
-                                            <RefreshCw className="w-8 h-8 mx-auto text-blue-600 animate-spin" />
-                                            <p className="mt-2 text-sm text-gray-500">
+                                        <div className="text-center py-8 bg-blue-50 rounded-lg">
+                                            <div className="flex justify-center mb-4">
+                                                <div className="relative">
+                                                    <Cpu className="w-8 h-8 text-blue-600 animate-pulse" />
+                                                    <Activity className="w-4 h-4 absolute -top-1 -right-1 text-green-500 animate-bounce" />
+                                                </div>
+                                            </div>
+                                            <p className="mt-2 text-sm text-blue-700 font-medium flex items-center justify-center gap-1">
+                                                <Zap className="w-4 h-4 animate-pulse" />
                                                 Running advanced reconciliation algorithms...
                                             </p>
+                                            <p className="text-xs text-blue-600 mt-1">AI matching in progress</p>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Reconciliation Results */}
+                                {/* Enhanced Reconciliation Results */}
                                 {reconciliationResults && (
                                     <div className="space-y-6">
-                                        {/* Summary Cards */}
+                                        {/* Enhanced Summary Cards */}
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            <div className="bg-white rounded-lg shadow p-6">
+                                            <div className="bg-white rounded-lg shadow p-6 metric-card">
                                                 <div className="flex items-center">
-                                                    <CheckCircle className="h-8 w-8 text-green-600" />
+                                                    <div className="p-2 bg-green-100 rounded-lg">
+                                                        <CheckCircle className="h-6 w-6 text-green-600" />
+                                                    </div>
                                                     <div className="ml-4">
-                                                        <p className="text-sm font-medium text-gray-500">Total Matches</p>
+                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                            <Target className="w-3 h-3" />
+                                                            Total Matches
+                                                        </p>
                                                         <p className="text-2xl font-semibold text-gray-900">
                                                             {reconciliationResults.summary.totalMatches}
                                                         </p>
-                                                        <p className="text-xs text-gray-500">
+                                                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                            <Award className="w-3 h-3 text-green-600" />
                                                             {reconciliationResults.summary.exactMatches} exact, {reconciliationResults.summary.fuzzyMatches} fuzzy
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-lg shadow p-6">
+                                            <div className="bg-white rounded-lg shadow p-6 metric-card">
                                                 <div className="flex items-center">
-                                                    <TrendingUp className="h-8 w-8 text-blue-600" />
+                                                    <div className="p-2 bg-blue-100 rounded-lg">
+                                                        <TrendingUp className="h-6 w-6 text-blue-600" />
+                                                    </div>
                                                     <div className="ml-4">
-                                                        <p className="text-sm font-medium text-gray-500">Match Rate</p>
+                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                            <Percent className="w-3 h-3" />
+                                                            Match Rate
+                                                        </p>
                                                         <p className="text-2xl font-semibold text-gray-900">
                                                             {reconciliationResults.summary.matchRate}%
                                                         </p>
-                                                        <p className="text-xs text-gray-500">
+                                                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                            <Database className="w-3 h-3 text-blue-600" />
                                                             {reconciliationResults.summary.totalRecords} total records
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-lg shadow p-6">
+                                            <div className="bg-white rounded-lg shadow p-6 metric-card">
                                                 <div className="flex items-center">
-                                                    <Clock className="h-8 w-8 text-purple-600" />
+                                                    <div className="p-2 bg-purple-100 rounded-lg">
+                                                        <Clock className="h-6 w-6 text-purple-600" />
+                                                    </div>
                                                     <div className="ml-4">
-                                                        <p className="text-sm font-medium text-gray-500">Time Saved</p>
+                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                                                            <Zap className="w-3 h-3" />
+                                                            Time Saved
+                                                        </p>
                                                         <p className="text-2xl font-semibold text-gray-900">
                                                             {reconciliationResults.summary.timeSaved?.timeSavedHours || 0}h
                                                         </p>
-                                                        <p className="text-xs text-gray-500">vs manual reconciliation</p>
+                                                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                            <ArrowUp className="w-3 h-3 text-purple-600" />
+                                                            vs manual reconciliation
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Production Results */}
+                                        {/* Enhanced Production Results */}
                                         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                             <div className="flex">
                                                 <CheckCircle className="h-5 w-5 text-green-400" />
                                                 <div className="ml-3">
-                                                    <h3 className="text-sm font-medium text-green-800">Production Reconciliation Complete</h3>
-                                                    <p className="mt-1 text-sm text-green-700">
+                                                    <h3 className="text-sm font-medium text-green-800 flex items-center gap-1">
+                                                        <Shield className="w-4 h-4" />
+                                                        Production Reconciliation Complete
+                                                    </h3>
+                                                    <p className="mt-1 text-sm text-green-700 flex items-center gap-1">
+                                                        <Cpu className="w-4 h-4" />
                                                         Real reconciliation completed successfully using your advanced algorithms. 
                                                         Results show actual matches from your uploaded files.
                                                     </p>
@@ -1123,33 +1450,48 @@
                                             </div>
                                         </div>
 
-                                        {/* Matches */}
+                                        {/* Enhanced Matches Display */}
                                         {reconciliationResults.matches && reconciliationResults.matches.length > 0 && (
                                             <div className="bg-white rounded-lg shadow">
                                                 <div className="px-6 py-4 border-b border-gray-200">
-                                                    <h3 className="text-lg font-medium text-gray-900">Matched Records</h3>
+                                                    <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                        <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                                        Matched Records
+                                                        <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                                            {reconciliationResults.matches.length} found
+                                                        </span>
+                                                    </h3>
                                                 </div>
                                                 <div className="p-6">
                                                     <div className="space-y-4">
                                                         {reconciliationResults.matches.map((match) => (
-                                                            <div key={match.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                                                            <div key={match.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                                                 <div className="flex items-center justify-between mb-3">
-                                                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                                                    <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1 ${
                                                                         match.matchType === 'exact' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                                                     }`}>
+                                                                        {match.matchType === 'exact' ? <CheckCircle className="w-3 h-3" /> : <Search className="w-3 h-3" />}
                                                                         {match.matchType} match ({Math.round(match.confidence * 100)}% confidence)
                                                                     </span>
                                                                 </div>
                                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-900">{match.record1.fileName}</p>
-                                                                        <p className="text-sm text-gray-600">
+                                                                    <div className="p-3 bg-blue-50 rounded-lg">
+                                                                        <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                                                            <FileText className="w-4 h-4 text-blue-600" />
+                                                                            {match.record1.fileName}
+                                                                        </p>
+                                                                        <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                                                                            <Users className="w-3 h-3" />
                                                                             {match.record1.data.patientName} - {formatCurrency(parseFloat(match.record1.data.amount || 0))} - {match.record1.data.service}
                                                                         </p>
                                                                     </div>
-                                                                    <div>
-                                                                        <p className="text-sm font-medium text-gray-900">{match.record2.fileName}</p>
-                                                                        <p className="text-sm text-gray-600">
+                                                                    <div className="p-3 bg-green-50 rounded-lg">
+                                                                        <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                                                            <FileText className="w-4 h-4 text-green-600" />
+                                                                            {match.record2.fileName}
+                                                                        </p>
+                                                                        <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                                                                            <Award className="w-3 h-3" />
                                                                             {match.record2.data.patientName} - {match.record2.data.points} points - {match.record2.data.rewardType}
                                                                         </p>
                                                                     </div>
@@ -1161,23 +1503,39 @@
                                             </div>
                                         )}
 
-                                        {/* Unmatched Records */}
+                                        {/* Enhanced Unmatched Records */}
                                         {reconciliationResults.unmatched && reconciliationResults.unmatched.length > 0 && (
                                             <div className="bg-white rounded-lg shadow">
                                                 <div className="px-6 py-4 border-b border-gray-200">
-                                                    <h3 className="text-lg font-medium text-gray-900">Unmatched Records</h3>
+                                                    <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                        <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                                                        Unmatched Records
+                                                        <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                                                            {reconciliationResults.unmatched.length} items
+                                                        </span>
+                                                    </h3>
                                                 </div>
                                                 <div className="p-6">
                                                     <div className="space-y-3">
                                                         {reconciliationResults.unmatched.map((item, index) => (
-                                                            <div key={index} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                                                                <div>
-                                                                    <p className="text-sm font-medium text-gray-900">
-                                                                        {item.record?.patientName || 'Unknown'} - {formatCurrency(parseFloat(item.record?.amount || 0))}
-                                                                    </p>
-                                                                    <p className="text-xs text-gray-500">{item.fileName}</p>
+                                                            <div key={index} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                                                                <div className="flex items-center gap-3">
+                                                                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                                                                    <div>
+                                                                        <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                                                            <Users className="w-3 h-3" />
+                                                                            {item.record?.patientName || 'Unknown'} - {formatCurrency(parseFloat(item.record?.amount || 0))}
+                                                                        </p>
+                                                                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                                            <FileText className="w-3 h-3" />
+                                                                            {item.fileName}
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
-                                                                <span className="text-xs text-yellow-600">{item.reason}</span>
+                                                                <span className="text-xs text-yellow-600 bg-yellow-200 px-2 py-1 rounded-full flex items-center gap-1">
+                                                                    <Info className="w-3 h-3" />
+                                                                    {item.reason}
+                                                                </span>
                                                             </div>
                                                         ))}
                                                     </div>
@@ -1189,61 +1547,108 @@
                             </div>
                         )}
 
-                        {/* ✅ ENHANCED REPORTS TAB */}
+                        {/* ✅ SUPER ENHANCED REPORTS TAB WITH COMPREHENSIVE ICONS */}
                         {activeTab === 'reports' && (
                             <div className="space-y-8">
-                                {/* Report Generation Section */}
+                                {/* Enhanced Report Generation Section */}
                                 <div className="bg-white rounded-lg shadow p-6">
-                                    <h3 className="text-lg font-medium text-gray-900 mb-6">Export Reports</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-6 flex items-center gap-2">
+                                        <BarChart3 className="w-5 h-5 text-blue-600" />
+                                        Export Reports
+                                        <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
+                                            <Award className="w-3 h-3" />
+                                            Enterprise
+                                        </span>
+                                    </h3>
                                     
                                     {reconciliationResults ? (
                                         <div>
-                                            {/* Business Intelligence Overview */}
+                                            {/* Enhanced Business Intelligence Overview */}
                                             <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                                                <h4 className="text-lg font-semibold text-gray-900 mb-4">Business Intelligence Summary</h4>
+                                                <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                    <TrendingUp className="w-5 h-5 text-blue-600" />
+                                                    Business Intelligence Summary
+                                                    <Zap className="w-4 h-4 text-yellow-500 animate-pulse" />
+                                                </h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <div className="text-center">
+                                                    <div className="text-center bg-white p-4 rounded-lg shadow-sm">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-blue-100 rounded-full">
+                                                                <Target className="w-6 h-6 text-blue-600" />
+                                                            </div>
+                                                        </div>
                                                         <p className="text-3xl font-bold text-blue-600">{reconciliationResults.summary.totalMatches}</p>
-                                                        <p className="text-sm text-gray-600">Matches Found</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <CheckCircle className="w-3 h-3" />
+                                                            Matches Found
+                                                        </p>
                                                     </div>
-                                                    <div className="text-center">
+                                                    <div className="text-center bg-white p-4 rounded-lg shadow-sm">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-green-100 rounded-full">
+                                                                <Percent className="w-6 h-6 text-green-600" />
+                                                            </div>
+                                                        </div>
                                                         <p className="text-3xl font-bold text-green-600">{reconciliationResults.summary.matchRate}%</p>
-                                                        <p className="text-sm text-gray-600">Success Rate</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <TrendingUp className="w-3 h-3" />
+                                                            Success Rate
+                                                        </p>
                                                     </div>
-                                                    <div className="text-center">
+                                                    <div className="text-center bg-white p-4 rounded-lg shadow-sm">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-purple-100 rounded-full">
+                                                                <Clock className="w-6 h-6 text-purple-600" />
+                                                            </div>
+                                                        </div>
                                                         <p className="text-3xl font-bold text-purple-600">{calculateBusinessMetrics(reconciliationResults.summary).timeSavedHours}h</p>
-                                                        <p className="text-sm text-gray-600">Time Saved</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <Zap className="w-3 h-3" />
+                                                            Time Saved
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {/* Report Generation Cards */}
+                                            {/* Enhanced Report Generation Cards */}
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                                 <div className="report-card border rounded-lg p-6 cursor-pointer hover:shadow-lg" onClick={() => generateReport('executive-summary')}>
                                                     <div className="flex items-center mb-4">
                                                         <div className="p-3 bg-blue-100 rounded-lg mr-4">
-                                                            <FileText className="w-8 h-8 text-blue-600" />
+                                                            <div className="relative">
+                                                                <FileText className="w-8 h-8 text-blue-600" />
+                                                                <Award className="w-4 h-4 absolute -top-1 -right-1 text-yellow-500" />
+                                                            </div>
                                                         </div>
                                                         <div>
-                                                            <h4 className="text-lg font-semibold text-gray-900">Executive Summary</h4>
-                                                            <p className="text-sm text-gray-500">Professional PDF report for management</p>
+                                                            <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                                Executive Summary
+                                                                <Star className="w-4 h-4 text-yellow-500" />
+                                                            </h4>
+                                                            <p className="text-sm text-gray-500 flex items-center gap-1">
+                                                                <Briefcase className="w-3 h-3" />
+                                                                Professional PDF report for management
+                                                            </p>
                                                         </div>
                                                     </div>
-                                                    <div className="space-y-2 mb-4">
-                                                        <p className="text-sm text-gray-600">
-                                                            📊 High-level overview with {reconciliationResults.summary.totalMatches} matches 
+                                                    <div className="space-y-3 mb-4">
+                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                                                            <BarChart className="w-4 h-4 text-blue-500" />
+                                                            High-level overview with {reconciliationResults.summary.totalMatches} matches 
                                                             and {reconciliationResults.summary.matchRate}% success rate
                                                         </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            💰 ROI analysis showing ${calculateBusinessMetrics(reconciliationResults.summary).revenueRecovery} potential recovery
+                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                                                            <DollarSign className="w-4 h-4 text-green-500" />
+                                                            ROI analysis showing ${calculateBusinessMetrics(reconciliationResults.summary).revenueRecovery} potential recovery
                                                         </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            ⏱️ Time savings: {calculateBusinessMetrics(reconciliationResults.summary).timeSavedHours} hours vs manual processing
+                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                                                            <Clock className="w-4 h-4 text-purple-500" />
+                                                            Time savings: {calculateBusinessMetrics(reconciliationResults.summary).timeSavedHours} hours vs manual processing
                                                         </p>
                                                     </div>
                                                     <button 
                                                         disabled={generatingReport}
-                                                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                                                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-all"
                                                     >
                                                         {generatingReport ? (
                                                             <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -1251,33 +1656,46 @@
                                                             <Download className="w-4 h-4 mr-2" />
                                                         )}
                                                         Generate PDF Report
+                                                        <ArrowRight className="w-4 h-4 ml-2" />
                                                     </button>
                                                 </div>
                                                 
                                                 <div className="report-card border rounded-lg p-6 cursor-pointer hover:shadow-lg" onClick={() => generateReport('detailed-analysis')}>
                                                     <div className="flex items-center mb-4">
                                                         <div className="p-3 bg-green-100 rounded-lg mr-4">
-                                                            <FileSpreadsheet className="w-8 h-8 text-green-600" />
+                                                            <div className="relative">
+                                                                <FileSpreadsheet className="w-8 h-8 text-green-600" />
+                                                                <Database className="w-4 h-4 absolute -top-1 -right-1 text-blue-500" />
+                                                            </div>
                                                         </div>
                                                         <div>
-                                                            <h4 className="text-lg font-semibold text-gray-900">Detailed Analysis</h4>
-                                                            <p className="text-sm text-gray-500">Complete Excel export with all data</p>
+                                                            <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                                Detailed Analysis
+                                                                <Layers className="w-4 h-4 text-green-500" />
+                                                            </h4>
+                                                            <p className="text-sm text-gray-500 flex items-center gap-1">
+                                                                <Database className="w-3 h-3" />
+                                                                Complete Excel export with all data
+                                                            </p>
                                                         </div>
                                                     </div>
-                                                    <div className="space-y-2 mb-4">
-                                                        <p className="text-sm text-gray-600">
-                                                            📋 Complete match results with confidence scores
+                                                    <div className="space-y-3 mb-4">
+                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                                                            <List className="w-4 h-4 text-green-500" />
+                                                            Complete match results with confidence scores
                                                         </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            🔍 Unmatched records analysis and recommendations
+                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                                                            <Search className="w-4 h-4 text-yellow-500" />
+                                                            Unmatched records analysis and recommendations
                                                         </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            📈 Performance metrics and business intelligence
+                                                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                                                            <TrendingUp className="w-4 h-4 text-blue-500" />
+                                                            Performance metrics and business intelligence
                                                         </p>
                                                     </div>
                                                     <button 
                                                         disabled={generatingReport}
-                                                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                                                        className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 transition-all"
                                                     >
                                                         {generatingReport ? (
                                                             <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -1285,33 +1703,69 @@
                                                             <Download className="w-4 h-4 mr-2" />
                                                         )}
                                                         Download Excel File
+                                                        <ExternalLink className="w-4 h-4 ml-2" />
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            {/* Business Metrics Dashboard */}
+                                            {/* Enhanced Business Metrics Dashboard */}
                                             <div className="bg-white border rounded-lg p-6">
-                                                <h4 className="text-lg font-semibold text-gray-900 mb-4">Performance Analytics</h4>
+                                                <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                    <Activity className="w-5 h-5 text-blue-600" />
+                                                    Performance Analytics
+                                                    <span className="text-sm bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
+                                                        <Zap className="w-3 h-3" />
+                                                        Live Data
+                                                    </span>
+                                                </h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                                                        <DollarSign className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                                                    <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200 hover:shadow-md transition-all">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-blue-200 rounded-full">
+                                                                <DollarSign className="w-6 h-6 text-blue-700" />
+                                                            </div>
+                                                        </div>
                                                         <p className="text-2xl font-bold text-blue-600">${calculateBusinessMetrics(reconciliationResults.summary).costSavings}</p>
-                                                        <p className="text-sm text-gray-600">Cost Savings</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <ArrowUp className="w-3 h-3 text-green-500" />
+                                                            Cost Savings
+                                                        </p>
                                                     </div>
-                                                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                                                        <TrendingUp className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                                                    <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200 hover:shadow-md transition-all">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-green-200 rounded-full">
+                                                                <TrendingUp className="w-6 h-6 text-green-700" />
+                                                            </div>
+                                                        </div>
                                                         <p className="text-2xl font-bold text-green-600">{calculateBusinessMetrics(reconciliationResults.summary).roi}%</p>
-                                                        <p className="text-sm text-gray-600">ROI</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <Award className="w-3 h-3 text-yellow-500" />
+                                                            ROI
+                                                        </p>
                                                     </div>
-                                                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                                                        <Clock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                                                    <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200 hover:shadow-md transition-all">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-purple-200 rounded-full">
+                                                                <Clock className="w-6 h-6 text-purple-700" />
+                                                            </div>
+                                                        </div>
                                                         <p className="text-2xl font-bold text-purple-600">{calculateBusinessMetrics(reconciliationResults.summary).efficiencyGain}%</p>
-                                                        <p className="text-sm text-gray-600">Efficiency Gain</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <Zap className="w-3 h-3 text-purple-500" />
+                                                            Efficiency Gain
+                                                        </p>
                                                     </div>
-                                                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                                                        <BarChart3 className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-                                                        <p className="text-2xl font-bold text-yellow-600">{calculateBusinessMetrics(reconciliationResults.summary).processingSpeed}</p>
-                                                        <p className="text-sm text-gray-600">Processing Speed</p>
+                                                    <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200 hover:shadow-md transition-all">
+                                                        <div className="flex items-center justify-center mb-2">
+                                                            <div className="p-2 bg-yellow-200 rounded-full">
+                                                                <Activity className="w-6 h-6 text-yellow-700" />
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-xl font-bold text-yellow-600">{calculateBusinessMetrics(reconciliationResults.summary).processingSpeed}</p>
+                                                        <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                                                            <Cpu className="w-3 h-3 text-blue-500" />
+                                                            Processing Speed
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1319,47 +1773,94 @@
                                         </div>
                                     ) : (
                                         <div className="text-center py-12">
-                                            <FileText className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                                            <h4 className="text-lg font-medium text-gray-900 mb-2">No Reconciliation Data Available</h4>
-                                            <p className="text-gray-600 mb-6">Run a reconciliation to generate comprehensive reports and business intelligence.</p>
+                                            <div className="flex justify-center mb-4">
+                                                <div className="relative">
+                                                    <FileText className="w-16 h-16 text-gray-400" />
+                                                    <AlertCircle className="w-6 h-6 absolute -top-2 -right-2 text-blue-500 bg-white rounded-full border-2 border-blue-500" />
+                                                </div>
+                                            </div>
+                                            <h4 className="text-lg font-medium text-gray-900 mb-2 flex items-center justify-center gap-2">
+                                                <Info className="w-5 h-5 text-blue-600" />
+                                                No Reconciliation Data Available
+                                            </h4>
+                                            <p className="text-gray-600 mb-6 flex items-center justify-center gap-1">
+                                                <Search className="w-4 h-4" />
+                                                Run a reconciliation to generate comprehensive reports and business intelligence.
+                                            </p>
                                             <button
                                                 onClick={() => setActiveTab('reconciliation')}
-                                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-all"
                                             >
-                                                <BarChart3 className="w-5 h-5 mr-2" />
+                                                <Play className="w-5 h-5 mr-2" />
                                                 Start Reconciliation
+                                                <ArrowRight className="w-5 h-5 ml-2" />
                                             </button>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Report History */}
+                                {/* Enhanced Report History */}
                                 {reportHistory.length > 0 && (
                                     <div className="bg-white rounded-lg shadow">
                                         <div className="px-6 py-4 border-b border-gray-200">
-                                            <h3 className="text-lg font-medium text-gray-900">Report History</h3>
+                                            <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                <FolderOpen className="w-5 h-5 text-blue-600" />
+                                                Report History
+                                                <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full flex items-center gap-1">
+                                                    <Hash className="w-3 h-3" />
+                                                    {reportHistory.length} reports
+                                                </span>
+                                            </h3>
                                         </div>
                                         <div className="p-6">
                                             <div className="space-y-4">
                                                 {reportHistory.map((report) => (
-                                                    <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                                                    <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-all hover:shadow-md">
                                                         <div className="flex items-center space-x-4">
-                                                            {report.type === 'Executive Summary' ? (
-                                                                <FileText className="w-6 h-6 text-blue-600" />
-                                                            ) : (
-                                                                <FileSpreadsheet className="w-6 h-6 text-green-600" />
-                                                            )}
+                                                            <div className={`p-2 rounded-lg ${report.type === 'Executive Summary' ? 'bg-blue-100' : 'bg-green-100'}`}>
+                                                                {report.type === 'Executive Summary' ? (
+                                                                    <FileText className="w-6 h-6 text-blue-600" />
+                                                                ) : (
+                                                                    <FileSpreadsheet className="w-6 h-6 text-green-600" />
+                                                                )}
+                                                            </div>
                                                             <div>
-                                                                <p className="text-sm font-medium text-gray-900">{report.type}</p>
-                                                                <p className="text-xs text-gray-500">
-                                                                    {report.matches} matches • {report.matchRate}% rate • {report.timeSaved}h saved
+                                                                <p className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                                                    {report.type}
+                                                                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center gap-1">
+                                                                        <CheckCircle className="w-3 h-3" />
+                                                                        Complete
+                                                                    </span>
+                                                                </p>
+                                                                <p className="text-xs text-gray-500 flex items-center gap-3">
+                                                                    <span className="flex items-center gap-1">
+                                                                        <Target className="w-3 h-3" />
+                                                                        {report.matches} matches
+                                                                    </span>
+                                                                    <span className="flex items-center gap-1">
+                                                                        <Percent className="w-3 h-3" />
+                                                                        {report.matchRate}% rate
+                                                                    </span>
+                                                                    <span className="flex items-center gap-1">
+                                                                        <Clock className="w-3 h-3" />
+                                                                        {report.timeSaved}h saved
+                                                                    </span>
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center space-x-2">
-                                                            <span className="text-xs text-gray-500">{formatDate(report.createdAt)}</span>
-                                                            <button className="p-2 text-gray-400 hover:text-gray-600">
+                                                        <div className="flex items-center space-x-3">
+                                                            <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                                <Calendar className="w-3 h-3" />
+                                                                {formatDate(report.createdAt)}
+                                                            </span>
+                                                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                                                                 <Download className="w-4 h-4" />
+                                                            </button>
+                                                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                                                <Share className="w-4 h-4" />
+                                                            </button>
+                                                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                                                <MoreHorizontal className="w-4 h-4" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -1375,18 +1876,26 @@
             );
         };
 
-        // Render the dashboard
+        // Enhanced render with error boundary
         try {
             ReactDOM.render(<IntegratedMedSpaSyncDashboard />, document.getElementById('dashboard-root'));
-            console.log('Production dashboard with enterprise reporting rendered successfully');
+            console.log('🎨 Enterprise dashboard with comprehensive icon system rendered successfully');
         } catch (error) {
             console.error('Failed to render dashboard:', error);
             document.getElementById('dashboard-root').innerHTML = `
                 <div class="flex items-center justify-center min-h-screen bg-gray-50">
                     <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
                         <h2 class="text-xl font-semibold text-gray-900">Dashboard Error</h2>
                         <p class="mt-2 text-gray-600">Failed to load the dashboard. Please refresh the page.</p>
-                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
                             Refresh Page
                         </button>
                     </div>
