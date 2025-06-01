@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSpaSync Pro - Customer Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .welcome-text {
+            margin-bottom: 30px;
+        }
+
+        .welcome-text h2 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .login-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .forgot-password {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #764ba2;
+        }
+
+        .divider {
+            margin: 30px 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .demo-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .demo-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .support-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .support-info a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .enterprise-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .logo h1 {
+                font-size: 24px;
+            }
+            
+            .welcome-text h2 {
+                font-size: 20px;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .login-button {
+            background: #cbd5e0;
+        }
+
+        /* Success animation */
+        @keyframes success {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success {
+            animation: success 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="enterprise-badge">Enterprise</div>
+        
+        <div class="logo">
+            <h1>MedSpaSync Pro</h1>
+            <p>Rewards Reconciliation Platform</p>
+        </div>
+
+        <div class="welcome-text">
+            <h2>Welcome Back</h2>
+            <p>Sign in to your enterprise account</p>
+        </div>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="login-button" id="loginButton">
+                Sign In to Dashboard
+            </button>
+
+            <a href="#" class="forgot-password">Forgot your password?</a>
+        </form>
+
+        <div class="divider">
+            <span>New to MedSpaSync Pro?</span>
+        </div>
+
+        <a href="demo.html" class="demo-link">View Demo Experience</a>
+
+        <div class="support-info">
+            Need help? Contact <a href="mailto:support@medspasyncpro.com">support@medspasyncpro.com</a><br>
+            <small>© 2025 MythosMediaCo, LLC</small>
+        </div>
+    </div>
+
+    <script>
+        // Professional login form handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const button = document.getElementById('loginButton');
+            const container = document.querySelector('.login-container');
+            
+            // Add loading state
+            container.classList.add('loading');
+            button.textContent = 'Signing In...';
+            
+            // Get form data
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simulate authentication (replace with actual API call)
+            setTimeout(() => {
+                // For demo purposes - in production, validate against your Railway API
+                if (email && password) {
+                    // Success animation
+                    container.classList.remove('loading');
+                    container.classList.add('success');
+                    button.textContent = 'Success! Redirecting...';
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    // Error handling
+                    container.classList.remove('loading');
+                    button.textContent = 'Sign In to Dashboard';
+                    alert('Please enter valid credentials');
+                }
+            }, 1500);
+        });
+
+        // Demo account quick access (for development)
+        document.addEventListener('keydown', function(e) {
+            // Press Ctrl+D for demo account
+            if (e.ctrlKey && e.key === 'd') {
+                document.getElementById('email').value = 'test@medspasync.com';
+                document.getElementById('password').value = 'TestPassword123';
+            }
+        });
+
+        // Professional error handling
+        window.addEventListener('error', function(e) {
+            console.error('Login page error:', e.error);
+        });
+
+        // Track page analytics (replace with your analytics)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: 'Customer Login',
+                page_location: window.location.href
+            });
+        }
+    </script>
+</body>
+</html>
