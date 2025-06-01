@@ -317,6 +317,11 @@
                     container.classList.add('success');
                     button.textContent = 'Success! Redirecting...';
                     
+                    // Set demo authentication token for dashboard
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('authToken', 'demo-token-' + Date.now());
+                    
                     // Redirect to dashboard
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
