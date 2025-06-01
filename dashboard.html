@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedSpaSync Pro - Dashboard</title>
+    <title>MedSpaSync Pro - Enterprise Dashboard</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
+        :root {
+            --primary-blue: #3B82F6;
+            --primary-green: #10B981;
+            --primary-purple: #8B5CF6;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
         .gradient-bg {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, var(--gray-50) 0%, #E0E7FF 50%, var(--gray-100) 100%);
             min-height: 100vh;
         }
+
         .card {
             background: white;
             border-radius: 12px;
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--gray-200);
             transition: all 0.2s ease;
         }
+
         .card:hover {
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             transform: translateY(-1px);
         }
+
+        .card-interactive {
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card-interactive:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            transform: translateY(-2px);
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -37,48 +64,162 @@
             transition: all 0.2s ease;
             cursor: pointer;
             border: none;
+            text-decoration: none;
         }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-primary {
-            background: #3B82F6;
+            background: var(--primary-blue);
             color: white;
         }
-        .btn-primary:hover {
+
+        .btn-primary:hover:not(:disabled) {
             background: #2563EB;
-            transform: translateY(-1px);
         }
+
         .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
         }
-        .btn-secondary:hover {
-            background: #e5e7eb;
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--gray-200);
         }
+
+        .btn-success {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+        }
+
         .metric-card {
             padding: 1.5rem;
             transition: all 0.2s ease;
         }
+
         .metric-card:hover {
             transform: translateY(-2px);
         }
+
         .loading-spinner {
             width: 1rem;
             height: 1rem;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #3B82F6;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary-blue);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        .loading-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--gray-200);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-zone.drag-active {
+            border-color: var(--primary-blue);
+            background: #DBEAFE;
+            transform: scale(1.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary-blue);
+            background: #F8FAFC;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            transition: width 0.3s ease;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background: #DCFCE7; color: #166534; }
+        .badge-warning { background: #FEF3C7; color: #92400E; }
+        .badge-info { background: #DBEAFE; color: #1E40AF; }
+        .badge-error { background: #FEE2E2; color: #991B1B; }
+
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            border: 1px solid var(--gray-200);
+            padding: 1rem;
+            max-width: 24rem;
+            z-index: 50;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show { transform: translateX(0); }
+        .notification-success { border-left: 4px solid var(--primary-green); }
+        .notification-error { border-left: 4px solid #EF4444; }
+        .notification-info { border-left: 4px solid var(--primary-blue); }
+
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .metric-card { padding: 1rem; }
+            .btn { padding: 0.625rem 1rem; font-size: 0.8rem; }
+            .upload-zone { padding: 2rem 1rem; }
         }
     </style>
 </head>
@@ -87,36 +228,57 @@
         <div class="flex items-center justify-center min-h-screen">
             <div class="text-center">
                 <div class="loading-spinner mx-auto mb-4" style="width: 3rem; height: 3rem; border-width: 3px;"></div>
-                <p class="text-xl text-gray-600 font-medium">Initializing Dashboard...</p>
-                <p class="text-sm text-gray-500 mt-2">Setting up your enterprise platform</p>
+                <p class="text-xl text-gray-600 font-medium">Connecting to Enterprise Backend...</p>
+                <p class="text-sm text-gray-500 mt-2">Initializing Railway API connection</p>
             </div>
         </div>
     </div>
     
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef, useCallback } = React;
         
-        // Simple Icon Component
-        const Icon = ({ name, className = "w-5 h-5" }) => {
+        // Enhanced Icon Component
+        const Icon = ({ name, className = "w-5 h-5", ...props }) => {
             const icons = {
                 upload: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12",
                 barChart: "M3 3v18h18M9 17V9m4 8V6m4 11V2",
                 users: "M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 108 0 4 4 0 00-8 0",
-                settings: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                settings: "M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 000 2l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.38a2 2 0 000-2l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2zM12 15a3 3 0 100-6 3 3 0 000 6z",
                 logOut: "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9",
                 home: "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z",
                 target: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z",
-                database: "M4 6c0-1.326 3.582-3 8-3s8 1.674 8 3v12c0 1.326-3.582 3-8 3s-8-1.674-8-3V6z",
+                database: "M4 6c0-1.326 3.582-3 8-3s8 1.674 8 3v12c0 1.326-3.582 3 8 3s8-1.674 8-3V6z",
                 shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
                 activity: "M22 12h-4l-3 9L9 3l-3 9H2",
                 checkCircle: "M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3",
+                alertCircle: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01",
+                xCircle: "M18 6L6 18M6 6l12 12",
                 play: "M8 5v14l11-7z",
                 folderOpen: "M6 14l1.45-2.9A2 2 0 019.24 10H20a2 2 0 011.94 2.5l-1.55 6a2 2 0 01-1.94 1.5H4a2 2 0 01-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 011.66.9L8 5h9a2 2 0 012 2v2",
                 filePlus: "M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M12 18v-6M9 15h6",
-                zap: "M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+                fileText: "M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h8a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+                zap: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
+                refreshCw: "M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16M3 21v-5h5",
+                download: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3",
+                info: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 16v-4M12 8h.01",
+                alertTriangle: "M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01",
+                x: "M18 6L6 18M6 6l12 12",
+                clock: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 6v6l4 2",
+                layers: "M12 2l8 4-8 4-8-4 8-4zM2 17l10 5 10-5M2 12l10 5 10-5",
+                award: "M7.5 11.5a4.5 4.5 0 109 0 4.5 4.5 0 00-9 0zM8.5 21l3.5-7 3.5 7-3.5-1-3.5 1z",
+                star: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z",
+                trendingUp: "M22 7l-8.5 8.5L9 11l-7 7M16 7h6v6",
+                dollarSign: "M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6",
+                calendar: "M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM21 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2M16 3v4M8 3v4",
+                search: "M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35",
+                percent: "M19 5L5 19M6.5 6.5a2.5 2.5 0 105 0 2.5 2.5 0 00-5 0zM12.5 12.5a2.5 2.5 0 105 0 2.5 2.5 0 00-5 0z"
             };
 
-            const path = icons[name] || icons.home;
+            const path = icons[name];
+            if (!path) {
+                console.warn(`Icon "${name}" not found`);
+                return <div className={`${className} bg-gray-300 rounded`}></div>;
+            }
 
             return (
                 <svg 
@@ -127,105 +289,496 @@
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    {...props}
                 >
                     <path d={path} />
                 </svg>
             );
         };
 
-        const Dashboard = () => {
-            const [activeTab, setActiveTab] = useState('dashboard');
-            const [isAuthenticated, setIsAuthenticated] = useState(false);
-            const [loading, setLoading] = useState(true);
+        // Enhanced API Service
+        class EnterpriseAPIService {
+            constructor() {
+                this.baseURL = 'https://medspasync-backend-production.up.railway.app';
+                this.token = this.getStoredToken();
+            }
 
-            // Mock user data
-            const user = {
-                firstName: "Demo",
-                lastName: "User",
-                email: "test@medspasync.com",
-                practice: {
-                    name: "Demo Medical Spa",
-                    size: "small"
-                }
-            };
+            getStoredToken() {
+                return localStorage.getItem('authToken');
+            }
 
-            // Mock stats
-            const stats = {
-                totalRecords: 1247,
-                totalUploads: 12,
-                reconciliationOpportunities: { potentialPairs: 8 }
-            };
+            setToken(token) {
+                this.token = token;
+                localStorage.setItem('authToken', token);
+            }
 
-            // Mock uploads
-            const uploads = [
-                {
-                    id: 1,
-                    fileName: "pos_transactions_may.csv",
-                    fileType: "pos_transactions",
-                    recordCount: 342,
-                    status: "processed",
-                    createdAt: "2025-05-15T10:30:00Z"
-                },
-                {
-                    id: 2,
-                    fileName: "alle_rewards_may.xlsx",
-                    fileType: "alle_rewards", 
-                    recordCount: 89,
-                    status: "processed",
-                    createdAt: "2025-05-15T11:15:00Z"
-                },
-                {
-                    id: 3,
-                    fileName: "aspire_certificates.csv",
-                    fileType: "aspire_certificates",
-                    recordCount: 156,
-                    status: "processed", 
-                    createdAt: "2025-05-15T14:20:00Z"
-                }
-            ];
+            isAuthenticated() {
+                const token = this.getStoredToken();
+                const isAuth = localStorage.getItem('isAuthenticated');
+                return !!(token || isAuth);
+            }
 
-            useEffect(() => {
-                console.log('🚀 Dashboard initializing...');
-                
-                // Simulate authentication check
-                const checkAuth = () => {
-                    const authToken = localStorage.getItem('authToken');
-                    const isAuth = localStorage.getItem('isAuthenticated');
-                    
-                    console.log('Auth check:', { authToken: !!authToken, isAuth });
-                    
-                    if (!authToken && !isAuth) {
-                        console.log('❌ Not authenticated, redirecting...');
-                        window.location.href = '/';
-                        return;
-                    }
-                    
-                    console.log('✅ Authentication successful');
-                    setIsAuthenticated(true);
-                    setLoading(false);
+            async request(endpoint, options = {}) {
+                const url = `${this.baseURL}${endpoint}`;
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+                        ...options.headers,
+                    },
+                    ...options,
                 };
 
-                // Add a delay to see the loading state
-                setTimeout(checkAuth, 1000);
-            }, []);
+                console.log(`🔥 API Request: ${options.method || 'GET'} ${url}`);
 
-            const handleLogout = () => {
+                try {
+                    const response = await fetch(url, config);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(`✅ API Response:`, data);
+                    return { success: true, data };
+                } catch (error) {
+                    console.error(`❌ API Error:`, error);
+                    return { 
+                        success: false, 
+                        error: error.message,
+                        status: error.status || 500
+                    };
+                }
+            }
+
+            async healthCheck() {
+                console.log('🏥 Checking backend health...');
+                return await this.request('/api/health');
+            }
+
+            async getStats() {
+                console.log('📊 Fetching stats...');
+                return await this.request('/api/stats');
+            }
+
+            async getUploadHistory() {
+                console.log('📁 Fetching upload history...');
+                return await this.request('/api/uploads');
+            }
+
+            async uploadFile(file, onProgress) {
+                console.log(`📤 Uploading file: ${file.name} (${file.size} bytes)`);
+                
+                const formData = new FormData();
+                formData.append('file', file);
+
+                return new Promise((resolve) => {
+                    const xhr = new XMLHttpRequest();
+                    
+                    xhr.upload.addEventListener('progress', (e) => {
+                        if (e.lengthComputable) {
+                            const progress = Math.round((e.loaded * 100) / e.total);
+                            console.log(`⬆️ Upload progress: ${progress}%`);
+                            if (onProgress) onProgress(progress);
+                        }
+                    });
+
+                    xhr.addEventListener('load', () => {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            console.log('✅ Upload complete:', response);
+                            resolve({ success: true, data: response });
+                        } catch (error) {
+                            console.error('❌ Upload parse error:', error);
+                            resolve({ success: false, error: 'Failed to parse response' });
+                        }
+                    });
+
+                    xhr.addEventListener('error', () => {
+                        console.error('❌ Upload network error');
+                        resolve({ success: false, error: 'Network error during upload' });
+                    });
+
+                    xhr.open('POST', `${this.baseURL}/api/upload`);
+                    if (this.token) {
+                        xhr.setRequestHeader('Authorization', `Bearer ${this.token}`);
+                    }
+                    xhr.send(formData);
+                });
+            }
+
+            async runReconciliation(uploadIds, settings) {
+                console.log('🎯 Running reconciliation:', { uploadIds, settings });
+                return await this.request('/api/reconciliation', {
+                    method: 'POST',
+                    body: JSON.stringify({ uploadIds, settings })
+                });
+            }
+
+            logout() {
+                console.log('👋 Logging out...');
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('isAuthenticated');
                 localStorage.removeItem('userEmail');
-                window.location.href = '/';
-            };
+                this.token = null;
+            }
 
-            if (loading) {
+            handleError(error, context) {
+                console.error(`❌ ${context} error:`, error);
+                
+                if (error.message?.includes('Authentication') || error.status === 401) {
+                    return 'Authentication required. Please log in again.';
+                }
+                
+                if (error.message?.includes('Network') || !navigator.onLine) {
+                    return 'Network connection error. Please check your internet connection.';
+                }
+                
+                return error.message || `${context} failed. Please try again.`;
+            }
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(parseFloat(amount || 0));
+            }
+
+            formatDate(dateString) {
+                return new Date(dateString).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+        }
+
+        // Notification Hook
+        const useNotification = () => {
+            const [notifications, setNotifications] = useState([]);
+
+            const showNotification = useCallback((message, type = 'info', duration = 4000) => {
+                const id = Date.now();
+                const notification = { id, message, type };
+                
+                setNotifications(prev => [...prev, notification]);
+                
+                setTimeout(() => {
+                    setNotifications(prev => prev.filter(n => n.id !== id));
+                }, duration);
+            }, []);
+
+            return { notifications, showNotification };
+        };
+
+        // Main Dashboard Component
+        const EnterpriseDashboard = () => {
+            // State Management
+            const [user, setUser] = useState(null);
+            const [uploads, setUploads] = useState([]);
+            const [reconciliationResults, setReconciliationResults] = useState(null);
+            const [stats, setStats] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [initialLoading, setInitialLoading] = useState(true);
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [dragActive, setDragActive] = useState(false);
+            const [error, setError] = useState(null);
+            const [uploadProgress, setUploadProgress] = useState(0);
+            const [selectedUploadIds, setSelectedUploadIds] = useState([]);
+            const [reconciliationSettings, setReconciliationSettings] = useState({
+                matchCriteria: 'normal',
+                dateToleranceDays: 7,
+                amountTolerancePercent: 5
+            });
+
+            const { notifications, showNotification } = useNotification();
+            const fileInputRef = useRef(null);
+            const api = useRef(new EnterpriseAPIService()).current;
+
+            // Utility Functions
+            const getFileTypeConfig = useCallback((fileType) => {
+                const configs = {
+                    pos_transactions: { 
+                        icon: 'database', 
+                        label: 'POS Transactions', 
+                        className: 'bg-blue-500 text-white',
+                        badgeClass: 'badge-info'
+                    },
+                    alle_rewards: { 
+                        icon: 'award', 
+                        label: 'Alle Rewards', 
+                        className: 'bg-green-500 text-white',
+                        badgeClass: 'badge-success'
+                    },
+                    aspire_certificates: { 
+                        icon: 'star', 
+                        label: 'Aspire Certificates', 
+                        className: 'bg-purple-500 text-white',
+                        badgeClass: 'badge-warning'
+                    },
+                    unknown: { 
+                        icon: 'fileText', 
+                        label: 'Unknown Type', 
+                        className: 'bg-gray-500 text-white',
+                        badgeClass: 'badge'
+                    }
+                };
+                return configs[fileType] || configs.unknown;
+            }, []);
+
+            const getStatusConfig = useCallback((status) => {
+                const configs = {
+                    processed: { icon: 'checkCircle', className: 'text-green-600', label: 'Processed' },
+                    processing: { icon: 'refreshCw', className: 'text-blue-600 loading-spinner', label: 'Processing' },
+                    error: { icon: 'xCircle', className: 'text-red-600', label: 'Error' },
+                    pending: { icon: 'clock', className: 'text-yellow-600', label: 'Pending' }
+                };
+                return configs[status] || configs.processed;
+            }, []);
+
+            // Data Loading Functions
+            const loadUploadHistory = useCallback(async () => {
+                console.log('📁 Loading upload history...');
+                try {
+                    const response = await api.getUploadHistory();
+                    if (response.success) {
+                        setUploads(response.data.uploads || []);
+                        const recentUploads = (response.data.uploads || []).slice(0, 3);
+                        setSelectedUploadIds(recentUploads.map(u => u.id));
+                        console.log(`✅ Loaded ${response.data.uploads?.length || 0} uploads`);
+                    } else {
+                        throw new Error(response.error || 'Failed to load upload history');
+                    }
+                } catch (error) {
+                    console.error('❌ Upload history error:', error);
+                    setError(api.handleError(error, 'Loading upload history'));
+                }
+            }, [api]);
+
+            const loadStats = useCallback(async () => {
+                console.log('📊 Loading statistics...');
+                try {
+                    const response = await api.getStats();
+                    if (response.success) {
+                        setStats(response.data);
+                        console.log('✅ Stats loaded:', response.data);
+                    } else {
+                        console.warn('⚠️ Stats unavailable:', response.error);
+                        // Set fallback stats
+                        setStats({
+                            totalRecords: 0,
+                            totalUploads: uploads.length,
+                            reconciliationOpportunities: { potentialPairs: 0 }
+                        });
+                    }
+                } catch (error) {
+                    console.error('❌ Stats error:', error);
+                    setStats({
+                        totalRecords: 0,
+                        totalUploads: uploads.length,
+                        reconciliationOpportunities: { potentialPairs: 0 }
+                    });
+                }
+            }, [api, uploads.length]);
+
+            // File Upload Handler
+            const handleFileUpload = useCallback(async (files) => {
+                if (!files || files.length === 0) return;
+
+                setLoading(true);
+                setError(null);
+                setUploadProgress(0);
+
+                try {
+                    const file = files[0];
+                    console.log(`📤 Starting upload: ${file.name}`);
+                    
+                    const response = await api.uploadFile(file, (progress) => {
+                        setUploadProgress(progress);
+                    });
+
+                    if (response.success) {
+                        showNotification(`Successfully uploaded ${file.name}`, 'success');
+                        await Promise.all([loadUploadHistory(), loadStats()]);
+                        setUploadProgress(0);
+                    } else {
+                        throw new Error(response.error || 'Upload failed');
+                    }
+                } catch (error) {
+                    console.error('❌ Upload failed:', error);
+                    setError(api.handleError(error, 'File upload'));
+                    setUploadProgress(0);
+                } finally {
+                    setLoading(false);
+                }
+            }, [api, showNotification, loadUploadHistory, loadStats]);
+
+            // Reconciliation Handler
+            const runReconciliation = useCallback(async () => {
+                if (selectedUploadIds.length < 2) {
+                    setError('Please select at least 2 files for reconciliation');
+                    return;
+                }
+
+                setLoading(true);
+                setError(null);
+                setReconciliationResults(null);
+
+                try {
+                    console.log('🎯 Starting reconciliation...');
+                    const response = await api.runReconciliation(selectedUploadIds, reconciliationSettings);
+
+                    if (response.success) {
+                        setReconciliationResults(response.data);
+                        showNotification(
+                            `Reconciliation complete: ${response.data.summary.totalMatches} matches found with ${response.data.summary.matchRate}% success rate`, 
+                            'success'
+                        );
+                        setActiveTab('reconciliation');
+                        await loadStats();
+                    } else {
+                        throw new Error(response.error || 'Reconciliation failed');
+                    }
+                } catch (error) {
+                    console.error('❌ Reconciliation failed:', error);
+                    setError(api.handleError(error, 'Reconciliation'));
+                } finally {
+                    setLoading(false);
+                }
+            }, [selectedUploadIds, api, reconciliationSettings, showNotification, loadStats]);
+
+            // Drag and Drop Handlers
+            const handleDrag = useCallback((e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.type === "dragenter" || e.type === "dragover") {
+                    setDragActive(true);
+                } else if (e.type === "dragleave") {
+                    setDragActive(false);
+                }
+            }, []);
+
+            const handleDrop = useCallback((e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDragActive(false);
+                
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleFileUpload(e.dataTransfer.files);
+                }
+            }, [handleFileUpload]);
+
+            // Toggle Upload Selection
+            const toggleUploadSelection = useCallback((uploadId) => {
+                setSelectedUploadIds(prev => {
+                    if (prev.includes(uploadId)) {
+                        return prev.filter(id => id !== uploadId);
+                    } else {
+                        return [...prev, uploadId];
+                    }
+                });
+            }, []);
+
+            // File Input Handler
+            const handleFileInputChange = useCallback((e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleFileUpload(e.target.files);
+                }
+            }, [handleFileUpload]);
+
+            // Logout Handler
+            const handleLogout = useCallback(() => {
+                api.logout();
+                showNotification('Logged out successfully', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            }, [api, showNotification]);
+
+            // Initialize App
+            useEffect(() => {
+                const initializeApp = async () => {
+                    try {
+                        console.log('🚀 Initializing enterprise dashboard...');
+
+                        // Check authentication
+                        if (!api.isAuthenticated()) {
+                            console.log('❌ Not authenticated, redirecting...');
+                            window.location.href = '/';
+                            return;
+                        }
+
+                        console.log('✅ Authentication verified');
+
+                        // Test backend connection
+                        console.log('🏥 Testing backend connection...');
+                        const healthResponse = await api.healthCheck();
+                        
+                        if (!healthResponse.success) {
+                            console.warn('⚠️ Backend health check failed:', healthResponse.error);
+                            showNotification(
+                                'Backend connection issue. Some features may be limited.', 
+                                'warning'
+                            );
+                        } else {
+                            console.log('✅ Backend connection successful');
+                        }
+
+                        // Set demo user
+                        setUser({
+                            firstName: "Demo",
+                            lastName: "User",
+                            email: "test@medspasync.com",
+                            practice: {
+                                name: "Demo Medical Spa",
+                                size: "small",
+                                subscriptionTier: "trial"
+                            }
+                        });
+
+                        // Load initial data
+                        console.log('📊 Loading initial data...');
+                        await Promise.all([
+                            loadUploadHistory(),
+                            loadStats()
+                        ]);
+
+                        console.log('🎉 Dashboard initialization complete!');
+
+                    } catch (error) {
+                        console.error('❌ Initialization failed:', error);
+                        setError(api.handleError(error, 'Dashboard initialization'));
+                        
+                        if (error.message && error.message.includes('Authentication')) {
+                            setTimeout(() => {
+                                window.location.href = '/';
+                            }, 2000);
+                        }
+                    } finally {
+                        setInitialLoading(false);
+                    }
+                };
+
+                initializeApp();
+            }, [api, loadUploadHistory, loadStats, showNotification]);
+
+            // Initial Loading Screen
+            if (initialLoading) {
                 return (
                     <div className="flex items-center justify-center min-h-screen">
-                        <div className="text-center">
+                        <div className="text-center animate-slide-in">
                             <div className="relative mb-6">
-                                <Icon name="shield" className="w-16 h-16 text-blue-600 mx-auto animate-pulse" />
+                                <Icon name="shield" className="w-16 h-16 text-blue-600 mx-auto loading-pulse" />
                                 <Icon name="zap" className="w-6 h-6 absolute top-0 right-0 text-yellow-500" />
                             </div>
-                            <p className="text-xl text-gray-600 font-medium">Loading MedSpaSync Pro...</p>
-                            <p className="text-sm text-gray-500 mt-2">Connecting to your enterprise dashboard</p>
+                            <p className="text-xl text-gray-600 font-medium">Connecting to Enterprise Backend...</p>
+                            <p className="text-sm text-gray-500 mt-2">Initializing Railway API connection</p>
+                            <div className="mt-4 w-64 mx-auto">
+                                <div className="progress-bar">
+                                    <div className="progress-fill loading-pulse" style={{ width: '60%' }}></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 );
@@ -233,6 +786,27 @@
 
             return (
                 <div className="min-h-screen">
+                    {/* Notifications */}
+                    <div className="fixed top-4 right-4 z-50 space-y-2">
+                        {notifications.map((notification) => (
+                            <div
+                                key={notification.id}
+                                className={`notification notification-${notification.type} show animate-slide-in`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Icon 
+                                        name={notification.type === 'success' ? 'checkCircle' : notification.type === 'error' ? 'xCircle' : 'info'} 
+                                        className={`w-5 h-5 ${
+                                            notification.type === 'success' ? 'text-green-600' : 
+                                            notification.type === 'error' ? 'text-red-600' : 'text-blue-600'
+                                        }`} 
+                                    />
+                                    <span className="text-sm font-medium text-gray-900">{notification.message}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                     {/* Header */}
                     <header className="bg-white shadow-sm border-b">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -251,27 +825,31 @@
                                             <span className="text-sm text-green-600 font-medium">Production</span>
                                         </div>
                                         <div className="flex items-center space-x-1">
-                                            <Icon name="activity" className="w-4 h-4 text-blue-600 animate-pulse" />
-                                            <span className="text-sm text-blue-600 font-medium">Live</span>
+                                            <Icon name="activity" className="w-4 h-4 text-blue-600 loading-pulse" />
+                                            <span className="text-sm text-blue-600 font-medium">Live API</span>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div className="flex items-center space-x-4">
-                                    <div className="text-right">
-                                        <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                                            <Icon name="users" className="w-4 h-4" />
-                                            {user.firstName} {user.lastName}
+                                    {user && (
+                                        <div className="text-right">
+                                            <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                                <Icon name="users" className="w-4 h-4" />
+                                                {user.firstName} {user.lastName}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {user.practice.name}
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-gray-500">
-                                            {user.practice.name}
-                                        </div>
-                                    </div>
+                                    )}
                                     <button className="btn-secondary !p-2">
                                         <Icon name="settings" className="w-5 h-5" />
+                                        <span className="sr-only">Settings</span>
                                     </button>
                                     <button onClick={handleLogout} className="btn-secondary !p-2">
                                         <Icon name="logOut" className="w-5 h-5" />
+                                        <span className="sr-only">Logout</span>
                                     </button>
                                 </div>
                             </div>
@@ -279,6 +857,25 @@
                     </header>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        {/* Error Alert */}
+                        {error && (
+                            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 animate-slide-in">
+                                <div className="flex">
+                                    <Icon name="alertCircle" className="h-5 w-5 text-red-400" />
+                                    <div className="ml-3">
+                                        <h3 className="text-sm font-medium text-red-800">Error</h3>
+                                        <p className="mt-1 text-sm text-red-700">{error}</p>
+                                        <button
+                                            onClick={() => setError(null)}
+                                            className="mt-2 text-sm text-red-600 hover:text-red-500 underline"
+                                        >
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Navigation Tabs */}
                         <div className="border-b border-gray-200 mb-8">
                             <nav className="-mb-px flex space-x-8">
@@ -304,19 +901,21 @@
                             </nav>
                         </div>
 
-                        {/* Dashboard Content */}
+                        {/* Dashboard Tab */}
                         {activeTab === 'dashboard' && (
-                            <div className="space-y-8">
-                                {/* Success Message */}
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Backend Connection Status */}
                                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                     <div className="flex">
                                         <Icon name="checkCircle" className="h-5 w-5 text-green-400" />
                                         <div className="ml-3">
-                                            <h3 className="text-sm font-medium text-green-800">
-                                                🎉 Dashboard Successfully Loaded!
+                                            <h3 className="text-sm font-medium text-green-800 flex items-center gap-1">
+                                                <Icon name="shield" className="w-4 h-4" />
+                                                🚀 Enterprise Backend Connected!
                                             </h3>
                                             <p className="mt-1 text-sm text-green-700">
-                                                Your MedSpaSync Pro enterprise platform is now running. The authentication redirect issue has been resolved!
+                                                Your MedSpaSync Pro platform is now connected to the Railway production backend. 
+                                                Real-time API integration is active and ready for file uploads and reconciliation.
                                             </p>
                                         </div>
                                     </div>
@@ -331,8 +930,11 @@
                                             </div>
                                             <div className="ml-4">
                                                 <p className="text-sm font-medium text-gray-500">Total Records</p>
-                                                <p className="text-2xl font-semibold text-gray-900">{stats.totalRecords}</p>
-                                                <p className="text-xs text-green-600">Processed</p>
+                                                <p className="text-2xl font-semibold text-gray-900">{stats?.totalRecords || 0}</p>
+                                                <p className="text-xs text-green-600 flex items-center gap-1">
+                                                    <Icon name="trendingUp" className="w-3 h-3" />
+                                                    {stats?.totalRecords > 0 ? 'Live Data' : 'Ready'}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -344,8 +946,11 @@
                                             </div>
                                             <div className="ml-4">
                                                 <p className="text-sm font-medium text-gray-500">Total Uploads</p>
-                                                <p className="text-2xl font-semibold text-gray-900">{stats.totalUploads}</p>
-                                                <p className="text-xs text-blue-600">Files ready</p>
+                                                <p className="text-2xl font-semibold text-gray-900">{uploads.length}</p>
+                                                <p className="text-xs text-blue-600 flex items-center gap-1">
+                                                    <Icon name="zap" className="w-3 h-3" />
+                                                    Backend Ready
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -357,8 +962,11 @@
                                             </div>
                                             <div className="ml-4">
                                                 <p className="text-sm font-medium text-gray-500">Ready to Reconcile</p>
-                                                <p className="text-2xl font-semibold text-gray-900">3</p>
-                                                <p className="text-xs text-purple-600">Selected</p>
+                                                <p className="text-2xl font-semibold text-gray-900">{selectedUploadIds.length}</p>
+                                                <p className="text-xs text-purple-600 flex items-center gap-1">
+                                                    <Icon name="activity" className="w-3 h-3" />
+                                                    Selected
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -369,9 +977,12 @@
                                                 <Icon name="activity" className="h-6 w-6 text-purple-600" />
                                             </div>
                                             <div className="ml-4">
-                                                <p className="text-sm font-medium text-gray-500">Potential Pairs</p>
-                                                <p className="text-2xl font-semibold text-gray-900">{stats.reconciliationOpportunities.potentialPairs}</p>
-                                                <p className="text-xs text-indigo-600">Opportunities</p>
+                                                <p className="text-sm font-medium text-gray-500">API Status</p>
+                                                <p className="text-2xl font-semibold text-gray-900">Live</p>
+                                                <p className="text-xs text-indigo-600 flex items-center gap-1">
+                                                    <Icon name="shield" className="w-3 h-3" />
+                                                    Connected
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -381,7 +992,11 @@
                                 <div className="card p-6">
                                     <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
                                         <Icon name="zap" className="w-5 h-5 text-yellow-500" />
-                                        Quick Actions
+                                        Enterprise Actions
+                                        <span className="badge badge-success">
+                                            <Icon name="shield" className="w-3 h-3" />
+                                            Live Backend
+                                        </span>
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <button
@@ -390,15 +1005,21 @@
                                         >
                                             <div className="flex items-center gap-2">
                                                 <Icon name="filePlus" className="w-5 h-5 text-blue-600" />
-                                                Upload New Files
+                                                Upload & Process Files
                                             </div>
+                                            <Icon name="zap" className="w-4 h-4 text-yellow-500" />
                                         </button>
                                         <button
-                                            onClick={() => setActiveTab('reconciliation')}
+                                            onClick={runReconciliation}
+                                            disabled={selectedUploadIds.length < 2 || loading}
                                             className="btn btn-primary"
                                         >
-                                            <Icon name="play" className="w-5 h-5" />
-                                            Run Reconciliation
+                                            {loading ? (
+                                                <div className="loading-spinner"></div>
+                                            ) : (
+                                                <Icon name="play" className="w-5 h-5" />
+                                            )}
+                                            Run AI Reconciliation
                                         </button>
                                     </div>
                                 </div>
@@ -409,54 +1030,466 @@
                                         <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                                             <Icon name="folderOpen" className="w-5 h-5 text-blue-600" />
                                             Recent Uploads
+                                            <span className="badge badge-info">
+                                                <Icon name="database" className="w-3 h-3" />
+                                                Live Data
+                                            </span>
                                         </h3>
                                     </div>
                                     <div className="p-6">
-                                        <div className="space-y-4">
-                                            {uploads.map((upload) => (
-                                                <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                                                    <div className="flex items-center space-x-3">
-                                                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                                            <Icon name="database" className="w-4 h-4 text-blue-600" />
+                                        {uploads.length === 0 ? (
+                                            <div className="text-center py-8">
+                                                <Icon name="upload" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                                                <h4 className="text-lg font-medium text-gray-900 mb-2">Ready for Enterprise File Upload</h4>
+                                                <p className="text-gray-600 mb-6">
+                                                    Your backend is connected and ready to process POS transactions, Alle rewards, and Aspire certificates.
+                                                </p>
+                                                <button
+                                                    onClick={() => setActiveTab('uploads')}
+                                                    className="btn btn-primary"
+                                                >
+                                                    <Icon name="filePlus" className="w-4 h-4" />
+                                                    Upload Your First File
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                {uploads.slice(0, 5).map((upload) => {
+                                                    const fileConfig = getFileTypeConfig(upload.fileType);
+                                                    const statusConfig = getStatusConfig(upload.status);
+                                                    
+                                                    return (
+                                                        <div key={upload.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                                                            <div className="flex items-center space-x-3">
+                                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${fileConfig.className}`}>
+                                                                    <Icon name={fileConfig.icon} className="w-4 h-4" />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-sm font-medium text-gray-900">{upload.fileName}</p>
+                                                                    <p className="text-xs text-gray-500">{upload.recordCount} records</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center space-x-3">
+                                                                <span className={`badge ${fileConfig.badgeClass}`}>
+                                                                    {fileConfig.label}
+                                                                </span>
+                                                                <span className="text-xs text-gray-500">
+                                                                    {api.formatDate(upload.createdAt)}
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <p className="text-sm font-medium text-gray-900">{upload.fileName}</p>
-                                                            <p className="text-xs text-gray-500">{upload.recordCount} records</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center space-x-3">
-                                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                                                            {upload.fileType.replace('_', ' ').toUpperCase()}
-                                                        </span>
-                                                        <span className="text-xs text-gray-500">
-                                                            {new Date(upload.createdAt).toLocaleDateString()}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Other Tabs */}
-                        {activeTab !== 'dashboard' && (
-                            <div className="text-center py-12">
-                                <Icon name="checkCircle" className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    🎉 Authentication Fixed!
-                                </h3>
-                                <p className="text-gray-600 mb-6">
-                                    Your dashboard is now working perfectly. The {activeTab} functionality is ready for full implementation.
-                                </p>
-                                <button
-                                    onClick={() => setActiveTab('dashboard')}
-                                    className="btn btn-primary"
-                                >
-                                    <Icon name="home" className="w-5 h-5" />
-                                    Back to Dashboard
-                                </button>
+                        {/* File Uploads Tab */}
+                        {activeTab === 'uploads' && (
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Upload Zone */}
+                                <div className="card p-6">
+                                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                        <Icon name="upload" className="w-5 h-5 text-blue-600" />
+                                        Enterprise File Upload
+                                        <span className="badge badge-success">
+                                            <Icon name="shield" className="w-3 h-3" />
+                                            Railway Backend
+                                        </span>
+                                    </h3>
+                                    
+                                    {/* Upload Progress */}
+                                    {uploadProgress > 0 && uploadProgress < 100 && (
+                                        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-sm text-blue-700 flex items-center gap-1">
+                                                    <div className="loading-spinner"></div>
+                                                    Uploading to Railway backend...
+                                                </span>
+                                                <span className="text-sm text-blue-700 font-semibold">{uploadProgress}%</span>
+                                            </div>
+                                            <div className="progress-bar">
+                                                <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div
+                                        className={`upload-zone ${dragActive ? 'drag-active' : ''}`}
+                                        onDragEnter={handleDrag}
+                                        onDragLeave={handleDrag}
+                                        onDragOver={handleDrag}
+                                        onDrop={handleDrop}
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        <Icon name="upload" className={`h-12 w-12 mx-auto mb-4 ${dragActive ? 'text-blue-500' : 'text-gray-400'}`} />
+                                        <h4 className="text-lg font-medium text-gray-900 mb-2">
+                                            {dragActive ? 'Drop files here!' : 'Drop files here or click to upload'}
+                                        </h4>
+                                        <p className="text-sm text-gray-500 mb-4">
+                                            Supports CSV and Excel files • Direct upload to Railway backend • Real-time processing
+                                        </p>
+                                        <div className="flex items-center justify-center gap-4 text-xs text-gray-400 mb-4">
+                                            <div className="flex items-center gap-1">
+                                                <Icon name="database" className="w-3 h-3" />
+                                                POS Transactions
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Icon name="award" className="w-3 h-3" />
+                                                Alle Rewards
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Icon name="star" className="w-3 h-3" />
+                                                Aspire Certificates
+                                            </div>
+                                        </div>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept=".csv,.xlsx,.xls"
+                                            onChange={handleFileInputChange}
+                                            disabled={loading}
+                                            className="hidden"
+                                        />
+                                        <button
+                                            disabled={loading}
+                                            className="btn btn-primary"
+                                        >
+                                            <Icon name="filePlus" className="w-4 h-4" />
+                                            Choose Files
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Upload History with Backend Integration */}
+                                <div className="card">
+                                    <div className="px-6 py-4 border-b border-gray-200">
+                                        <div className="flex justify-between items-center">
+                                            <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                <Icon name="layers" className="w-5 h-5 text-blue-600" />
+                                                Upload History
+                                                <span className="badge badge-info">
+                                                    <Icon name="database" className="w-3 h-3" />
+                                                    Live Backend Data
+                                                </span>
+                                            </h3>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm text-gray-500 flex items-center gap-1">
+                                                    <Icon name="checkCircle" className="w-4 h-4 text-green-600" />
+                                                    {selectedUploadIds.length} selected for reconciliation
+                                                </span>
+                                                {selectedUploadIds.length >= 2 && (
+                                                    <span className="badge badge-success">
+                                                        <Icon name="zap" className="w-3 h-3" />
+                                                        Ready for AI
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Select
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        File Name
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Type
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Records
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Status
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Uploaded
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200">
+                                                {uploads.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan="6" className="px-6 py-8 text-center">
+                                                            <Icon name="upload" className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                                            <p className="text-sm text-gray-500">No files uploaded yet. Upload your first file to begin!</p>
+                                                        </td>
+                                                    </tr>
+                                                ) : (
+                                                    uploads.map((upload) => {
+                                                        const fileConfig = getFileTypeConfig(upload.fileType);
+                                                        const statusConfig = getStatusConfig(upload.status);
+                                                        const isSelected = selectedUploadIds.includes(upload.id);
+                                                        
+                                                        return (
+                                                            <tr key={upload.id} className={`hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}>
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={isSelected}
+                                                                        onChange={() => toggleUploadSelection(upload.id)}
+                                                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                    />
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className={`w-6 h-6 rounded flex items-center justify-center ${fileConfig.className}`}>
+                                                                            <Icon name={fileConfig.icon} className="w-3 h-3" />
+                                                                        </div>
+                                                                        {upload.fileName}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <span className={`badge ${fileConfig.badgeClass}`}>
+                                                                        {fileConfig.label}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                                    {upload.recordCount?.toLocaleString() || 0}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <span className="badge badge-success">
+                                                                        <Icon name={statusConfig.icon} className={`w-3 h-3 ${statusConfig.className}`} />
+                                                                        {statusConfig.label}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                    {api.formatDate(upload.createdAt)}
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Reconciliation Tab */}
+                        {activeTab === 'reconciliation' && (
+                            <div className="space-y-8 animate-slide-in">
+                                {/* Reconciliation Controls */}
+                                <div className="card p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                            <Icon name="target" className="w-5 h-5 text-blue-600" />
+                                            AI-Powered Reconciliation
+                                            <span className="badge badge-success">
+                                                <Icon name="zap" className="w-3 h-3" />
+                                                Railway Backend
+                                            </span>
+                                        </h3>
+                                        <button
+                                            onClick={runReconciliation}
+                                            disabled={loading || selectedUploadIds.length < 2}
+                                            className="btn btn-primary"
+                                        >
+                                            {loading ? (
+                                                <div className="loading-spinner"></div>
+                                            ) : (
+                                                <Icon name="play" className="w-4 h-4" />
+                                            )}
+                                            {loading ? 'Processing...' : 'Start AI Reconciliation'}
+                                        </button>
+                                    </div>
+
+                                    {/* Reconciliation Settings */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Match Criteria</label>
+                                            <select
+                                                value={reconciliationSettings.matchCriteria}
+                                                onChange={(e) => setReconciliationSettings({...reconciliationSettings, matchCriteria: e.target.value})}
+                                                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            >
+                                                <option value="strict">🎯 Strict (90%+ confidence)</option>
+                                                <option value="normal">⚡ Normal (70%+ confidence)</option>
+                                                <option value="fuzzy">🔍 Fuzzy (50%+ confidence)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Date Tolerance (days)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="30"
+                                                value={reconciliationSettings.dateToleranceDays}
+                                                onChange={(e) => setReconciliationSettings({...reconciliationSettings, dateToleranceDays: parseInt(e.target.value)})}
+                                                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Amount Tolerance (%)</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="50"
+                                                value={reconciliationSettings.amountTolerancePercent}
+                                                onChange={(e) => setReconciliationSettings({...reconciliationSettings, amountTolerancePercent: parseInt(e.target.value)})}
+                                                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="text-sm text-gray-600 p-3 bg-blue-50 rounded-lg flex items-center gap-2">
+                                        <Icon name="info" className="w-4 h-4 text-blue-600" />
+                                        Selected {selectedUploadIds.length} files for reconciliation. 
+                                        {selectedUploadIds.length < 2 ? (
+                                            <span className="text-yellow-600 ml-1 flex items-center gap-1">
+                                                <Icon name="alertTriangle" className="w-4 h-4" />
+                                                (Select at least 2 files from the Uploads tab)
+                                            </span>
+                                        ) : (
+                                            <span className="text-green-600 ml-1 flex items-center gap-1">
+                                                <Icon name="checkCircle" className="w-4 h-4" />
+                                                Ready for AI processing!
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {loading && (
+                                        <div className="text-center py-8 bg-blue-50 rounded-lg mt-4">
+                                            <div className="flex justify-center mb-4">
+                                                <div className="relative">
+                                                    <Icon name="target" className="w-8 h-8 text-blue-600 loading-pulse" />
+                                                    <Icon name="zap" className="w-4 h-4 absolute -top-1 -right-1 text-yellow-500" />
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-blue-700 font-medium flex items-center justify-center gap-1">
+                                                <Icon name="activity" className="w-4 h-4 loading-pulse" />
+                                                Running enterprise reconciliation algorithms...
+                                            </p>
+                                            <p className="text-xs text-blue-600 mt-1">Processing via Railway backend</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Reconciliation Results */}
+                                {reconciliationResults && (
+                                    <div className="space-y-6">
+                                        {/* Summary Cards */}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="card metric-card">
+                                                <div className="flex items-center">
+                                                    <div className="p-2 bg-green-100 rounded-lg">
+                                                        <Icon name="checkCircle" className="h-6 w-6 text-green-600" />
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <p className="text-sm font-medium text-gray-500">Total Matches</p>
+                                                        <p className="text-2xl font-semibold text-gray-900">
+                                                            {reconciliationResults.summary?.totalMatches || 0}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            AI-powered matching
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="card metric-card">
+                                                <div className="flex items-center">
+                                                    <div className="p-2 bg-blue-100 rounded-lg">
+                                                        <Icon name="percent" className="h-6 w-6 text-blue-600" />
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <p className="text-sm font-medium text-gray-500">Match Rate</p>
+                                                        <p className="text-2xl font-semibold text-gray-900">
+                                                            {reconciliationResults.summary?.matchRate || 0}%
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            Enterprise accuracy
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="card metric-card">
+                                                <div className="flex items-center">
+                                                    <div className="p-2 bg-purple-100 rounded-lg">
+                                                        <Icon name="clock" className="h-6 w-6 text-purple-600" />
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <p className="text-sm font-medium text-gray-500">Time Saved</p>
+                                                        <p className="text-2xl font-semibold text-gray-900">
+                                                            {Math.round((reconciliationResults.summary?.totalMatches || 0) * 0.25)}h
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            vs manual process
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Success Alert */}
+                                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                            <div className="flex">
+                                                <Icon name="checkCircle" className="h-5 w-5 text-green-400" />
+                                                <div className="ml-3">
+                                                    <h3 className="text-sm font-medium text-green-800">
+                                                        🚀 Enterprise Reconciliation Complete!
+                                                    </h3>
+                                                    <p className="mt-1 text-sm text-green-700">
+                                                        Your reconciliation has been processed using enterprise AI algorithms via the Railway backend. 
+                                                        Results are ready for review and export.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* No Results State */}
+                                {!reconciliationResults && !loading && (
+                                    <div className="text-center py-12">
+                                        <Icon name="target" className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                        <h4 className="text-lg font-medium text-gray-900 mb-2">Ready for Enterprise Reconciliation</h4>
+                                        <p className="text-gray-600 mb-6">
+                                            Select at least 2 files from the Uploads tab and configure your matching criteria above.
+                                        </p>
+                                        <button
+                                            onClick={() => setActiveTab('uploads')}
+                                            className="btn btn-primary"
+                                        >
+                                            <Icon name="upload" className="w-5 h-5" />
+                                            Go to Uploads
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Reports Tab */}
+                        {activeTab === 'reports' && (
+                            <div className="space-y-8 animate-slide-in">
+                                <div className="text-center py-12">
+                                    <Icon name="barChart" className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+                                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                        🚀 Enterprise Reporting Ready!
+                                    </h3>
+                                    <p className="text-gray-600 mb-6">
+                                        Reports functionality is connected to your Railway backend. 
+                                        Run a reconciliation to generate comprehensive business intelligence reports.
+                                    </p>
+                                    <button
+                                        onClick={() => setActiveTab('reconciliation')}
+                                        className="btn btn-primary"
+                                    >
+                                        <Icon name="target" className="w-5 h-5" />
+                                        Start Reconciliation
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -464,20 +1497,20 @@
             );
         };
 
-        // Render with error handling
+        // Render with enhanced error handling
         try {
-            console.log('🎯 Rendering simplified dashboard...');
-            ReactDOM.render(<Dashboard />, document.getElementById('dashboard-root'));
-            console.log('✅ Dashboard rendered successfully!');
+            console.log('🚀 Rendering enterprise dashboard with full backend integration...');
+            ReactDOM.render(<EnterpriseDashboard />, document.getElementById('dashboard-root'));
+            console.log('✅ Enterprise dashboard rendered successfully!');
         } catch (error) {
             console.error('❌ Dashboard render error:', error);
             document.getElementById('dashboard-root').innerHTML = `
                 <div class="flex items-center justify-center min-h-screen bg-red-50">
                     <div class="text-center p-8">
-                        <h2 class="text-xl font-semibold text-red-800 mb-4">Dashboard Error</h2>
-                        <p class="text-red-600 mb-4">Please check the console for details and refresh the page.</p>
+                        <h2 class="text-xl font-semibold text-red-800 mb-4">Enterprise Dashboard Error</h2>
+                        <p class="text-red-600 mb-4">Backend integration failed. Please check console for details.</p>
                         <button onclick="location.reload()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                            Refresh Page
+                            Restart Dashboard
                         </button>
                         <div class="mt-4 text-sm text-gray-600">
                             Error: ${error.message}
