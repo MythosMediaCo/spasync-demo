@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedSpaSync - Rewards Reconciliation Automation</title>
+    <title>MedSpaSync Pro - Demo Experience</title>
     <style>
         /* Existing CSS from your file */
         .metric-value{
@@ -804,9 +804,43 @@
                 padding: 40px 20px;
             }
         }
+
+        /* Demo banner */
+        .demo-banner {
+            background: linear-gradient(45deg, #ff9500, #ffad33);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(255, 149, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
     </style>
 </head>
 <body>
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+        🎬 Demo Experience - Experience MedSpaSync Pro's Enterprise Features | 
+        <strong>Ready to Start? <a href="/" style="color: white; text-decoration: underline;">Customer Login →</a></strong>
+    </div>
+
    <header>
     <h1 style="
         color: #667eea;
@@ -833,7 +867,7 @@
     </h1>
     <div class="contact-info">
         <div style="margin-bottom: 10px;">
-            <a href="login.html" style="
+            <a href="/" style="
                 background: linear-gradient(135deg, #667eea, #764ba2);
                 color: white;
                 padding: 8px 16px;
@@ -864,7 +898,7 @@
             
             <!-- Updated CTA buttons -->
             <div style="display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 40px;">
-                <a href="login.html" class="cta-button" style="
+                <a href="/" class="cta-button" style="
                     background: linear-gradient(90deg, #4CAF50, #45a049);
                     display: inline-flex;
                     align-items: center;
@@ -873,9 +907,9 @@
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
-                    Access Dashboard
+                    Get Started Now
                 </a>
-                <a href="#demo-section" class="cta-button">See the Demo</a>
+                <a href="#demo-section" class="cta-button">Continue Demo</a>
             </div>
         </section>
 
@@ -1129,7 +1163,7 @@
             from_name: data.firstName + ' ' + data.lastName,
             from_email: data.email,
             practice_name: data.practiceName,
-            source: 'ROI Report Request',
+            source: 'ROI Report Request - Demo Page',
             timestamp: new Date().toLocaleString(),
             lead_details: JSON.stringify(data, null, 2)
         }, 'Xe2K-4SHtRCGh-vSf')
