@@ -1,5 +1,4 @@
 // api-service.js - MedSpaSync Pro API Integration
-// Copy this entire file to your GitHub repository as: api-service.js
 
 class MedSpaSyncAPI {
     constructor() {
@@ -49,7 +48,7 @@ class MedSpaSyncAPI {
                     this.setToken(null);
                     throw new Error('Authentication required');
                 }
-                
+
                 let errorMessage;
                 try {
                     const errorData = await response.json();
@@ -59,7 +58,7 @@ class MedSpaSyncAPI {
                 }
                 throw new Error(errorMessage);
             }
-            
+
             const data = await response.json();
             console.log('API Response:', data);
             return data;
@@ -69,7 +68,6 @@ class MedSpaSyncAPI {
         }
     }
 
-    // Health check
     async healthCheck() {
         try {
             const response = await this.request('/health');
@@ -79,14 +77,12 @@ class MedSpaSyncAPI {
         }
     }
 
-    // Authentication
     async login(email, password) {
         try {
             const response = await this.request('/auth/login', {
                 method: 'POST',
                 body: JSON.stringify({ email, password }),
             });
-            
             if (response.success && response.token) {
                 this.setToken(response.token);
                 return response;
@@ -104,7 +100,6 @@ class MedSpaSyncAPI {
                 method: 'POST',
                 body: JSON.stringify(userData),
             });
-            
             if (response.success && response.token) {
                 this.setToken(response.token);
                 return response;
@@ -125,71 +120,54 @@ class MedSpaSyncAPI {
         return !!this.token;
     }
 
-    // File Upload with progress tracking
     async uploadFile(file, onProgress = null) {
-        if (!this.token) {
-            throw new Error('Authentication required');
-        }
+        if (!this.token) throw new Error('Authentication required');
 
         const formData = new FormData();
         formData.append('file', file);
 
-        try {
-            console.log(`Uploading file: ${file.name} (${file.size} bytes)`);
-            
+        return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            
-            return new Promise((resolve, reject) => {
-                xhr.upload.onprogress = (event) => {
-                    if (event.lengthComputable && onProgress) {
-                        const progress = Math.round((event.loaded / event.total) * 100);
-                        onProgress(progress);
+
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable && onProgress) {
+                    const progress = Math.round((event.loaded / event.total) * 100);
+                    onProgress(progress);
+                }
+            };
+
+            xhr.onload = () => {
+                try {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        resolve(response);
+                    } else {
+                        const error = JSON.parse(xhr.responseText);
+                        reject(new Error(error.error || error.message || `Upload failed: ${xhr.status}`));
                     }
-                };
+                } catch {
+                    reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
+                }
+            };
 
-                xhr.onload = () => {
-                    try {
-                        if (xhr.status === 200) {
-                            const response = JSON.parse(xhr.responseText);
-                            console.log('Upload successful:', response);
-                            resolve(response);
-                        } else {
-                            const error = JSON.parse(xhr.responseText);
-                            reject(new Error(error.error || error.message || `Upload failed: ${xhr.status}`));
-                        }
-                    } catch (parseError) {
-                        reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
-                    }
-                };
+            xhr.onerror = () => reject(new Error('Upload failed: Network error'));
 
-                xhr.onerror = () => {
-                    reject(new Error('Upload failed: Network error'));
-                };
-
-                xhr.open('POST', `${this.baseURL}/upload/file`);
-                xhr.setRequestHeader('Authorization', `Bearer ${this.token}`);
-                xhr.send(formData);
-            });
-        } catch (error) {
-            throw new Error(`Upload failed: ${error.message}`);
-        }
+            xhr.open('POST', `${this.baseURL}/upload/file`);
+            xhr.setRequestHeader('Authorization', `Bearer ${this.token}`);
+            xhr.send(formData);
+        });
     }
 
-    // Upload History
     async getUploadHistory() {
         try {
-            const response = await this.request('/upload/history');
-            if (response.success) {
-                return response;
-            } else {
-                throw new Error(response.error || 'Failed to fetch upload history');
-            }
+            const response = await this.request('/upload/history'); // ✅ corrected
+            if (response.success) return response;
+            throw new Error(response.error || 'Failed to fetch upload history');
         } catch (error) {
             throw new Error(`Failed to fetch upload history: ${error.message}`);
         }
     }
 
-    // Reconciliation
     async runReconciliation(uploadIds, options = {}) {
         try {
             const requestBody = {
@@ -199,38 +177,28 @@ class MedSpaSyncAPI {
                 amountTolerancePercent: options.amountTolerancePercent || 5,
             };
 
-            console.log('Running reconciliation with options:', requestBody);
-
             const response = await this.request('/reconciliation/analyze', {
                 method: 'POST',
                 body: JSON.stringify(requestBody),
             });
 
-            if (response.success) {
-                return response;
-            } else {
-                throw new Error(response.error || 'Reconciliation failed');
-            }
+            if (response.success) return response;
+            throw new Error(response.error || 'Reconciliation failed');
         } catch (error) {
             throw new Error(`Reconciliation failed: ${error.message}`);
         }
     }
 
-    // Statistics
     async getStats() {
         try {
-            const response = await this.request('/reconciliation/stats');
-            if (response.success) {
-                return response;
-            } else {
-                throw new Error(response.error || 'Failed to fetch statistics');
-            }
+            const response = await this.request('/reconciliation/stats'); // ✅ corrected
+            if (response.success) return response;
+            throw new Error(response.error || 'Failed to fetch statistics');
         } catch (error) {
             throw new Error(`Failed to fetch statistics: ${error.message}`);
         }
     }
 
-    // Utility methods
     formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -256,10 +224,8 @@ class MedSpaSyncAPI {
         }).format(amount);
     }
 
-    // Error handling helper
     handleError(error, context = '') {
         console.error(`${context} error:`, error);
-        
         if (error.message.includes('Authentication required')) {
             return 'Please log in to continue';
         } else if (error.message.includes('Network')) {
@@ -272,10 +238,8 @@ class MedSpaSyncAPI {
     }
 }
 
-// Make API available globally
 window.MedSpaSyncAPI = MedSpaSyncAPI;
 
-// Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = MedSpaSyncAPI;
 }
