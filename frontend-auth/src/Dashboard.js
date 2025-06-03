@@ -18,7 +18,7 @@ import {
 } from 'recharts';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import ReconciliationUploader from './ReconciliationUploader';
+import ReconciliationUploader from './components/ReconciliationUploader';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
