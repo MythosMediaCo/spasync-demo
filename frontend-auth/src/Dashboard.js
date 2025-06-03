@@ -1,96 +1,92 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, BarChart, Bar
+} from 'recharts';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [analytics, setAnalytics] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [uploadTrends, setUploadTrends] = useState([]);
+  const [memberDistribution, setMemberDistribution] = useState([]);
+  const [failedRecords, setFailedRecords] = useState([]);
+  const [activePractices, setActivePractices] = useState([]);
+  const [trialExpirations, setTrialExpirations] = useState([]);
 
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (!token) {
-      navigate('/login');
-      return;
-    }
+    if (!token) return navigate('/');
 
-    const fetchData = async () => {
+    const fetchUserAndAnalytics = async () => {
       try {
-        const userRes = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const [userRes, analyticsRes] = await Promise.all([
+          fetch('https://ubiquitous-space-disco-69pvpp6r6jvw3rjpx-5000.app.github.dev/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch('https://ubiquitous-space-disco-69pvpp6r6jvw3rjpx-5000.app.github.dev/api/analytics/summary', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
 
-        if (!userRes.ok) throw new Error('User not authenticated');
         const userData = await userRes.json();
-        setUser(userData.user);
-
-        const analyticsRes = await fetch('/api/analytics/summary', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!analyticsRes.ok) throw new Error('Failed to fetch analytics');
         const analyticsData = await analyticsRes.json();
-        setAnalytics(analyticsData);
-        setLoading(false);
+
+        if (userRes.ok && userData.success) setUser(userData.user);
+        if (analyticsRes.ok && analyticsData.success) {
+          setUploadTrends(analyticsData.data.uploadTrends);
+          setMemberDistribution(analyticsData.data.memberTierDistribution);
+          setFailedRecords(analyticsData.data.failedRecordPercentage);
+          setActivePractices(analyticsData.data.mostActivePractices);
+          setTrialExpirations(analyticsData.data.trialExpirationHeatmap);
+        }
       } catch (err) {
-        console.error(err);
-        navigate('/login');
+        console.error('❌ Dashboard fetch error:', err);
+        navigate('/');
       }
     };
 
-    fetchData();
-  }, [token, navigate]);
+    fetchUserAndAnalytics();
+  }, [navigate, token]);
 
-  const logout = () => {
+  const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
-  if (loading) return <div className="p-6 text-center text-gray-500">Loading dashboard...</div>;
+  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Welcome, {user?.firstName}</h1>
-        <button
-          onClick={logout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-        >
-          Logout
-        </button>
-      </div>
+    <div className="dashboard">
+      <header>
+        <h1>Welcome, {user?.firstName} {user?.lastName}</h1>
+        <p>{user?.email} ({user?.role})</p>
+        <button onClick={handleLogout}>Logout</button>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-2">Upload Trends</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={analytics?.uploadTrends}>
+      <div className="charts-grid">
+        <div className="chart-card">
+          <h2>📈 Upload Trends</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={uploadTrends}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="uploads" stroke="#3b82f6" />
+              <Line type="monotone" dataKey="count" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-2">Member Tier Distribution</h2>
-          <ResponsiveContainer width="100%" height={200}>
+        <div className="chart-card">
+          <h2>🎯 Member Tier Distribution</h2>
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
-              <Pie
-                data={analytics?.memberTiers}
-                dataKey="count"
-                nameKey="tier"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                label
-              >
-                {analytics?.memberTiers.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={['#6366f1', '#3b82f6', '#10b981', '#f59e0b'][index % 4]} />
+              <Pie data={memberDistribution} dataKey="value" nameKey="tier" cx="50%" cy="50%" outerRadius={80} label>
+                {memberDistribution.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip />
@@ -98,38 +94,41 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-2">Failed Record Rate</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={analytics?.failedRecordRate}>
-              <XAxis dataKey="type" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="failureRate" fill="#ef4444" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-2">Top Active Practices</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={analytics?.topPractices}>
-              <XAxis dataKey="practiceName" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="uploadCount" fill="#10b981" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="bg-white p-4 rounded shadow col-span-1 md:col-span-2">
-          <h2 className="text-lg font-semibold mb-2">Trial Expiration Heatmap</h2>
+        <div className="chart-card">
+          <h2>⚠️ Failed Record %</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={analytics?.trialExpirations}>
-              <XAxis dataKey="week" />
+            <BarChart data={failedRecords}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="fileType" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="expiringCount" fill="#f59e0b" />
+              <Bar dataKey="failRate" fill="#ff6b6b" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chart-card">
+          <h2>🏢 Most Active Practices</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={activePractices} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis dataKey="practice" type="category" />
+              <Tooltip />
+              <Bar dataKey="uploads" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chart-card">
+          <h2>🗓️ Trial Expiration Heatmap</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={trialExpirations}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="expiring" fill="#ffc658" />
             </BarChart>
           </ResponsiveContainer>
         </div>
