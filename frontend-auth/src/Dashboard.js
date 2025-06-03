@@ -1,92 +1,128 @@
-// src/Dashboard.js
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
-  LineChart, Line, CartesianGrid, Legend, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  LineChart, Line, CartesianGrid, Legend
 } from 'recharts';
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
+
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (!token) return navigate('/');
-
-    const fetchUser = async () => {
+    const fetchUserAndAnalytics = async () => {
       try {
-        const res = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message);
-        setUser(data.user);
-      } catch {
-        localStorage.removeItem('token');
-        navigate('/');
-      }
-    };
+        const [meRes, summaryRes] = await Promise.all([
+          fetch(`${API_BASE}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch(`${API_BASE}/api/analytics/summary`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
 
-    const fetchSummary = async () => {
-      try {
-        const res = await fetch('/api/analytics/summary', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        setSummary(data);
-      } catch {
-        console.error('Failed to load summary');
+        if (!meRes.ok || !summaryRes.ok) throw new Error('Unauthorized or failed to fetch data');
+
+        const userData = await meRes.json();
+        const analyticsData = await summaryRes.json();
+
+        setUser(userData.user);
+        setData(analyticsData);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUser();
-    fetchSummary();
-  }, [navigate, token]);
+    fetchUserAndAnalytics();
+  }, [token]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/');
+    window.location.href = '/';
   };
 
-  if (!user || loading || !summary) return <div className="p-6">Loading dashboard...</div>;
+  const handleDownloadPDF = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/analytics/pdf`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch PDF');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'MedSpaSyncPro_Analytics_Summary.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      alert('❌ Could not generate PDF. Please try again.');
+    }
+  };
+
+  if (!token) return <Navigate to="/" />;
+  if (loading) return <p className="text-center p-4">Loading dashboard...</p>;
+  if (error) return <p className="text-red-600 text-center">Error: {error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Welcome, {user.firstName} {user.lastName}</h1>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-          Logout
-        </button>
+        <h1 className="text-3xl font-bold">Welcome, {user.firstName || user.email}</h1>
+        <div className="space-x-2">
+          <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow">
+            Logout
+          </button>
+          <button onClick={handleDownloadPDF} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+            Export as PDF
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Upload Trends */}
-        <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Upload Trends</h2>
+        <div className="p-4 bg-white rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">Upload Trends</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={summary.uploadTrends}>
-              <XAxis dataKey="date" />
+            <LineChart data={data.uploadTrends}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
-              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <Line type="monotone" dataKey="uploads" stroke="#3b82f6" />
+              <Legend />
+              <Line type="monotone" dataKey="uploads" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Member Tier Distribution */}
-        <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Member Tier Distribution</h2>
+        <div className="p-4 bg-white rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">Member Tier Distribution</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
-              <Pie data={summary.tierDistribution} dataKey="count" nameKey="tier" outerRadius={90} fill="#8884d8" label>
-                {summary.tierDistribution.map((entry, i) => (
-                  <Cell key={`cell-${i}`} fill={['#0ea5e9', '#6366f1', '#10b981', '#f59e0b'][i % 4]} />
+              <Pie
+                data={data.memberTierDistribution}
+                dataKey="value"
+                nameKey="tier"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                label
+              >
+                {data.memberTierDistribution.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={['#8884d8', '#82ca9d', '#ffc658'][index % 3]} />
                 ))}
               </Pie>
               <Tooltip />
@@ -94,28 +130,29 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Failed Record % */}
-        <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Failed Record %</h2>
+        <div className="p-4 bg-white rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">Failed Record Percentage</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={summary.failedRecords}>
-              <XAxis dataKey="source" />
+            <BarChart data={data.failedRecordPercentage}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="category" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="failureRate" fill="#ef4444" />
+              <Legend />
+              <Bar dataKey="percent" fill="#ff6961" />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Most Active Practices */}
-        <div className="bg-white rounded-xl shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Most Active Practices</h2>
+        <div className="p-4 bg-white rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">Most Active Practices</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={summary.activePractices}>
-              <XAxis dataKey="practice" />
-              <YAxis />
+            <BarChart data={data.mostActivePractices} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" />
               <Tooltip />
-              <Bar dataKey="uploads" fill="#22c55e" />
+              <Bar dataKey="uploads" fill="#4fd1c5" />
             </BarChart>
           </ResponsiveContainer>
         </div>
