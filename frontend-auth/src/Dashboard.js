@@ -13,7 +13,6 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-  HeatMap,
   Legend,
 } from 'recharts';
 import jsPDF from 'jspdf';
@@ -21,36 +20,12 @@ import html2canvas from 'html2canvas';
 import ReconciliationUploader from './components/ReconciliationUploader';
 
 const Dashboard = () => {
+  if (!localStorage.getItem('token')) return <Navigate to="/" />;
+
   const [user, setUser] = useState(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('7d');
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const fetchUser = async () => {
-      const res = await fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const json = await res.json();
-      if (json.success) setUser(json.user);
-    };
-
-    const fetchAnalytics = async () => {
-      setLoading(true);
-      const res = await fetch(`/api/analytics/summary?range=${filter}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const json = await res.json();
-      if (json.success) setData(json.data);
-      setLoading(false);
-    };
-
-    fetchUser();
-    fetchAnalytics();
-  }, [filter]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -67,7 +42,40 @@ const Dashboard = () => {
     });
   };
 
-  if (!localStorage.getItem('token')) return <Navigate to="/" />;
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const json = await res.json();
+        if (json.success) setUser(json.user);
+        else logout();
+      } catch {
+        logout();
+      }
+    };
+
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/analytics/summary?range=${filter}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const json = await res.json();
+        if (json.success) setData(json.data);
+        else logout();
+        setLoading(false);
+      } catch {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+    fetchAnalytics();
+  }, [filter]);
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen" id="dashboard">
@@ -95,63 +103,74 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white shadow rounded p-4">
-          <h2 className="font-bold mb-2">Upload Trends</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data?.uploadTrends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="uploads" stroke="#8884d8" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      {loading && <p className="text-center text-gray-500">Loading analytics...</p>}
 
-        <div className="bg-white shadow rounded p-4">
-          <h2 className="font-bold mb-2">Member Tier Distribution</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={data?.tierDistribution} dataKey="value" nameKey="tier" cx="50%" cy="50%" outerRadius={100}>
-                {data?.tierDistribution?.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={["#8884d8", "#82ca9d", "#ffc658"][index % 3]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+      {!loading && data && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {data.uploadTrends?.length > 0 && (
+            <div className="bg-white shadow rounded p-4">
+              <h2 className="font-bold mb-2">Upload Trends</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={data.uploadTrends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="uploads" stroke="#8884d8" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
-        <div className="bg-white shadow rounded p-4">
-          <h2 className="font-bold mb-2">Failed Record Percentage</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data?.failedPercentage}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="#f87171" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+          {data.tierDistribution?.length > 0 && (
+            <div className="bg-white shadow rounded p-4">
+              <h2 className="font-bold mb-2">Member Tier Distribution</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={data.tierDistribution} dataKey="value" nameKey="tier" cx="50%" cy="50%" outerRadius={100}>
+                    {data.tierDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={["#8884d8", "#82ca9d", "#ffc658"][index % 3]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
-        <div className="bg-white shadow rounded p-4">
-          <h2 className="font-bold mb-2">Most Active Practices</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data?.activePractices} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis type="category" dataKey="practice" />
-              <Tooltip />
-              <Bar dataKey="uploads" fill="#60a5fa" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+          {data.failedPercentage?.length > 0 && (
+            <div className="bg-white shadow rounded p-4">
+              <h2 className="font-bold mb-2">Failed Record Percentage</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data.failedPercentage}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#f87171" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
-      {/* 🔁 Reconciliation uploader added at the bottom */}
+          {data.activePractices?.length > 0 && (
+            <div className="bg-white shadow rounded p-4">
+              <h2 className="font-bold mb-2">Most Active Practices</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data.activePractices} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis type="category" dataKey="practice" />
+                  <Tooltip />
+                  <Bar dataKey="uploads" fill="#60a5fa" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="mt-10">
         <ReconciliationUploader />
       </div>
