@@ -1,137 +1,136 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
+  BarChart, Bar, ResponsiveContainer, HeatMapChart
 } from 'recharts';
-import './Dashboard.css';
+import mockAnalytics from './mockAnalyticsData';
+
+const COLORS = ['#4ADE80', '#60A5FA', '#F472B6', '#FBBF24', '#F87171'];
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [uploadTrends, setUploadTrends] = useState([]);
-  const [memberDistribution, setMemberDistribution] = useState([]);
-  const [failedRecords, setFailedRecords] = useState([]);
-  const [activePractices, setActivePractices] = useState([]);
-  const [trialExpirations, setTrialExpirations] = useState([]);
-
-  const token = localStorage.getItem('token');
+  const [analytics, setAnalytics] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) return navigate('/');
-
     const fetchUserAndAnalytics = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
       try {
-        const [userRes, analyticsRes] = await Promise.all([
-          fetch('https://ubiquitous-space-disco-69pvpp6r6jvw3rjpx-5000.app.github.dev/api/auth/me', {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          fetch('https://ubiquitous-space-disco-69pvpp6r6jvw3rjpx-5000.app.github.dev/api/analytics/summary', {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        ]);
+        const userRes = await fetch('/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
+        if (!userRes.ok) throw new Error('User fetch failed');
         const userData = await userRes.json();
-        const analyticsData = await analyticsRes.json();
+        setUser(userData.user);
 
-        if (userRes.ok && userData.success) setUser(userData.user);
-        if (analyticsRes.ok && analyticsData.success) {
-          setUploadTrends(analyticsData.data.uploadTrends);
-          setMemberDistribution(analyticsData.data.memberTierDistribution);
-          setFailedRecords(analyticsData.data.failedRecordPercentage);
-          setActivePractices(analyticsData.data.mostActivePractices);
-          setTrialExpirations(analyticsData.data.trialExpirationHeatmap);
-        }
+        const analyticsRes = await fetch('/api/analytics/summary', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!analyticsRes.ok) throw new Error('Analytics fetch failed');
+        const analyticsData = await analyticsRes.json();
+        if (!analyticsData.success) throw new Error('Bad analytics response');
+        setAnalytics(analyticsData.analytics);
       } catch (err) {
-        console.error('❌ Dashboard fetch error:', err);
-        navigate('/');
+        console.warn('Fallback to mock data:', err.message);
+        setAnalytics(mockAnalytics);
       }
     };
 
     fetchUserAndAnalytics();
-  }, [navigate, token]);
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/');
+    navigate('/login');
   };
 
-  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
+  if (!user || !analytics) return <div className="text-center p-10">Loading dashboard...</div>;
 
   return (
-    <div className="dashboard">
-      <header>
-        <h1>Welcome, {user?.firstName} {user?.lastName}</h1>
-        <p>{user?.email} ({user?.role})</p>
-        <button onClick={handleLogout}>Logout</button>
-      </header>
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Welcome, {user.firstName} {user.lastName}</h1>
+        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+      </div>
 
-      <div className="charts-grid">
-        <div className="chart-card">
-          <h2>📈 Upload Trends</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={uploadTrends}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#8884d8" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Upload Trends */}
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Upload Trends</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={analytics.uploadsByMonth}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="uploads" stroke="#4ADE80" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
-        <div className="chart-card">
-          <h2>🎯 Member Tier Distribution</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie data={memberDistribution} dataKey="value" nameKey="tier" cx="50%" cy="50%" outerRadius={80} label>
-                {memberDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Member Tier Distribution */}
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Member Tier Distribution</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <PieChart>
+            <Pie data={analytics.memberTierDistribution} dataKey="count" nameKey="tier" cx="50%" cy="50%" outerRadius={80} label>
+              {analytics.memberTierDistribution.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
 
-        <div className="chart-card">
-          <h2>⚠️ Failed Record %</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={failedRecords}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="fileType" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="failRate" fill="#ff6b6b" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Failed Record Rate */}
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Failed Record Percentage</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <PieChart>
+            <Pie data={analytics.failedRecordRate} dataKey="value" nameKey="label" cx="50%" cy="50%" outerRadius={80} label>
+              {analytics.failedRecordRate.map((entry, index) => (
+                <Cell key={`fail-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
 
-        <div className="chart-card">
-          <h2>🏢 Most Active Practices</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={activePractices} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="practice" type="category" />
-              <Tooltip />
-              <Bar dataKey="uploads" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Active Practices */}
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Most Active Practices</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={analytics.activePractices}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="practice" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="uploads" fill="#60A5FA" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
 
-        <div className="chart-card">
-          <h2>🗓️ Trial Expiration Heatmap</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={trialExpirations}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="expiring" fill="#ffc658" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Trial Expiration Heatmap (Basic Example as Bar Chart) */}
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Upcoming Trial Expirations</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={analytics.trialExpirations}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="expiring" fill="#FBBF24" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
