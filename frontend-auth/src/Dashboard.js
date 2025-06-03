@@ -5,50 +5,41 @@ function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Decode JWT token payload
-  const parseJwt = (token) => {
-    try {
-      const base64Payload = token.split('.')[1];
-      const payload = atob(base64Payload);
-      return JSON.parse(payload);
-    } catch (e) {
-      return null;
-    }
-  };
-
+  // Protect route
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/login');
-    } else {
-      const decoded = parseJwt(token);
-      if (decoded && decoded.email) {
-        setUser(decoded);
-      } else {
-        localStorage.removeItem('token');
-        navigate('/login');
-      }
+      navigate('/');
+      return;
     }
+
+    // Optional: Fetch user details using token
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    setUser(payload); // Assumes your token is a JWT with user data
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
+  if (!user) return null;
+
   return (
-    <div className="dashboard">
-      <div className="card">
-        <h2>Welcome to MedSpaSync Pro</h2>
-        {user ? (
-          <>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Role:</strong> {user.role || 'User'}</p>
-          </>
-        ) : (
-          <p>Loading user info...</p>
-        )}
-        <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 space-y-4">
+        <h1 className="text-2xl font-bold text-center text-blue-600">Welcome, {user.firstName || 'User'}!</h1>
+        <p className="text-center text-gray-700">Email: <span className="font-medium">{user.email}</span></p>
+        <p className="text-center text-gray-700">Role: <span className="capitalize font-medium">{user.role}</span></p>
+
+        <div className="text-center">
+          <button
+            onClick={handleLogout}
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
