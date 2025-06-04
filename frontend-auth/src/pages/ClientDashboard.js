@@ -18,12 +18,14 @@ function ClientDashboard() {
 
     const fetchData = async () => {
       try {
+        // Get user
         const userRes = await fetch('https://medspasync-backend-production.up.railway.app/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userData = await userRes.json();
         setUser(userData);
 
+        // Get upload history
         const historyRes = await fetch('https://medspasync-backend-production.up.railway.app/api/upload/history', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -56,6 +58,28 @@ function ClientDashboard() {
 
     setFiltered(filteredData);
   }, [history, fileType, dateRange]);
+
+  const handleExport = async (uploadId) => {
+    try {
+      const res = await fetch(
+        `https://medspasync-backend-production.up.railway.app/api/upload/export/${uploadId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Reconciliation-${uploadId}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed:', err);
+      alert('Failed to export PDF.');
+    }
+  };
 
   if (loading) return <p className="p-6 text-gray-600">Loading your dashboard...</p>;
 
@@ -102,31 +126,3 @@ function ClientDashboard() {
               <tr className="bg-gray-100 text-left text-sm text-gray-700">
                 <th className="py-2 px-4 border-b">Date</th>
                 <th className="py-2 px-4 border-b">File Type</th>
-                <th className="py-2 px-4 border-b">Match Rate</th>
-                <th className="py-2 px-4 border-b">Revenue Recovered</th>
-                <th className="py-2 px-4 border-b">Export</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((item, idx) => (
-                <tr key={idx} className="text-sm">
-                  <td className="py-2 px-4 border-b">{new Date(item.uploadDate).toLocaleDateString()}</td>
-                  <td className="py-2 px-4 border-b">{item.fileType}</td>
-                  <td className="py-2 px-4 border-b">{(item.matchRate * 100).toFixed(1)}%</td>
-                  <td className="py-2 px-4 border-b">${item.revenueRecovered?.toFixed(2) || '0.00'}</td>
-                  <td className="py-2 px-4 border-b">
-                    <button className="text-blue-600 hover:underline" disabled>
-                      Export PDF
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default ClientDashboard;
