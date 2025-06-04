@@ -159,4 +159,102 @@ function ClientDashboard() {
         <div>
           <label className="block text-sm font-medium mb-1">Date Range</label>
           <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} className="border px-3 py-2 rounded">
-            <option
+            <option value="All">All Time</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="text-sm font-semibold mb-2">Match Rate % Over Time</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={chartData}>
+              <XAxis dataKey="date" />
+              <YAxis domain={[0, 100]} />
+              <Tooltip />
+              <Line type="monotone" dataKey="matchRate" stroke="#4f46e5" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="text-sm font-semibold mb-2">Revenue Recovered ($)</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={chartData}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="revenue" fill="#16a34a" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="text-sm font-semibold mb-2">File Type Breakdown</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={60}>
+                {pieData.map((_, idx) => (
+                  <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Table */}
+      <h2 className="text-xl font-semibold mt-6">Reconciliation History</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border rounded shadow">
+          <thead>
+            <tr className="bg-gray-100 text-left text-sm text-gray-700">
+              <th className="py-2 px-4 border-b">Date</th>
+              <th className="py-2 px-4 border-b">File Type</th>
+              <th className="py-2 px-4 border-b">Match Rate</th>
+              <th className="py-2 px-4 border-b">Revenue Recovered</th>
+              <th className="py-2 px-4 border-b">Export</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((item, idx) => (
+              <tr key={idx} className="text-sm">
+                <td className="py-2 px-4 border-b">{new Date(item.uploadDate).toLocaleDateString()}</td>
+                <td className="py-2 px-4 border-b">{item.fileType}</td>
+                <td className="py-2 px-4 border-b">{(item.matchRate * 100).toFixed(1)}%</td>
+                <td className="py-2 px-4 border-b">${item.revenueRecovered?.toFixed(2) || '0.00'}</td>
+                <td className="py-2 px-4 border-b">
+                  <button onClick={() => handleExport(item._id)} className="text-blue-600 hover:underline">
+                    Export PDF
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Upload Reconciliation File</h3>
+            <input type="file" accept=".csv" onChange={handleUpload} className="mb-4" />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowUploadModal(false)} className="text-sm px-4 py-2">Cancel</button>
+              <button disabled={uploading} className="bg-blue-600 text-white px-4 py-2 rounded">
+                {uploading ? 'Uploading...' : 'Submit'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default ClientDashboard;
