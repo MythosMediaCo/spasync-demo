@@ -22,18 +22,18 @@ function Login() {
     if (retryCountdown > 0) return;
 
     try {
-      const res = await fetch('https://ubiquitous-space-disco-69pvpp6r6jvw3rjpx-5000.app.github.dev/api/auth/login', {
+      const res = await fetch('https://medspasync-backend-production.up.railway.app/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, password: formData.password }),
       });
 
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.token) {
+        localStorage.setItem('token', data.token);
         setMessage('✅ Login successful!');
         setError('');
-        localStorage.setItem('token', data.token);
-        setTimeout(() => navigate('/dashboard'), 1500);
+        setTimeout(() => navigate('/client'), 1000); // Adjust route if needed
       } else {
         throw new Error(data.message || 'Login failed');
       }
