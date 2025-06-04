@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Papa from 'papaparse';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, Tooltip, XAxis, YAxis, ResponsiveContainer
 } from 'recharts';
@@ -81,35 +82,41 @@ function ClientDashboard() {
     if (!file) return;
     setUploading(true);
 
-    try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const result = {
-          fileType: 'POS', // placeholder
-          matchRate: Math.random() * 0.2 + 0.8,
-          revenueRecovered: Math.random() * 5000 + 2000,
-        };
-        await fetch('https://medspasync-backend-production.up.railway.app/api/upload', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(result),
-        });
-        setShowUploadModal(false);
-        window.location.reload();
-      };
-      reader.readAsText(file);
-    } catch (err) {
-      console.error('Upload failed:', err);
-      alert('Upload failed.');
-    } finally {
-      setUploading(false);
-    }
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        try {
+          const parsedData = results.data;
+
+          const response = await fetch('https://medspasync-backend-production.up.railway.app/api/reconciliation/upload/json', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ data: parsedData }),
+          });
+
+          if (!response.ok) throw new Error('Upload failed');
+
+          setShowUploadModal(false);
+          window.location.reload();
+        } catch (err) {
+          console.error('Upload failed:', err);
+          alert('Failed to process file.');
+        } finally {
+          setUploading(false);
+        }
+      },
+      error: (err) => {
+        console.error('Parse error:', err);
+        alert('File could not be parsed.');
+        setUploading(false);
+      }
+    });
   };
 
-  // Chart Data
   const chartData = filtered.map(h => ({
     date: new Date(h.uploadDate).toLocaleDateString(),
     matchRate: parseFloat((h.matchRate * 100).toFixed(1)),
@@ -152,52 +159,4 @@ function ClientDashboard() {
         <div>
           <label className="block text-sm font-medium mb-1">Date Range</label>
           <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} className="border px-3 py-2 rounded">
-            <option value="All">All Time</option>
-            <option value="30">Last 30 Days</option>
-            <option value="90">Last 90 Days</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm font-semibold mb-2">Match Rate % Over Time</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={chartData}>
-              <XAxis dataKey="date" />
-              <YAxis domain={[0, 100]} />
-              <Tooltip />
-              <Line type="monotone" dataKey="matchRate" stroke="#4f46e5" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm font-semibold mb-2">Revenue Recovered ($)</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={chartData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="revenue" fill="#16a34a" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm font-semibold mb-2">File Type Breakdown</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={60}>
-                {pieData.map((_, idx) => (
-                  <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {
+            <option
