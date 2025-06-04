@@ -77,6 +77,23 @@ function ClientDashboard() {
     }
   };
 
+  const handleEmail = async (uploadId) => {
+    try {
+      const res = await fetch(
+        `https://medspasync-backend-production.up.railway.app/api/upload/email/${uploadId}`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error();
+      alert('✅ PDF sent to your email.');
+    } catch (err) {
+      console.error('Email export failed:', err);
+      alert('❌ Failed to send PDF via email.');
+    }
+  };
+
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -144,6 +161,22 @@ function ClientDashboard() {
           Start New Reconciliation
         </button>
       </div>
+
+      {/* Guided Onboarding */}
+      {filtered.length === 0 && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded shadow mb-6">
+          <h2 className="text-lg font-semibold mb-2 text-yellow-800">Let’s Get Started</h2>
+          <p className="text-sm text-yellow-700 mb-3">
+            It looks like you haven’t uploaded any reconciliation files yet. Let’s run your first one!
+          </p>
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium px-4 py-2 rounded"
+          >
+            Upload First File
+          </button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex gap-4">
@@ -228,9 +261,14 @@ function ClientDashboard() {
                 <td className="py-2 px-4 border-b">{(item.matchRate * 100).toFixed(1)}%</td>
                 <td className="py-2 px-4 border-b">${item.revenueRecovered?.toFixed(2) || '0.00'}</td>
                 <td className="py-2 px-4 border-b">
-                  <button onClick={() => handleExport(item._id)} className="text-blue-600 hover:underline">
-                    Export PDF
-                  </button>
+                  <div className="flex flex-col space-y-1">
+                    <button onClick={() => handleExport(item._id)} className="text-blue-600 hover:underline">
+                      Download PDF
+                    </button>
+                    <button onClick={() => handleEmail(item._id)} className="text-sm text-indigo-600 hover:underline">
+                      Email to Me
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
